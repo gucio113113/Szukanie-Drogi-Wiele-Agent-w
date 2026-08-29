@@ -118,12 +118,12 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   
   bool Obiekt::operator== (Obiekt*& obiekt)
   {
-	  if (this->IndexObiektu == obiekt->IndexObiektu)
-	  {
-		  return true;
-	  }
-	  else return false;
-
+	  return this->IndexObiektu == obiekt->IndexObiektu;
+	 
+  }
+  bool Obiekt::operator!=(Obiekt*& obiekt)
+  {
+	  return this->IndexObiektu != obiekt->IndexObiektu;
   }
   Obiekt* ZwrocObiekt(unsigned indexObiektu, std::vector<Obiekt*>& Obiekty)
   {

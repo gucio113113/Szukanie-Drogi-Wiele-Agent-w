@@ -1,4 +1,33 @@
 #include "Bron.h"
+
+std::ostream& operator<<(std::ostream& os, const TypPocisku& typ)
+{
+	switch (typ)
+	{
+	case TypPocisku::RAKIETA:
+		os << "TypPocisku::RAKIETA";
+		break;
+	case TypPocisku::RAKIETA_NAPROWADZAJACA:
+		os << "TypPocisku::RAKIETA_NAPROWADZAJACA";
+		break;
+	case TypPocisku::POCISK:
+		os << "TypPocisku::POCISK:";
+		break;
+	case TypPocisku::BOMBA:
+		os << "TypPocisku::BOMBA";
+		break;
+	case TypPocisku::NABOJ:
+		os << "TypPocisku::NABOJ";
+		break;
+	default:
+		os << "NIEZNANY ";
+		break;
+	}
+	return os;
+}
+
+
+
 ParametrPocisk::ParametrPocisk(unsigned int Zdrowie, std::string NazwaTekstury, float Predkosc, bool StatycznyCel, float Promien,unsigned int TickZycia,  Damage* damage)
 {
 	this->Zdrowie = Zdrowie;
@@ -9,10 +38,34 @@ ParametrPocisk::ParametrPocisk(unsigned int Zdrowie, std::string NazwaTekstury, 
 	this->TickZycia = TickZycia;
 	this->damage = damage;
 }
+
+#ifdef ZASOBY_DEBUG
+void ParametrPocisk::WyswietlParametry()
+{
+	std::cout << "Zdrowie: " << this->Zdrowie << "\n"
+		<< "NazwaTekstury: " << this->NazwaTekstury << "\n"
+		<< "StatycznyCel: " << this->StatycznyCel << "\n"
+		<< "Predkosc: " << this->Predkosc << "\n"
+		<< "Promien: " << this->Promien << "\n"
+		<< "TickZycia: " << this->TickZycia << "\n";
+}
+#endif
 ParametryPociskow::ParametryPociskow()
 {
-	ParametrPocisk parametr{ 100,"Pocisk",4,true,1,200,new DamageKolo({0,0},5,2,1,5) };
-	Parametry.try_emplace(TypPocisku::POCISK, parametr);
+	
+}
+void ParametryPociskow::Inicjuj()
+{
+	ParametrPocisk parametr(100,"Pocisk",4,true,1,200,new DamageKolo({0,0},5,2,1,5));
+#ifdef ZASOBY_DEBUG
+	parametr.WyswietlParametry();
+#endif
+	auto para= Parametry.try_emplace(TypPocisku::POCISK, parametr);
+#ifdef ZASOBY_DEBUG
+	if (para.second == false)
+		std::cout << "Nie wpisano parametru :" << TypPocisku::POCISK << "\n";
+	else std::cout << "Wpisano parametr :" << TypPocisku::POCISK << "\n";
+#endif // ZASOBY_DEBUG
 }
 
 ParametrPocisk* ParametryPociskow::ZwrocParametr(TypPocisku typPocisku)
@@ -33,13 +86,24 @@ Pocisk::Pocisk(Vector2 Pozycja , Vector2 Cel , ParametrPocisk* parametr )
 
 Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& parametry, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica)
 {
+	
 	parametr= parametry.ZwrocParametr(typ);
 	if (parametr != nullptr)
 	{
-		std::cout << "Parametr o typie pocisku nie zostal znaleziony :" << typ << "\n";
+	#ifdef STRZELANIE_DEBUG
+		std::cout << "Znaleziono Parametr :" << typ << "\n";
+	#endif // STRZELANIE_DEBUG
 		player.ZnajdzZasob(parametr->NazwaTekstury, tablica);
-		
 	}
+		#ifdef STRZELANIE_DEBUG
+	else
+	{
+		std::cout << "Parametr zostal nie znaleziony dla Pocisku o indeksie :"<<IndexObiektu<<"\n";
+	}
+	#endif // STRZELANIE_DEBUG
+
+	this->pozycja = Pozycja;
+	this->ruch.ZdefiniujRuch(this->pozycja, Cel, Pozycja);
 	this->Tick = 0;
 	this->IndexObiektu = Obiekty.size();
 
@@ -149,10 +213,22 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 				 if (obiekt != nullptr && obiekt2 != nullptr)
 				 {
 					 Pocisk* pocisk = new Pocisk(obiekt->pozycja, typ, obiekt2->pozycja, parametrypociskow, Obiekty, tablica);
-				#ifdef STRZELANIE_DEBUG
-					 std::cout << "Dodalismy Pocisk \n";
-				#endif // STRZELANIE_DEBUG
-					 Obiekty.emplace_back(pocisk);
+					 if (pocisk->parametr == nullptr)
+					 {
+						 
+								#ifdef STRZELANIE_DEBUG
+									std::cout << "Nie stworzylismy pociska o indeksie: "<<pocisk->IndexObiektu<<"\n";
+								#endif // STRZELANIE_DEBUG
+									delete pocisk;
+					 }
+					 else
+					 {
+					#ifdef STRZELANIE_DEBUG
+						 std::cout << "Dodalismy Pocisk o indeksie :" << pocisk->IndexObiektu << "\n";
+					#endif // STRZELANIE_DEBUG
+
+						 Obiekty.emplace_back(pocisk);
+					 }
 					 TickStrzalu = 0;
 				 }
 			 }

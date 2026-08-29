@@ -8,6 +8,7 @@ void Gra::Inicjacja()
 	tablica.WczytajZestawyAnimacji("./Zasoby/Tekstury/Animacje");
 	graczSter.InicjujKamere(mapa);
 	Obiekty.reserve(500);
+	parametrypociskow.Inicjuj();
 
 
 	Agent* agent1 = new Agent(mapa.SrodekPola({ 3,3 }), "Ludzik", FIOLETOWY, 2.5, 100,  Sojusze(Druzyny::DRUZYNA1,Druzyny::DRUZYNA1), Obiekty, tablica);
@@ -69,7 +70,9 @@ void Gra::Logika()
 
 		systemobrazen.LogikaSystemu(Obiekty,czas, mapa, tablica);
 
+#ifdef GRA_DEBUG
 		std::cout << "Ilosc Obiektow :" << Obiekty.size() << "\n";
+#endif // GRA_DEBUG
 		mapa.UsunPozycjeWCzasie(czas.ZwrocTick());
 		if (Obiekty.empty() == false)
 		{

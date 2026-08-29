@@ -70,9 +70,13 @@ Animacja::Animacja(unsigned int CoKtoryTick,   std::string AdresTekstury, TypyAn
 	this->LiczbaKlatek = static_cast<unsigned int>(this->tekstura.width / Rozmiar.x);
 	if (IsTextureValid(tekstura) == false)
 	{
+#ifdef ZASOBY_DEBUG
 		std::cout << "Animacja nie zostala wczytana: " << AdresTekstury << "\n";
+#endif
 	}
+#ifdef ZASOBY_DEBUG
 	else std::cout << "Animacja zostala wczytana \n";
+#endif
 }
 Rectangle Animacja::ZwrocKlatke(KierunkiSwiata kierunki, Vector2& Rozmiar, const unsigned int Klatka)
 {
@@ -104,9 +108,13 @@ void ZestawAnimacji::WczytajKtoryTyp(TypyAnimacji typAnimacji, blmp::Obiekt& obi
 	if (znajdz != animacje.end())
 	{
 		blmp::WczytajWartoscWlasciwosci(obiekt, ZwrocNazweAnimacji(typAnimacji), znajdz->CoKtoryTick);
+#ifdef ZASOBY_DEBUG
 		std::cout << "Wczytano Animacje :" << ZwrocNazweAnimacji(typAnimacji) << "\n";
+#endif
 	}
+#ifdef ZASOBY_DEBUG
 	else std::cout << "Nie wczytano animacji o Typie :" << ZwrocNazweAnimacji(typAnimacji) << "\n";
+#endif
 }
 
 
@@ -116,10 +124,13 @@ ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 	
 
 	std::filesystem::path SciezkaInfo = std::filesystem::path{ Folder.string() + "/info.obi" };
+#ifdef ZASOBY_DEBUG
 	if (std::filesystem::exists(SciezkaInfo) == false) std::cout << "Nie znaleziono Zestawu Animacji :" << SciezkaInfo.string() << "\n";
 	if (std::filesystem::exists(Folder) == false) std::cout << "Nie znaleziono Folderu Zestawu Animaacji :" << Folder.string() << "\n";
+#endif
 	if (std::filesystem::exists(Folder) == true && std::filesystem::exists(SciezkaInfo)==true && std::filesystem::is_directory(Folder) == true)
 	{
+#ifdef ZASOBY_DEBUG
 		std::cout << "Zawartosc Foldera :" << Folder.string() << "\n";
 
 		for (const auto& iterator : std::filesystem::directory_iterator(Folder))
@@ -131,13 +142,16 @@ ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 					
 			}
 		}
+#endif
 
 		for (const auto &iterator : std::filesystem::directory_iterator(Folder))
 		{
 			if (std::filesystem::equivalent(iterator.path(),SciezkaInfo)==false )
 			{
 				 TypyAnimacji typ= ZwrocTypAnimacji(iterator.path().filename().string());
+			#ifdef ZASOBY_DEBUG
 				 std::cout << "Jaki typ :" << iterator.path().filename().string() << "\n";
+			#endif
 				 animacje.emplace_back(0, iterator.path().string(), typ,Rozmiar);
 			}
 		}
@@ -151,6 +165,8 @@ ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 			blmp::Obiekt obiekt{ "",{} };
 			blmp::WczytajObiekt(obiekt, Plik);
 			this->NazwaAnimacji = obiekt.Nazwa;
+
+			
 			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIARX",Rozmiar.x);
 			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIARY", Rozmiar.y);
 
@@ -158,15 +174,20 @@ ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 			WczytajKtoryTyp(TypyAnimacji::CHODZENIE, obiekt);
 			WczytajKtoryTyp(TypyAnimacji::STRZELANIE, obiekt);
 
-
+	#ifdef ZASOBY_DEBUG
 			std::cout << "Wczytano Plik Informacyjny :" << SciezkaInfo.string();
+	#endif
 			Plik.close();
 		}
+	#ifdef ZASOBY_DEBUG
 		else std::cout << "Nie wczytano Pliku informacyjnego dla zestatu animacji :" << SciezkaInfo.string() << "\n";
+	#endif
 	}
 	else
 	{
+	#ifdef ZASOBY_DEBUG
 		std::cout << "Zestaw Animacji o Folderze :" << Folder.string() << " Nie zostal znaleziony \n";
+	#endif
 	}
 }
 void ZestawAnimacji::DodajAnimacje(unsigned int CoKtoryTick, std::string AdresTekstury, TypyAnimacji typ)
@@ -196,22 +217,31 @@ void StworzZestawAnimacji(std::filesystem::path Folder,std::string NazwaAnimacji
 			Image zdjecie = GenImageColor(LiczbaKlatek * Rozmiar.x, 8 * Rozmiar.y, { 0,0,0,255 });
 			if (ExportImage(zdjecie, std::string(Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STANIE)+ ".png").c_str()) == true)
 			{
-				std::cout << "Wczytano zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STANIE) << ".png\n";
+#ifdef ZASOBY_DEBUG
+				std::cout << "Stworzono zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STANIE) << ".png\n";
+#endif
 			}
-			else std::cout << "Wczytano zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STANIE) << ".png\n";
-
+#ifdef ZASOBY_DEBUG
+			else std::cout << "Stworzono zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STANIE) << ".png\n";
+#endif
 			if (ExportImage(zdjecie, std::string(Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::CHODZENIE) +".png").c_str()) == true)
 			{
-				std::cout << "Wczytano zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::CHODZENIE) << ".png\n";
+#ifdef ZASOBY_DEBUG
+				std::cout << "Stworzono zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::CHODZENIE) << ".png\n";
+#endif
 			}
-			else std::cout << "Wczytano zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::CHODZENIE) << ".png\n";
-
+#ifdef ZASOBY_DEBUG
+			else std::cout << "Stworzono zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::CHODZENIE) << ".png\n";
+#endif
 			if (ExportImage(zdjecie, std::string(Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STRZELANIE) + ".png").c_str()) == true)
 			{
-				std::cout << "Wczytano zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STRZELANIE) <<".png" << "\n";
+#ifdef ZASOBY_DEBUG
+				std::cout << "Stworzono zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STRZELANIE) <<".png" << "\n";
+#endif
 			}
-			else std::cout << "Wczytano zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STRZELANIE) << ".png \n";
-
+#ifdef ZASOBY_DEBUG
+			else std::cout << "Stworzono zdjecia " << Animka.string() + "/" + ZwrocNazweAnimacji(TypyAnimacji::STRZELANIE) << ".png \n";
+#endif
 			std::ofstream Plik(Animka.string() + "/info.obi");
 			if (Plik.is_open() == true && Plik.good() == true)
 			{
@@ -226,9 +256,13 @@ void StworzZestawAnimacji(std::filesystem::path Folder,std::string NazwaAnimacji
 				Plik.close();
 			}
 		}
+#ifdef 	ZASOBY_DEBUG
 		else std::cout << "Animacja Juz istnieje wiec nie stworzono Folderu z animacja :" << Animka.string() << "\n";
+#endif // 	ZASOBY_DEBUG
 	}
+#ifdef 	ZASOBY_DEBUG
 	else std::cout << "Folder o nazwie :" << Folder.string() << " nie zostal zanleziony \n";
+#endif
 
 
 
@@ -253,11 +287,14 @@ void TablicaAnimacji::WczytajZestawyAnimacji(std::filesystem::path Sciezka)
 
 
 		}
+#ifdef 	ZASOBY_DEBUG
 		std::cout << "Zaladowano Pomyslnie TabliceAnimacji \n";
-
+#endif
 
 	}
+#ifdef 	ZASOBY_DEBUG
 	else std::cout << "Nie znaleziono Sciezki dla Tablicy Animacji :" << Sciezka.string() << "\n";
+#endif
 }
 ZestawAnimacji* TablicaAnimacji::ZwrocZestawAnimajcji(std::string NazwaAnimacji)
 {
@@ -281,7 +318,9 @@ PlayerAnimacji::PlayerAnimacji(std::string NazwaAnimacji)
 void PlayerAnimacji::ZnajdzZasob(std::string NazwaAnimacji, TablicaAnimacji& tablicaAnimacji)
 {
 	zestawAnimacji = tablicaAnimacji.ZwrocZestawAnimajcji(NazwaAnimacji);
+#ifdef 	ZASOBY_DEBUG
 	if (zestawAnimacji == nullptr) std::cout << "Nie znaleziono Zestawu Animacji \n";
+#endif
 	ZnajdzTypAnimacji(typAnimacji);
 }
 void PlayerAnimacji::ZnajdzTypAnimacji(TypyAnimacji typAnimacji)
@@ -290,16 +329,24 @@ void PlayerAnimacji::ZnajdzTypAnimacji(TypyAnimacji typAnimacji)
 	{
 		
 		auto iterator = std::find_if(zestawAnimacji->animacje.begin(), zestawAnimacji->animacje.end(), [&](const Animacja& animacja) { return animacja.typ == typAnimacji; });
+#ifdef 	ZASOBY_DEBUG
 		std::cout << "Ile jest animacji :" << zestawAnimacji->animacje.size() << "\n";
+#endif
 		if (iterator != zestawAnimacji->animacje.end())
 		{
 			this->typAnimacji = typAnimacji;
 			animacja = iterator._Ptr;
+#ifdef 	ZASOBY_DEBUG
 			std::cout << "Znaleziono Typ Animacji \n";
+#endif
 		}
+#ifdef 	ZASOBY_DEBUG
 		else std::cout << "Nie znaleziono typu animacji \n";
+#endif
 	}
+#ifdef 	ZASOBY_DEBUG
 	else std::cout << "Zestaw Animacji nie zostal znaleziony \n";
+#endif
 }
 
 
@@ -356,14 +403,22 @@ void StworzTabliceAnimacji(std::filesystem::path Folder, std::string NazwaFolder
 				
 				for (std::string& nazwaAnimacji : NazwyAnimacji)
 				{
+#ifdef 	ZASOBY_DEBUG
 					std::cout << "Stworzono Zestaw Animacji :" << nazwaAnimacji << "\n";
+#endif
 					StworzZestawAnimacji(FolderZAnimacjami, nazwaAnimacji, Rozmiar, liczbaKlatek);
 				}
+#ifdef 	ZASOBY_DEBUG
 				std::cout << "Zapisano Pomyslnie Tablice Animacji  w folderze:"<< FolderZAnimacjami.string()<<"\n";
+#endif
 			}
 		}
+#ifdef 	ZASOBY_DEBUG
 		else std::cout << "Folder o nazwie :" << Folder.string() + "/" + NazwaFolderu << " Juz istniejie";
+#endif
 	}
+#ifdef 	ZASOBY_DEBUG
 	else std::cout << "Nie zdolano uwtowrzyc folderu dla tablic animacji nie znaleziono Sciezki do Folderu :" << NazwaFolderu << "\n";
+#endif
 }
 

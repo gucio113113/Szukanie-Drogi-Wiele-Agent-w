@@ -123,6 +123,7 @@ public:
 	unsigned int DostanIdnex();
 	
 	bool operator== (Obiekt*& obiekt);
+	bool operator!=(Obiekt*& obiekt);
 
 	friend class Bron;
 	friend class Damage;

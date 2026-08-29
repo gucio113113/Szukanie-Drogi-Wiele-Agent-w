@@ -10,6 +10,7 @@
 #include "SystemNamierzania.h"
 #include "Zasob.h"
 #include "GraczISter.h"
+#include <DyrektywyDebugowania.h>
 
 class Gra
 {

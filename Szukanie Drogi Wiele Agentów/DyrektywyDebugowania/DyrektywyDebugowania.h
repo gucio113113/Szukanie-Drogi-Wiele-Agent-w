@@ -1,7 +1,8 @@
 #pragma once
 //#define SYSTEMNAMIERZANIA_DEBUG
 //#define SYSTEM_OBRAZEN_DEBUG
-#define GRA_DEBUG
+//#define GRA_DEBUG
 //#define AGENT_DEBUG
 #define MAPA_DEBUG
-#define STRZELANIE_DEBUG
+//#define STRZELANIE_DEBUG
+#define ZASOBY_DEBUG

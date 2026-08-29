@@ -14,7 +14,7 @@
 #include "SystemNamierzania.h"
 #include <DyrektywyDebugowania.h>
 
-enum TypPocisku
+enum class TypPocisku : unsigned char
 {
 	RAKIETA=0,
 	RAKIETA_NAPROWADZAJACA,
@@ -22,8 +22,11 @@ enum TypPocisku
 	BOMBA,
 	NABOJ
 };
-struct ParametrPocisk
+std::ostream& operator<<(std::ostream& os, const TypPocisku& typ);
+
+class ParametrPocisk
 {
+public:
 	unsigned int Zdrowie;
 	std::string NazwaTekstury;
 	float Predkosc;
@@ -32,6 +35,9 @@ struct ParametrPocisk
 	unsigned int TickZycia;
 	Damage* damage;
 	ParametrPocisk(unsigned int Zdrowie,std::string NazwaTekstury,float Predkosc,bool StatycznyCel,float Promien,unsigned int TickZycia, Damage* damage);
+#ifdef ZASOBY_DEBUG
+	void WyswietlParametry();
+#endif // ZASOBY_DEBUG
 };
 class Pocisk;
 class ParametryPociskow
@@ -39,6 +45,7 @@ class ParametryPociskow
 	std::unordered_map<TypPocisku, ParametrPocisk> Parametry;
 public:
 	ParametryPociskow();
+	void Inicjuj();
 	// Przed strzalem z broni bron nadaje wartsic Pociskowi
 	ParametrPocisk * ZwrocParametr(TypPocisku typPocisku);
 };
@@ -67,6 +74,7 @@ public:
 	virtual ~Pocisk();
 	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty) override;
 	void NaLiczZycie(CzasLogiki& czasLogiki);
+	friend class Bron;
 };
 
 //----------------------------------------
@@ -83,7 +91,7 @@ public:
 	void UstawCel(float katRozpoczeczeczia,Obiekt *& obiekt);
 	void NaliczZycie(CzasLogiki &czasLogiki);
 	void NamierzCel(std::vector<Obiekt*> &Obiekty);
-
+	friend class Bron;
 };
 
 /*
@@ -108,7 +116,7 @@ class Bron
 	TypPocisku typ;
 	unsigned int TickStrzalu;
 public:
-	Bron(unsigned int szybkostrzelnosc=100, float Zasieg=10, TypPocisku typ=TypPocisku::POCISK);
+	Bron(unsigned int szybkostrzelnosc=100, float Zasieg=5, TypPocisku typ=TypPocisku::POCISK);
 	void Strzelanie(const unsigned int &Index,CzasLogiki &czasLogiki,SystemNamierzania &namierzania,std::vector<Obiekt*> &Obiekty, Mapa& mapa ,ParametryPociskow &parametrypociskow,TablicaAnimacji &tablica);
 
 };

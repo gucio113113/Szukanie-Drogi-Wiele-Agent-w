@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "CzasLogiki.h"
 #include "PozycjeNaMapie.h"
+#include <DyrektywyDebugowania.h>
 
 
 enum KierunkiSwiata

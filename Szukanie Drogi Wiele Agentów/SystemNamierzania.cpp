@@ -14,7 +14,7 @@ void SystemNamierzania::CzyMozeNamierzyc(Obiekt*& obiekt1, Obiekt*& obiekt2, flo
 	{
 		auto TenObiekt = std::find(Celowe.begin(), Celowe.end(), obiekt2->IndexObiektu);
 
-		if (obiekt1 != nullptr && TenObiekt==Celowe.end() && obiekt1->sojusze.SprawdzSojusz(obiekt2->sojusze)==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= Dlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
+		if (obiekt1 != nullptr && obiekt1!=obiekt2 && TenObiekt==Celowe.end() && obiekt1->sojusze.SprawdzSojusz(obiekt2->sojusze)==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= Dlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
 		{
 			Celowe.emplace_back(obiekt2->IndexObiektu);
 		#ifdef SYSTEMNAMIERZANIA_DEBUG
@@ -47,7 +47,7 @@ void SystemNamierzania::ZwrocSpelniajaceZasieg(unsigned int indexObiektu, float 
 	std::cout << "Wywolujesz Sie Systemie namierzania ? \n";
 #endif // !SYSTEMNAMIERZANIA_DEBUG
 	Obiekt* obiekt = ZwrocObiekt(indexObiektu,Obiekty);
-	if (obiekt != nullptr)
+	if (obiekt != nullptr && System.empty()==false )
 	{
 		PozycjaNaMapie pozStartowa;
 		PozycjaNaMapie pozKoncowa;
@@ -70,8 +70,7 @@ void SystemNamierzania::ZwrocSpelniajaceZasieg(unsigned int indexObiektu, float 
 
 
 
-				if (System.empty() == false)
-				{
+				
 					for (unsigned int& index : System[x + (y * rozmiarSystemu)])
 					{
 						Obiekt* obiekt2 = ZwrocObiekt(index, Obiekty);
@@ -81,7 +80,7 @@ void SystemNamierzania::ZwrocSpelniajaceZasieg(unsigned int indexObiektu, float 
 						CzyMozeNamierzyc(obiekt, obiekt2, Zasieg, ListaObiektow, mapa);
 					}
 					//if (System[x + (y * rozmiarSystemu)].empty() == true) std::cout << "Iterator systemowy pusty :" << x+ (y * rozmiarSystemu) << "\n";
-				}
+				
 				#ifdef SYSTEMNAMIERZANIA_DEBUG
 				else std::cout << "System jest pusty \n";
 				#endif
