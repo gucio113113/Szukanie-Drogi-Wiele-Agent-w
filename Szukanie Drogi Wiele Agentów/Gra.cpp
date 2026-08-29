@@ -93,7 +93,9 @@ void Gra::Render()
 	#ifdef SYSTEMNAMIERZANIA_DEBUG
 	systemnamierzania.Debug();
 	#endif
-	//systemobrazen.Debug();
+	#ifdef SYSTEM_OBRAZEN_DEBUG
+	systemobrazen.Debug();
+	#endif
 	for (Obiekt*& obiekt : Obiekty)
 	{
 		obiekt->Render(mapa, czas, tablica);

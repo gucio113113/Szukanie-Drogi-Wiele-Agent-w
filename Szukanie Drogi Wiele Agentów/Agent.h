@@ -91,9 +91,9 @@ class Agent : public Obiekt
 	Vector2 CelGlobalny;
 
 	std::queue<PozycjaNaMapie> droga;
-
+#ifdef AGENT_DEBUG
 	std::vector<KolorowyKwadrat> KoloroweKwadraty;
-
+#endif
 	bool Rezerwacja(std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, Mapa& mapa,CzasLogiki &Czaslogiki);
 
 	//Metody Szukania drogi
@@ -139,8 +139,9 @@ public:
 	void UstawGlownyCel(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki);
 
 	//wizualizajca drogi Agenta
+#ifdef  AGENT_DEBUG
 	void WizuDrogi(Mapa& mapa);
-
+#endif // AGENT_DEBUG
 	virtual void WykonujDroge(Mapa& mapa, CzasLogiki& czaslogiki);
 
 

@@ -131,33 +131,43 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 	 {
 		 if (TickStrzalu == Szybkostrzelnosc)
 		 {
+		#ifdef STRZELANIE_DEBUG
 			 std::cout << "Strzal \n";
+		#endif // STRZELANIE_DEBUG
 			 std::vector<unsigned int> Indexy;
 			 namierzania.ZwrocSpelniajaceZasieg(Index, Zasieg, Indexy, Obiekty, mapa);
 
 
 			 if (Indexy.empty() == false)
 			 {
+			#ifdef STRZELANIE_DEBUG
 				 std::cout << "Liczba Indeksow :" << Indexy.size() << "\n";
+			#endif // STRZELANIE_DEBUG
 				 Obiekt* obiekt = ZwrocObiekt(Index, Obiekty);
 				 Obiekt* obiekt2 = ZwrocObiekt(Indexy.at(0), Obiekty);
 
 				 if (obiekt != nullptr && obiekt2 != nullptr)
 				 {
 					 Pocisk* pocisk = new Pocisk(obiekt->pozycja, typ, obiekt2->pozycja, parametrypociskow, Obiekty, tablica);
+				#ifdef STRZELANIE_DEBUG
 					 std::cout << "Dodalismy Pocisk \n";
+				#endif // STRZELANIE_DEBUG
 					 Obiekty.emplace_back(pocisk);
 					 TickStrzalu = 0;
 				 }
 			 }
+		#ifdef STRZELANIE_DEBUG
 			 else std::cout << "Nie znaleziono nic \n";
 			 if (Indexy.empty() == true) std::cout << "Indexy Puste \n";
+		#endif // STRZELANIE_DEBUG
 			 Indexy.clear();
 		 }
 		 else
 		 {
 			 TickStrzalu++;
+		#ifdef STRZELANIE_DEBUG
 			 std::cout << "Tick: "<<TickStrzalu<<"\n";
+		#endif // STRZELANIE_DEBUG
 		 }
 		 
 	 }

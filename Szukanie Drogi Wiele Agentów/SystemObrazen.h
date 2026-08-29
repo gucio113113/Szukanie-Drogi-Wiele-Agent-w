@@ -4,6 +4,7 @@
 #include "PozycjeNaMapie.h"
 #include <vector>
 #include "Zasob.h"
+#include <DyrektywyDebugowania.h>
 
 #ifndef SYSTEMOBRAZEN
 #define SYSTEMOBRAZEN
@@ -71,7 +72,9 @@ public:
 	void ZmapujObiekty(std::vector<Obiekt*>& Obiekty);
 	void LogikaSystemu(std::vector<Obiekt*> &Obiekty,CzasLogiki &Czaslogiki,Mapa &mapa, TablicaAnimacji& tablicanimacji);
 	void UstawParametry(unsigned int RozmiarSystemu,Mapa &mapa);
+#ifdef SYSTEM_OBRAZEN_DEBUG
 	void Debug();
+#endif // SYSTEM_OBRAZEN
 };
 
 #endif // !SYSTEMOBRAZEN

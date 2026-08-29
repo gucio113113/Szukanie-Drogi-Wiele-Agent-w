@@ -12,6 +12,7 @@
 #include <numeric>
 #include "Obiekt.h"
 #include "SystemNamierzania.h"
+#include <DyrektywyDebugowania.h>
 
 enum TypPocisku
 {

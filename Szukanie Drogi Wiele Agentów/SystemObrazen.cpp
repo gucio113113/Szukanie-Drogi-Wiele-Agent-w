@@ -2,6 +2,7 @@
 #include "Obiekt.h"
 #include "Mapa.h"
 
+
 Damage::Damage(Vector2 Pozycja, unsigned int CzasTrwania, unsigned int KiedyZadaje, unsigned int IleZadaje)
 {
 	this->Pozycja = Pozycja;
@@ -193,10 +194,28 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 						 {
 							 damage->Sprawdz(obiekt, mapa, tablicanimacji);
 						 }
+					#ifdef SYSTEM_OBRAZEN_DEBUG
+						 else
+						 {
+							 std::cout << "Wskaznik Obiektu jest pusty dla Systemu namierzania  \n";
+						 }
+
+					#endif // SYSTEM_OBRAZEN_DEBUG
+
 					 }
 				 }
 			 }
 		 }
+#ifdef SYSTEM_OBRAZEN_DEBUG
+		 else
+		 {
+			 std::cout << "Wskaznik damage jest pusty \n";
+
+
+		 }
+#endif // SYSTEM_OBRAZEN_DEBUG
+
+		 
 	 }
 	 auto szukacz = [&](const Damage* damage)->bool { return damage->Tick >= damage->CzasTrwania; };
 	 auto iterator = std::find_if(Obrazenia.begin(), Obrazenia.end(), szukacz);
@@ -213,14 +232,9 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 	 this->RozmiarKlatek = mapa.szerokosc * mapa.RozmiarKlatki / RozmiarSystemu;
 	 this->IndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu, {});
  }
+#ifdef SYSTEM_OBRAZEN_DEBUG
  void SystemObrazen::Debug()
  {
 	 NarysujSiatke(IndexyObiektow, RozmiarSystemu, RozmiarKlatek, POMARANCZOWY, RED);
-	 
-
-	 
-
-
-
-
  }
+#endif

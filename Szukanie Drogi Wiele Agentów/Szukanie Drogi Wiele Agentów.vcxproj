@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>F:\programowanie\raylib\include;F:\programowanie\MojeBiblioteki\MojeZasoby\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\programowanie\raylib\include;F:\programowanie\MojeBiblioteki\MojeZasoby\include;F:\programowanie\MojeBiblioteki\RayLib\Szukanie Drogi Wiele Agentów\Szukanie Drogi Wiele Agentów\DyrektywyDebugowania;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Bron.h" />
     <ClInclude Include="CzasLogiki.h" />
-    <ClInclude Include="DyrektywyDebugowania.h" />
+    <ClInclude Include="DyrektywyDebugowania\DyrektywyDebugowania.h" />
     <ClInclude Include="Funkcje.h" />
     <ClInclude Include="Gra.h" />
     <ClInclude Include="GraczISter.h" />

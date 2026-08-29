@@ -35,12 +35,15 @@ Druzyny Sojusze::zwrocWlasciciel()
 //checks if two objects have the same team
 bool Sojusze::SprawdzSojusz(const Sojusze& sojusz1)
 {
-	bool so= (!!(sojusz & sojusz1.sojusz));
+#ifdef SYSTEMNAMIERZANIA_DEBUG
+
+	bool so = (!!(sojusz & sojusz1.sojusz));
 	if (so == true) std::cout << "Sa sojusz \n";
 	else "Nie ma sojusz \n";
-
-
 	return so;
+#else // SYSTEMNAMIERZANIA_DEBUG
+	return (!!(sojusz & sojusz1.sojusz));
+#endif
 }
 Sojusze Sojusze::operator=(const Sojusze& sojusz1)
 {

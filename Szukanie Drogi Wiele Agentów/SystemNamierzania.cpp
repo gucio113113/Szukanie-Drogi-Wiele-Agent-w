@@ -17,7 +17,9 @@ void SystemNamierzania::CzyMozeNamierzyc(Obiekt*& obiekt1, Obiekt*& obiekt2, flo
 		if (obiekt1 != nullptr && TenObiekt==Celowe.end() && obiekt1->sojusze.SprawdzSojusz(obiekt2->sojusze)==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= Dlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
 		{
 			Celowe.emplace_back(obiekt2->IndexObiektu);
+		#ifdef SYSTEMNAMIERZANIA_DEBUG
 			std::cout << "Dodany :" << obiekt2->IndexObiektu << "\n";
+		#endif
 		}
 	}
 }
@@ -73,7 +75,7 @@ void SystemNamierzania::ZwrocSpelniajaceZasieg(unsigned int indexObiektu, float 
 					for (unsigned int& index : System[x + (y * rozmiarSystemu)])
 					{
 						Obiekt* obiekt2 = ZwrocObiekt(index, Obiekty);
-						#ifndef SYSTEMNAMIERZANIA_DEBUG
+						#ifdef SYSTEMNAMIERZANIA_DEBUG
 						std::cout << "Halo \n \n \n";
 						#endif
 						CzyMozeNamierzyc(obiekt, obiekt2, Zasieg, ListaObiektow, mapa);

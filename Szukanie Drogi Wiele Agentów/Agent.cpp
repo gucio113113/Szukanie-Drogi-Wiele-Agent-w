@@ -159,17 +159,24 @@ void Agent::SzukanieDrogi(PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, std:
 		{
 
 			droga.push(obecna.pozycja);
+
+
+
+		#ifdef AGENT_DEBUG
 			UstawKolor(obecna.pozycja, PURPLE, KoloroweKwadraty);
+		#endif // AGENT_DEBUG
 			Szukanaklatka(RodzicPozycja(obecna.Rodzic, mapa.szerokosc), Otwarte, Zamkniente, obecna);
 		}
 		//std::cout << "Kurwa mac \n";
 	}
-
+#ifdef AGENT_DEBUG
 	std::cout << "Rozmiar Drogi :" << droga._Get_container().size() << "Rozmiar Klatek :" << Otwarte.size() + Zamkniente.size() << "\n Liczba iteracji:" << iteracji << "\n";
-
+#endif // AGENT_DEBUG 
 	if (droga.empty() == true)
 	{
+#ifdef AGENT_DEBUG
 		std::cout << "Nie ma drogi \n";
+#endif // AGENT_DEBUG
 		CelGlobalny.x = std::numeric_limits<float>::infinity();
 		CelGlobalny.y = std::numeric_limits<float>::infinity();
 	}
@@ -187,7 +194,9 @@ void Agent::SzukanieDrogi(PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, std:
 		droga.push(stos.top());
 		stos.pop();
 	}
+#ifdef AGENT_DEBUG
 	std::cout << "Odwrocenie kolejki";
+#endif // AGENT_DEBUG
 }
 void Agent::ZajmowaniePozycjiCzasowych(PozycjaNaMapie &Poczatek,CzasLogiki &czaslogiki,Mapa &mapa)
 {
@@ -208,23 +217,27 @@ void Agent::ZajmowaniePozycjiCzasowych(PozycjaNaMapie &Poczatek,CzasLogiki &czas
 		{
 			poprzednia = droga._Get_container().at(index - 1);
 			float poprzedniTick = TickRuchu(mapa.SrodekPola(obecnaPoz), mapa.SrodekPola(poprzednia), PredkoscKlatkowa, czaslogiki.ZwroctickRate());
-			//std::cout << "Poprzedni Tick :" << obencytick - poprzedniTick << " Pozycje :" << obecnaPoz.x << ".x " << obecnaPoz.y << ".y \n";
+		#ifdef AGENT_DEBUG
+			std::cout << "Poprzedni Tick :" << obencytick - poprzedniTick << " Pozycje :" << obecnaPoz.x << ".x " << obecnaPoz.y << ".y \n";
+		#endif // AGENT_DEBUG
 			mapa.ustawPozycjeWchodzaca(obecnaPoz, static_cast<unsigned int>(obencytick - poprzedniTick),IndexObiektu);
 		}
 		else
 		{
 			mapa.ustawPozycjeWchodzaca(obecnaPoz, obencytick,IndexObiektu);
-			// float nastepnyTick = TickRuchu(mapa.SrodekPola(obecnaPoz), mapa.SrodekPola(Nastpstwa), PredkoscKlatkowa, czaslogiki.ZwroctickRate());
-			//	mapa.ustawPozycjeWychodzaca(obecnaPoz, static_cast<unsigned int>(obencytick + nastepnyTick));
 		}
 		if (index < droga._Get_container().size() - 1)
 		{
 			Nastpstwa = droga._Get_container().at(index + 1);
 			float nastepnyTick = TickRuchu(mapa.SrodekPola(obecnaPoz), mapa.SrodekPola(Nastpstwa), PredkoscKlatkowa, czaslogiki.ZwroctickRate());
 			mapa.ustawPozycjeWychodzaca(obecnaPoz, static_cast<unsigned int>(obencytick + nastepnyTick),IndexObiektu);
-			//std::cout << "nastepny Tick :" << nastepnyTick + obencytick << " Pozycje :" << obecnaPoz.x << ".x " << obecnaPoz.y << ".y \n";
+		#ifdef AGENT_DEBUG
+			std::cout << "nastepny Tick :" << nastepnyTick + obencytick << " Pozycje :" << obecnaPoz.x << ".x " << obecnaPoz.y << ".y \n";
+		#endif // AGENT_DEBUG
 			obencytick = obencytick + TickRuchu(mapa.SrodekPola(obecnaPoz), mapa.SrodekPola(Nastpstwa), PredkoscKlatkowa, czaslogiki.ZwroctickRate(), 1);
+		#ifdef AGENT_DEBUG
 			//std::cout << "Obecny Tick:" << obencytick << "\n";
+		#endif // AGENT_DEBUG
 		}
 		else
 		{
@@ -251,7 +264,9 @@ void Agent::Roszerz(Mapa& mapa, std::vector<KlatkaRuchu>& Otwarte, std::vector<K
 {
 
 	KlatkaRuchu minimalna = ZwrocMinimalne(Otwarte);
+#ifdef AGENT_DEBUG
 	NowyKwadrat(minimalna.pozycja, NIEBIESKI, minimalna.Rodzic, minimalna.kosztG, minimalna.kosztH, KoloroweKwadraty);
+#endif // AGENT_DEBUG
 	Zamkniente.emplace_back(minimalna);
 	auto iterator = std::find(Otwarte.begin(), Otwarte.end(), minimalna);
 
@@ -275,11 +290,14 @@ void Agent::Roszerz(Mapa& mapa, std::vector<KlatkaRuchu>& Otwarte, std::vector<K
 
 				if (nowaKlatka.pozycja == docelu)
 				{
+				#ifdef AGENT_DEBUG
 					std::cout << "Znaleziona \n";
+				#endif // AGENT_DEBUG
 					SzukajDrogi = true;
-
+				#ifdef AGENT_DEBUG
+					std::cout << "Znaleziona \n";
 					NowyKwadrat(nowaKlatka.pozycja, ZIELONY, nowaKlatka.Rodzic, nowaKlatka.kosztG, nowaKlatka.kosztH, KoloroweKwadraty);
-
+				#endif // AGENT_DEBUG
 					Otwarte.emplace_back(nowaKlatka);
 					//ustawRodzic({ nowaKlatka.pozycja }, nowaKlatka.Rodzic);
 					break;
@@ -298,8 +316,9 @@ void Agent::Roszerz(Mapa& mapa, std::vector<KlatkaRuchu>& Otwarte, std::vector<K
 
 						//nowaKlatka.WypiszKlatkeRuchu();
 						Otwarte.emplace_back(nowaKlatka);
+					#ifdef AGENT_DEBUG
 						NowyKwadrat(nowaKlatka.pozycja, ZIELONY, nowaKlatka.Rodzic, nowaKlatka.kosztG, nowaKlatka.kosztH, KoloroweKwadraty);
-
+					#endif // AGENT_DEBUG
 
 					}
 				}
@@ -402,39 +421,25 @@ void Agent::NajbliszyCel(bool& Znaleziono, Vector2 Poczatek, Vector2& ZwracanyCe
 			{
 				KlatkaCelu minimalna = ZwrocMinimalne(Otwarte);
 				pozPoczatkowa = minimalna.poz;
+			#ifdef AGENT_DEBUG
 				std::cout << "Co mi ty zwrociles" << minimalna.poz.x << ".x " << minimalna.poz.y << ".y \n";
-
+			#endif // AGENT_DEBUG
 			}
 		}
 		if (Znaleziono == true)
 		{
 			ZwracanyCel = mapa.SrodekPola(ZwrocMinimalne(Celowe).poz);
+		#ifdef AGENT_DEBUG
 			std::cout << "Cel najbliszy :" << ZwracanyCel.x << ".x " << ZwracanyCel.y << ".y \n";
+		#endif // AGENT_DEBUG
 		}
-
-
-
-
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
 bool Agent::Rezerwacja(std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, Mapa& mapa, CzasLogiki& Czaslogiki)
 {
-
+#ifdef AGENT_DEBUG
 	KoloroweKwadraty.clear();
+#endif // AGENT_DEBUG
 	while (droga.empty() == false)
 	{
 		droga.pop();
@@ -507,8 +512,10 @@ void Agent::AlgorytmDrogi(Mapa& mapa, CzasLogiki& czaslogiki)
 
 	PozycjaNaMapie docelu = mapa.Kordynat(CelLokalny);
 	PozycjaNaMapie Poczatek = mapa.Kordynat(pozycja);
+#ifdef AGENT_DEBUG
 	std::cout << "Do Celu :" << docelu.x << ".x " << docelu.y << ".y \n Poczatek: " << Poczatek.x << ".x " << Poczatek.y << ".y \n";
 	std::cout << " Do Tick :" << czaslogiki.ZwrocTick() << "\n";
+#endif // AGENT_DEBUG
 	bool SzukajDrogi = false;
 	if (Rezerwacja(Otwarte, Zamkniente, Poczatek, docelu, mapa,czaslogiki) == true)
 	{
@@ -609,7 +616,7 @@ void Agent::UstawGlownyCel(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki
 }
 
 
-
+#ifdef AGENT_DEBUG
 void Agent::WizuDrogi(Mapa& mapa)
 {
 	//std::cout<<"Pozycje Czasowe :" << mapa.PozycjeCzasowe.size() << "\n";
@@ -624,6 +631,7 @@ void Agent::WizuDrogi(Mapa& mapa)
 	DrawLine(pozycja.x, pozycja.y, CelLokalny.x, CelLokalny.y, GREEN);
 	DrawLine(pozycja.x, pozycja.y, CelGlobalny.x, CelGlobalny.y, YELLOW);
 }
+#endif // AGENT_DEBUG
 
 
 
@@ -699,6 +707,8 @@ void Agent::WykonujDroge(Mapa& mapa, CzasLogiki& czaslogiki)
  void Agent::Render(Mapa& mapa,CzasLogiki& czasLogiki, TablicaAnimacji& tablica)
  {
 //	 std::cout << "Index Obiektu :" << IndexObiektu << "\n";
-	// WizuDrogi(mapa);
+#ifdef AGENT_DEBUG
+	 WizuDrogi(mapa);
+#endif // AGENT_DEBUG
 	 player.Rysuj(czasLogiki, pozycja,mapa.RozmiarKlatki, tablica);
  }

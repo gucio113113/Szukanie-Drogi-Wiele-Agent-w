@@ -4,6 +4,7 @@
 #include <vector>
 #include "Mapa.h"
 #include "Funkcje.h"
+#include <DyrektywyDebugowania.h>
 
 
 class SystemNamierzania
