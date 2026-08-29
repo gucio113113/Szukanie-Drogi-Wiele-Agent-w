@@ -459,7 +459,7 @@ bool Agent::Rezerwacja(std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuch
 
 //metody ruchu
 
-Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Predkosc, unsigned int Zdrowie, unsigned int Druzyna)
+Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Predkosc, unsigned int Zdrowie, Sojusze sojusz)
 {
 	this->pozycja = Pozycja;
 	this->kolor = kolor;
@@ -467,7 +467,9 @@ Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Pred
 	this->player.zestawAnimacji = nullptr;
 	this->Predkosc = Predkosc;
 	this->Zdrowie = Zdrowie;
-	this->Druzyna = Druzyna;
+	this->sojusze = sojusz;
+	this->typ = Typy::SYSTEM_OBRAZEN | Typy::SYSTEM_NAMIERZANIA;
+
 
 	CelLokalny.x = std::numeric_limits<float>::infinity();
 	CelLokalny.y = std::numeric_limits<float>::infinity();
@@ -475,7 +477,7 @@ Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Pred
 	CelGlobalny.x = std::numeric_limits<int>::infinity();
 	CelGlobalny.y = std::numeric_limits<int>::infinity();
 }
-Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Predkosc, unsigned int Zdrowie, unsigned int Druzyna, std::vector<Obiekt*> Obiekty, TablicaAnimacji& tablica)
+Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Predkosc, unsigned int Zdrowie, Sojusze sojusz, std::vector<Obiekt*> Obiekty, TablicaAnimacji& tablica)
 {
 	this->pozycja = Pozycja;
 	this->kolor = kolor;
@@ -485,7 +487,8 @@ Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Pred
 	this->player.ZnajdzZasob(NazwaTekstury, tablica);
 	this->Predkosc = Predkosc;
 	this->Zdrowie = Zdrowie;
-	this->Druzyna = Druzyna;
+	this->sojusze = sojusz;
+	this->typ = Typy::SYSTEM_OBRAZEN | Typy::SYSTEM_NAMIERZANIA;
 
 	CelLokalny.x = std::numeric_limits<float>::infinity();
 	CelLokalny.y = std::numeric_limits<float>::infinity();
@@ -689,7 +692,7 @@ void Agent::WykonujDroge(Mapa& mapa, CzasLogiki& czaslogiki)
 }
  void Agent::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty)
 {
-	 bron.Strzelanie(IndexObiektu, Druzyna, czasLogiki, systemnamierzania, Obiekty, mapa, parametry, tablica);
+	 bron.Strzelanie(IndexObiektu,czasLogiki, systemnamierzania, Obiekty, mapa, parametry, tablica);
 
 	 WykonujDroge(mapa, czasLogiki);
 }

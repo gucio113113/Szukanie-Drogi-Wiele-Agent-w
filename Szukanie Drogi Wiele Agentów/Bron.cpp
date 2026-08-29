@@ -42,7 +42,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 	}
 	this->Tick = 0;
 	this->IndexObiektu = Obiekty.size();
-	this->Druzyna = 0;
+
 }
  Pocisk::~Pocisk()
  {
@@ -124,7 +124,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 	 this->typ = typ;
 
  }
- void Bron::Strzelanie(const unsigned int& Index,  const unsigned int& Druzyna,  CzasLogiki& czasLogiki, SystemNamierzania& namierzania, std::vector<Obiekt*>& Obiekty,Mapa &mapa, ParametryPociskow& parametrypociskow, TablicaAnimacji& tablica)
+ void Bron::Strzelanie(const unsigned int& Index,CzasLogiki& czasLogiki, SystemNamierzania& namierzania, std::vector<Obiekt*>& Obiekty,Mapa &mapa, ParametryPociskow& parametrypociskow, TablicaAnimacji& tablica)
  {
 
 	 if (czasLogiki.StanCzasu() == true)
@@ -145,6 +145,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 				 if (obiekt != nullptr && obiekt2 != nullptr)
 				 {
 					 Pocisk* pocisk = new Pocisk(obiekt->pozycja, typ, obiekt2->pozycja, parametrypociskow, Obiekty, tablica);
+					 std::cout << "Dodalismy Pocisk \n";
 					 Obiekty.emplace_back(pocisk);
 					 TickStrzalu = 0;
 				 }

@@ -1,5 +1,56 @@
 #include "Obiekt.h"
 
+Sojusze::Sojusze(Druzyny wlasciciel, Druzyny sojusz)
+{
+	this->wlasciciel = wlasciciel;
+	this->sojusz = sojusz;
+}
+Sojusze::Sojusze(Druzyny wlasciciel)
+{
+	this->wlasciciel = wlasciciel;
+	this->sojusz = wlasciciel;
+}
+void Sojusze::UstawWlasciciel(Druzyny wlasciciel)
+{
+	this->sojusz = this->sojusz & ~this->wlasciciel;
+	this->wlasciciel = wlasciciel;
+	this->sojusz = this->sojusz | sojusz;
+}
+void Sojusze::UstawSojusz(Druzyny sojusz)
+{
+	this->sojusz = this->sojusz | sojusz;
+}
+void Sojusze::UsunSojusz(Druzyny sojusz)
+{
+	this->sojusz = this->sojusz ^ sojusz;
+}
+Druzyny Sojusze::zwrocSojusz()
+{
+	return sojusz;
+}
+Druzyny Sojusze::zwrocWlasciciel()
+{
+	return wlasciciel;
+}
+//checks if two objects have the same team
+bool Sojusze::SprawdzSojusz(const Sojusze& sojusz1)
+{
+	bool so= (!!(sojusz & sojusz1.sojusz));
+	if (so == true) std::cout << "Sa sojusz \n";
+	else "Nie ma sojusz \n";
+
+
+	return so;
+}
+Sojusze Sojusze::operator=(const Sojusze& sojusz1)
+{
+	this->sojusz = sojusz1.sojusz;
+	this->wlasciciel = sojusz1.wlasciciel;
+	return *this;
+}
+
+
+
 void Obiekt::UstawIndexObiektu(std::vector<Obiekt*>& Obiekty)
 {
 	unsigned int indexNastepny = Obiekty.size();
@@ -16,11 +67,13 @@ void Obiekt::UstawIndexObiektu(std::vector<Obiekt*>& Obiekty)
 	if(iteratorszukania==Obiekty.end())
 	this->IndexObiektu = indexNastepny;
 }
-Obiekt::Obiekt( Vector2 pozycja, unsigned int Zdrowie, unsigned int Druzyna)
+Obiekt::Obiekt(Vector2 pozycja , unsigned int Zdrowie,  Sojusze sojusz , Typy typ )
 {
 	this->pozycja = pozycja;
 	this->Zdrowie = Zdrowie;
-	this->Druzyna = Druzyna;
+	this->sojusze = sojusz;
+	this->typ = typ;
+	
 
 	
 	player.kierunek = KierunkiSwiata::POLUDNIE;
@@ -29,11 +82,12 @@ Obiekt::Obiekt( Vector2 pozycja, unsigned int Zdrowie, unsigned int Druzyna)
 	player.typAnimacji = TypyAnimacji::STANIE;
 	this->IndexObiektu = 0;
 }
-Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie, unsigned int Druzyna, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica)
+Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie, Sojusze sojusz, Typy typ, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica)
 {
 	this->pozycja = pozycja;
 	this->Zdrowie = Zdrowie;
-	this->Druzyna = Druzyna;
+	this->sojusze = sojusz;
+	this->typ = typ;
 
 	player.typAnimacji = TypyAnimacji::STANIE;
 	player.ZnajdzZasob(NazwaAnimacji, tablica);
@@ -232,7 +286,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   {
 	  return stanruchu;
   }
-  void MapowanieObiektow(std::vector<Obiekt*>& Obiekty, std::vector<std::vector<unsigned int>> &KlatkiSystemu, unsigned int RozmiarKlatek, unsigned int RozmiarSystemu, unsigned int FlagaDruzyny)
+  void MapowanieObiektow(std::vector<Obiekt*>& Obiekty, std::vector<std::vector<unsigned int>> &KlatkiSystemu, unsigned int RozmiarKlatek, unsigned int RozmiarSystemu, Typy typ )
   {
 	  for (std::vector<unsigned int>& indexy : KlatkiSystemu)
 	  {
@@ -240,7 +294,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 	  }
 	  for (unsigned int index = 0; index < Obiekty.size(); index++)
 	  {
-		  if (Obiekty[index] != nullptr && Obiekty[index]->Druzyna!=FlagaDruzyny )
+		  if (Obiekty[index] != nullptr && !!(Obiekty[index]->typ & typ))
 		  {
 			  Obiekt*& obiekt = Obiekty[index];
 			  PozycjaNaMapie poz;

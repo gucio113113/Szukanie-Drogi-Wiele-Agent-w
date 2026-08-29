@@ -14,7 +14,7 @@ void SystemNamierzania::CzyMozeNamierzyc(Obiekt*& obiekt1, Obiekt*& obiekt2, flo
 	{
 		auto TenObiekt = std::find(Celowe.begin(), Celowe.end(), obiekt2->IndexObiektu);
 
-		if (obiekt1 != nullptr && TenObiekt==Celowe.end() && obiekt1->Druzyna != obiekt2->Druzyna && obiekt1->IndexObiektu != obiekt2->IndexObiektu && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= Dlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
+		if (obiekt1 != nullptr && TenObiekt==Celowe.end() && obiekt1->sojusze.SprawdzSojusz(obiekt2->sojusze)==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= Dlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
 		{
 			Celowe.emplace_back(obiekt2->IndexObiektu);
 			std::cout << "Dodany :" << obiekt2->IndexObiektu << "\n";
@@ -36,51 +36,65 @@ void SystemNamierzania::UstawParametry(unsigned int rozmiarSystemu,Mapa& mapa)
 }
 void SystemNamierzania::UstawSystem(std::vector<Obiekt*>& Obiekty)
 {
-	MapowanieObiektow(Obiekty, System, rozmiarKlatki, rozmiarSystemu,NEURALNA);
+	MapowanieObiektow(Obiekty, System, rozmiarKlatki, rozmiarSystemu,Typy::SYSTEM_NAMIERZANIA);
 
 }
 void SystemNamierzania::ZwrocSpelniajaceZasieg(unsigned int indexObiektu, float Zasieg, std::vector<unsigned int>& ListaObiektow, std::vector<Obiekt*>& Obiekty, Mapa& mapa)
 {
+#ifdef SYSTEMNAMIERZANIA_DEBUG
 	std::cout << "Wywolujesz Sie Systemie namierzania ? \n";
+#endif // !SYSTEMNAMIERZANIA_DEBUG
 	Obiekt* obiekt = ZwrocObiekt(indexObiektu,Obiekty);
-		if (obiekt != nullptr)
+	if (obiekt != nullptr)
+	{
+		PozycjaNaMapie pozStartowa;
+		PozycjaNaMapie pozKoncowa;
+
+		pozStartowa.x = (obiekt->pozycja.x - static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
+		pozStartowa.y = (obiekt->pozycja.y - static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
+		pozKoncowa.x = (obiekt->pozycja.x + static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
+		pozKoncowa.y = (obiekt->pozycja.y + static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
+
+		if (pozStartowa.x < 0) pozStartowa.x = 0;
+		if (pozStartowa.y < 0) pozStartowa.y = 0;
+		if (pozKoncowa.x >= rozmiarSystemu) pozKoncowa.x = rozmiarSystemu - 1;
+		if (pozKoncowa.y >= rozmiarSystemu) pozKoncowa.y = rozmiarSystemu - 1;
+
+		for (unsigned int x = pozStartowa.x; x <= pozKoncowa.x; x++)
 		{
-			PozycjaNaMapie pozStartowa;
-			PozycjaNaMapie pozKoncowa;
-				
-				pozStartowa.x= (obiekt->pozycja.x - static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
-				pozStartowa.y = (obiekt->pozycja.y - static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
-				pozKoncowa.x = (obiekt->pozycja.x + static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
-				pozKoncowa.y = (obiekt->pozycja.y + static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
-
-			if (pozStartowa.x < 0) pozStartowa.x=0;
-			if (pozStartowa.y < 0) pozStartowa.y=0;
-			if (pozKoncowa.x >= rozmiarSystemu) pozKoncowa.x=rozmiarSystemu-1;
-			if (pozKoncowa.y >= rozmiarSystemu) pozKoncowa.y=rozmiarSystemu-1;
-
-			unsigned int Poczatek= pozStartowa.x + (pozStartowa.y * rozmiarSystemu);
-			unsigned int Koniec= pozKoncowa.x + (pozKoncowa.y * rozmiarSystemu);
-
-			
-			for (unsigned int iteratorSystemowy = Poczatek; iteratorSystemowy < Koniec; iteratorSystemowy++)
+			for (unsigned int y = pozStartowa.y; y <= pozKoncowa.y; y++)
 			{
-				if (System.empty() == false && System.size() > iteratorSystemowy)
+
+
+
+
+				if (System.empty() == false)
 				{
-					for (unsigned int& index : System[iteratorSystemowy])
+					for (unsigned int& index : System[x + (y * rozmiarSystemu)])
 					{
 						Obiekt* obiekt2 = ZwrocObiekt(index, Obiekty);
+						#ifndef SYSTEMNAMIERZANIA_DEBUG
 						std::cout << "Halo \n \n \n";
+						#endif
 						CzyMozeNamierzyc(obiekt, obiekt2, Zasieg, ListaObiektow, mapa);
 					}
-					if (System[iteratorSystemowy].empty() == true) std::cout << "Iterator systemowy pusty :" << iteratorSystemowy << "\n";
+					//if (System[x + (y * rozmiarSystemu)].empty() == true) std::cout << "Iterator systemowy pusty :" << x+ (y * rozmiarSystemu) << "\n";
 				}
+				#ifdef SYSTEMNAMIERZANIA_DEBUG
 				else std::cout << "System jest pusty \n";
+				#endif
+
 			}
 		}
-	
+	}
+	#ifdef SYSTEMNAMIERZANIA_DEBUG
+	else std::cout << "Obiektu o indexie nie znaleziono :" << indexObiektu << "\n";
+	#endif
 }
+#ifdef SYSTEMNAMIERZANIA_DEBUG
 void SystemNamierzania::Debug()
 {
 	NarysujSiatke(System, rozmiarSystemu, rozmiarKlatki, FIOLETOWY,ZOLTY);
 }
+#endif
 

@@ -23,6 +23,8 @@ public:
 	void UstawParametry(unsigned int rozmiarSystemu,Mapa &mapa);
 	void UstawSystem(std::vector<Obiekt*> &Obiekty);
 	void ZwrocSpelniajaceZasieg(unsigned int indexObiektu,float Zasieg,std::vector<unsigned int> &ListaObiektow,std::vector<Obiekt*> &Obiekty,Mapa &mapa);
+	#ifdef SYSTEMNAMIERZANIA_DEBUG
 	void Debug();
+	#endif
 };
 

@@ -166,7 +166,7 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
  }
  void SystemObrazen::ZmapujObiekty(std::vector<Obiekt*>& Obiekty)
  {
-	 MapowanieObiektow(Obiekty, IndexyObiektow, RozmiarKlatek, RozmiarSystemu,POCISKOW);
+	 MapowanieObiektow(Obiekty, IndexyObiektow, RozmiarKlatek, RozmiarSystemu,Typy::SYSTEM_OBRAZEN);
  }
  void SystemObrazen::LogikaSystemu(std::vector<Obiekt*>& Obiekty, CzasLogiki& Czaslogiki, Mapa& mapa,TablicaAnimacji & tablicanimacji)
  {
@@ -182,26 +182,28 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 			 if (gornyRog.y < 0) dolnyRog.y = 0;
 			 if (dolnyRog.x >= RozmiarSystemu) dolnyRog.x = RozmiarSystemu - 1;
 			 if (dolnyRog.y >= RozmiarSystemu) dolnyRog.y = RozmiarSystemu - 1;
-			 for (unsigned int index = gornyRog.x + (gornyRog.y * RozmiarSystemu); index <= dolnyRog.x + (dolnyRog.y * RozmiarSystemu); index++)
+			 for (unsigned int x = gornyRog.x; x <= dolnyRog.x; x++)
 			 {
-				 for (unsigned int& indexobiektu : IndexyObiektow[index])
+				 for (unsigned int y = gornyRog.y; y <= dolnyRog.y; y++)
 				 {
-					 Obiekt*& obiekt = Obiekty[indexobiektu];
-					 if (obiekt != nullptr)
+					 for (unsigned int& indexobiektu : IndexyObiektow[x+(y * RozmiarSystemu)])
 					 {
-						 damage->Sprawdz(obiekt, mapa, tablicanimacji);
-						 
+						 Obiekt*& obiekt = Obiekty[indexobiektu];
+						 if (obiekt != nullptr)
+						 {
+							 damage->Sprawdz(obiekt, mapa, tablicanimacji);
+						 }
 					 }
 				 }
 			 }
 		 }
 	 }
-	 auto szukacz = [&](const Damage* damage)->bool { return damage->Tick == damage->CzasTrwania; };
+	 auto szukacz = [&](const Damage* damage)->bool { return damage->Tick >= damage->CzasTrwania; };
 	 auto iterator = std::find_if(Obrazenia.begin(), Obrazenia.end(), szukacz);
 	 while (iterator!=Obrazenia.end() )
 	 {
-		 Obrazenia.erase(iterator);
-		 iterator = std::find_if(Obrazenia.begin(), Obrazenia.end(), szukacz);
+			 Obrazenia.erase(iterator);
+			 iterator = std::find_if(Obrazenia.begin(), Obrazenia.end(), szukacz);
 	 }
 
  }

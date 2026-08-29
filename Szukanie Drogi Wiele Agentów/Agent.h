@@ -126,8 +126,8 @@ class Agent : public Obiekt
 public:
 
 
-	Agent(Vector2 Pozycja,std::string NazwaTekstury,  Color kolor, float Predkosc,unsigned int Zdrowie,unsigned int Druzyna);
-	Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Predkosc, unsigned int Zdrowie, unsigned int Druzyna,std::vector<Obiekt*> Obiekty,TablicaAnimacji &tablica);
+	Agent(Vector2 Pozycja,std::string NazwaTekstury,  Color kolor, float Predkosc,unsigned int Zdrowie,Sojusze sojusz);
+	Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Predkosc, unsigned int Zdrowie, Sojusze sojusz,std::vector<Obiekt*> Obiekty,TablicaAnimacji &tablica);
 
 	friend void ZnajdzDroge();
 	friend void WypiszInformacje(Agent& agent, Mapa& mapa);

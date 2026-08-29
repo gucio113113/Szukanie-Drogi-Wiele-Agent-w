@@ -10,13 +10,13 @@ void Gra::Inicjacja()
 	Obiekty.reserve(500);
 
 
-	Agent* agent1=new Agent(mapa.SrodekPola({3,3}),"Ludzik", FIOLETOWY, 2.5,100,1,Obiekty,tablica);
+	Agent* agent1 = new Agent(mapa.SrodekPola({ 3,3 }), "Ludzik", FIOLETOWY, 2.5, 100,  Sojusze(Druzyny::DRUZYNA1,Druzyny::DRUZYNA1), Obiekty, tablica);
 	Obiekty.emplace_back(agent1);
-	Agent* agent2 = new Agent(mapa.SrodekPola({ 9,9 }), "Ludzik", FIOLETOWY, 2.5, 100, 0, Obiekty, tablica);
+	Agent* agent2 = new Agent(mapa.SrodekPola({ 9,9 }), "Ludzik", FIOLETOWY, 2.5, 100, Sojusze(Druzyny::DRUZYNA2, Druzyny::DRUZYNA2), Obiekty, tablica);
 	Obiekty.emplace_back(agent2);
-	Agent* agent3 = new Agent(mapa.SrodekPola({ 15,3 }), "Ludzik", FIOLETOWY, 2.5, 100, 2, Obiekty, tablica);
+	Agent* agent3 = new Agent(mapa.SrodekPola({ 15,3 }), "Ludzik", FIOLETOWY, 2.5, 100, Sojusze(Druzyny::DRUZYNA3, Druzyny::DRUZYNA3), Obiekty, tablica);
 	Obiekty.emplace_back(agent3);
-	Agent* agent4 = new Agent(mapa.SrodekPola({ 15,19 }), "Ludzik", FIOLETOWY, 2.5, 100, 3, Obiekty, tablica);
+	Agent* agent4 = new Agent(mapa.SrodekPola({ 15,19 }), "Ludzik", FIOLETOWY, 2.5, 100, Sojusze(Druzyny::DRUZYNA4, Druzyny::DRUZYNA4), Obiekty, tablica);
 	Obiekty.emplace_back(agent4);
 
 	
@@ -89,7 +89,10 @@ void Gra::Render()
 	BeginMode2D(graczSter.kamera);
 
 	mapa.Wizualizacja(czas);
+
+	#ifdef SYSTEMNAMIERZANIA_DEBUG
 	systemnamierzania.Debug();
+	#endif
 	//systemobrazen.Debug();
 	for (Obiekt*& obiekt : Obiekty)
 	{

@@ -145,6 +145,7 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Bron.h" />
     <ClInclude Include="CzasLogiki.h" />
+    <ClInclude Include="DyrektywyDebugowania.h" />
     <ClInclude Include="Funkcje.h" />
     <ClInclude Include="Gra.h" />
     <ClInclude Include="GraczISter.h" />

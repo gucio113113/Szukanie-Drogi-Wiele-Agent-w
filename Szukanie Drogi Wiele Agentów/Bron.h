@@ -108,7 +108,7 @@ class Bron
 	unsigned int TickStrzalu;
 public:
 	Bron(unsigned int szybkostrzelnosc=100, float Zasieg=10, TypPocisku typ=TypPocisku::POCISK);
-	void Strzelanie(const unsigned int &Index,const unsigned int &Druzyna,CzasLogiki &czasLogiki,SystemNamierzania &namierzania,std::vector<Obiekt*> &Obiekty, Mapa& mapa ,ParametryPociskow &parametrypociskow,TablicaAnimacji &tablica);
+	void Strzelanie(const unsigned int &Index,CzasLogiki &czasLogiki,SystemNamierzania &namierzania,std::vector<Obiekt*> &Obiekty, Mapa& mapa ,ParametryPociskow &parametrypociskow,TablicaAnimacji &tablica);
 
 };
 
