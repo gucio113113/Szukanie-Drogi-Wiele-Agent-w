@@ -473,7 +473,7 @@ Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Pred
 	this->Predkosc = Predkosc;
 	this->Zdrowie = Zdrowie;
 	this->sojusze = sojusz;
-	this->typ = Typy::SYSTEM_OBRAZEN | Typy::SYSTEM_NAMIERZANIA;
+	this->typ = Typy::SYSTEM_OBRAZEN | Typy::SYSTEM_NAMIERZANIA | Typy::SYSTEM_USUWANIA;
 
 
 	CelLokalny.x = std::numeric_limits<float>::infinity();
@@ -493,7 +493,7 @@ Agent::Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Pred
 	this->Predkosc = Predkosc;
 	this->Zdrowie = Zdrowie;
 	this->sojusze = sojusz;
-	this->typ = Typy::SYSTEM_OBRAZEN | Typy::SYSTEM_NAMIERZANIA;
+	this->typ = Typy::SYSTEM_OBRAZEN | Typy::SYSTEM_NAMIERZANIA | Typy::SYSTEM_USUWANIA;
 
 	CelLokalny.x = std::numeric_limits<float>::infinity();
 	CelLokalny.y = std::numeric_limits<float>::infinity();

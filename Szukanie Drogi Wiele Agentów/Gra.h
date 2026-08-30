@@ -32,6 +32,8 @@ class Gra
 	void Inicjacja();
 	void Sterowanie();
 	void Logika();
+	//This function is for handling deleting objects
+	void UsuwanieObiektow();
 	void Render();
 	
 public:

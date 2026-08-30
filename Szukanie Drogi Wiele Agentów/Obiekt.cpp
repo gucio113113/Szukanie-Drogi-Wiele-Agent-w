@@ -110,12 +110,23 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
  {
 	  player.Rysuj(czasLogiki, pozycja,mapa.RozmiarKlatki, tablica);
  }
+  // This command allow us for own terms of deleting the object from the engine and it saves all deleted object from the current state to the table
+  void Obiekt::SprawdzCzyUsunObiekt(std::vector<unsigned int>& IndexyUsuwanych)
+  {
+	  if (!!(typ & Typy::SYSTEM_USUWANIA))
+	  {
+		  if (CzyZyje == false)
+		  {
+			  auto szukajObiektu = std::find(IndexyUsuwanych.begin(), IndexyUsuwanych.end(), IndexObiektu);
+			  if (szukajObiektu == IndexyUsuwanych.end()) IndexyUsuwanych.emplace_back(IndexObiektu);
+		  }
+	  }
+  }
+
   unsigned int Obiekt::DostanIdnex()
   {
 	  return IndexObiektu;
   }
-
-  
   bool Obiekt::operator== (Obiekt*& obiekt)
   {
 	  return this->IndexObiektu == obiekt->IndexObiektu;

@@ -82,6 +82,31 @@ void Gra::Logika()
 				obiekt->Akcja(mapa, czas, systemobrazen, systemnamierzania, parametrypociskow, tablica, Obiekty);
 			}
 		}
+		UsuwanieObiektow();
+	}
+}
+//This function is for handling deleting objects
+void Gra::UsuwanieObiektow()
+{
+	std::vector<unsigned int> Indexy;
+	Indexy.reserve(80);
+	for (Obiekt*& obiekt : Obiekty)
+	{
+		obiekt->SprawdzCzyUsunObiekt(Indexy);
+	}
+	for (unsigned int& index : Indexy)
+	{
+		auto szukanie = std::find_if(Obiekty.begin(), Obiekty.end(), [&](const Obiekt* ob) { return ob->IndexObiektu == index; });
+		if (szukanie != Obiekty.end())
+		{
+#ifdef GRA_DEBUG
+			std::cout << "Usuniento Obiekt o Indeksie :" << index << "\n";
+#endif // GRA_DEBUG
+
+
+			Obiekty.erase(szukanie);
+
+		}
 	}
 }
 void Gra::Render()

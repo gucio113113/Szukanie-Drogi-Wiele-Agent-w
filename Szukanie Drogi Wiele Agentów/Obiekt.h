@@ -6,12 +6,14 @@
 
 
 #include <raylib.h>
+#include <algorithm>
 #include <string>
 #include "Zasob.h"
 #include "Mapa.h"
 #include "CzasLogiki.h"
 #include "Funkcje.h"
 #include "SystemObrazen.h"
+
 
 
 #define LICZBA_PI 3.141592f
@@ -55,11 +57,10 @@ inline constexpr bool operator!(Druzyny a) {
 
 enum class Typy : unsigned char
 {
-	ZADEN       = 0b00000000,
+	ZADEN       =		  0b00000000,
 	SYSTEM_OBRAZEN      = 0b00000001,  //typ druzyny polega na tym ze nie jest traktowana przez system namierzania jako cel do namierzania
-	SYSTEM_NAMIERZANIA = 0b00000010,
-	
-	
+	SYSTEM_NAMIERZANIA =  0b00000010,
+	SYSTEM_USUWANIA    =  0b00000100	
 };
 inline constexpr Typy operator|(Typy a, Typy b) {
 	return static_cast<Typy>(static_cast<unsigned char>(a) | static_cast<unsigned char>(b));
@@ -120,6 +121,10 @@ public:
 	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty);
 	virtual void Render(Mapa& mapa,CzasLogiki &czasLogiki,TablicaAnimacji &tablica);
 
+	// This command allow us for own terms of deleting the object from the engine and it saves all deleted object from the current state to the table
+	virtual void SprawdzCzyUsunObiekt(std::vector<unsigned int> &IndexyUsuwanych);
+
+
 	unsigned int DostanIdnex();
 	
 	bool operator== (Obiekt*& obiekt);
@@ -133,6 +138,7 @@ public:
 	friend class SystemNamierzania;
 	friend class Pocisk;
 	friend class PociskKierowany;
+	friend class Gra;
 	friend void MapowanieObiektow(std::vector<Obiekt*>& Obiekty, std::vector<std::vector<unsigned int>> &KlatkiSystemu, unsigned int RozmiarKlatek, unsigned int RozmiarSystemu, Typy typ);
 	friend Obiekt* ZwrocObiekt(unsigned indexObiektu, std::vector<Obiekt*>& Obiekty);
 };

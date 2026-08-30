@@ -72,7 +72,7 @@ ParametrPocisk* ParametryPociskow::ZwrocParametr(TypPocisku typPocisku)
 {
 	auto iterator = Parametry.find(typPocisku);
 	if (iterator == Parametry.end()) return nullptr;
-	else iterator._Ptr;
+	else return &iterator->second;
 
 }
 Pocisk::Pocisk(Vector2 Pozycja , Vector2 Cel , ParametrPocisk* parametr )
@@ -82,6 +82,7 @@ Pocisk::Pocisk(Vector2 Pozycja , Vector2 Cel , ParametrPocisk* parametr )
 	ruch.ZdefiniujRuch(Pozycja, Cel, Pozycja);
 	this->IndexObiektu = std::numeric_limits<unsigned int>::infinity();
 	this->Tick = 0;
+	this->typ = Typy::SYSTEM_USUWANIA;
 }
 
 Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& parametry, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica)
@@ -106,7 +107,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 	this->ruch.ZdefiniujRuch(this->pozycja, Cel, Pozycja);
 	this->Tick = 0;
 	this->IndexObiektu = Obiekty.size();
-
+	this->typ = Typy::SYSTEM_USUWANIA;
 }
  Pocisk::~Pocisk()
  {
@@ -129,8 +130,8 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 		 }
 		 if (parametr != nullptr && Zdrowie == 0)
 		 {
+			 this->CzyZyje = false;
 			 system.Obrazenia.emplace_back(parametr->damage->ZwrocKopie(pozycja));
-
 		 }
 	 }
 
@@ -182,7 +183,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 
  Bron::Bron(unsigned int szybkostrzelnosc, float Zasieg, TypPocisku typ)
  {
-	 this->Szybkostrzelnosc = Szybkostrzelnosc;
+	 this->Szybkostrzelnosc = szybkostrzelnosc;
 	 this->Zasieg = Zasieg;
 	 this->TickStrzalu = 0;
 	 this->typ = typ;
@@ -193,7 +194,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 
 	 if (czasLogiki.StanCzasu() == true)
 	 {
-		 if (TickStrzalu == Szybkostrzelnosc)
+		 if (TickStrzalu >= Szybkostrzelnosc)
 		 {
 		#ifdef STRZELANIE_DEBUG
 			 std::cout << "Strzal \n";
@@ -213,6 +214,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 				 if (obiekt != nullptr && obiekt2 != nullptr)
 				 {
 					 Pocisk* pocisk = new Pocisk(obiekt->pozycja, typ, obiekt2->pozycja, parametrypociskow, Obiekty, tablica);
+					 TickStrzalu = 0;
 					 if (pocisk->parametr == nullptr)
 					 {
 						 
@@ -228,13 +230,18 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 					#endif // STRZELANIE_DEBUG
 
 						 Obiekty.emplace_back(pocisk);
+
+#ifdef STRZELANIE_DEBUG
+						 std::cout << "Tick: " << TickStrzalu << "\n";
+#endif // STRZELANIE_DEBUG
+						 
 					 }
-					 TickStrzalu = 0;
+					
 				 }
 			 }
 		#ifdef STRZELANIE_DEBUG
 			 else std::cout << "Nie znaleziono nic \n";
-			 if (Indexy.empty() == true) std::cout << "Indexy Puste \n";
+			// if (Indexy.empty() == true) std::cout << "Indexy Puste \n";
 		#endif // STRZELANIE_DEBUG
 			 Indexy.clear();
 		 }

@@ -11,6 +11,7 @@
 #include "Zasob.h"
 #include <numeric>
 #include "Obiekt.h"
+#include <iostream>
 #include "SystemNamierzania.h"
 #include <DyrektywyDebugowania.h>
 
@@ -116,7 +117,7 @@ class Bron
 	TypPocisku typ;
 	unsigned int TickStrzalu;
 public:
-	Bron(unsigned int szybkostrzelnosc=100, float Zasieg=5, TypPocisku typ=TypPocisku::POCISK);
+	Bron(unsigned int szybkostrzelnosc=20, float Zasieg=5, TypPocisku typ=TypPocisku::POCISK);
 	void Strzelanie(const unsigned int &Index,CzasLogiki &czasLogiki,SystemNamierzania &namierzania,std::vector<Obiekt*> &Obiekty, Mapa& mapa ,ParametryPociskow &parametrypociskow,TablicaAnimacji &tablica);
 
 };

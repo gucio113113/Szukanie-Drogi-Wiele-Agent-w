@@ -4,5 +4,5 @@
 //#define GRA_DEBUG
 //#define AGENT_DEBUG
 #define MAPA_DEBUG
-//#define STRZELANIE_DEBUG
+#define STRZELANIE_DEBUG
 #define ZASOBY_DEBUG
