@@ -352,7 +352,7 @@ void PlayerAnimacji::ZnajdzTypAnimacji(TypyAnimacji typAnimacji)
 
 
 
-void PlayerAnimacji::Rysuj(CzasLogiki &czasLogiki, Vector2& Pozycja,const unsigned int &rozmiarKlatki, TablicaAnimacji& tablicaAnimacji)
+void PlayerAnimacji::Rysuj(CzasLogiki &czasLogiki, Vector2 Pozycja,const unsigned int rozmiarKlatki, TablicaAnimacji& tablicaAnimacji)
 {
 	if (animacja != nullptr && zestawAnimacji!=nullptr )
 	{

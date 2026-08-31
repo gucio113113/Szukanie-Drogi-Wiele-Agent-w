@@ -24,7 +24,7 @@ struct KolorowyKwadrat
 
 	KolorowyKwadrat(PozycjaNaMapie poz = { 0,0 }, Color kolor = ZIELONY, std::string Napis = "", std::string Napis2 = "");
 	bool operator==(const KolorowyKwadrat& kolorowy);
-	bool operator==(const PozycjaNaMapie& poz);
+	bool operator==(const PozycjaNaMapie poz);
 };
 
 //--------------------------------------------------
@@ -59,15 +59,15 @@ int WInterwale(float t);
 
 int Manhatan(PozycjaNaMapie A, PozycjaNaMapie B);
 
-int Koszt(const PozycjaNaMapie& A, const PozycjaNaMapie& B);
+int Koszt(const PozycjaNaMapie A, const PozycjaNaMapie B);
 
 //konwersja rodzicza na wektor
 
-PozycjaNaMapie RodzicPozycja(const unsigned int& Rodzic, const unsigned int& szerokosc);
+PozycjaNaMapie RodzicPozycja(const unsigned int Rodzic, const unsigned int szerokosc);
 
-unsigned int PozycjaRodzic(const PozycjaNaMapie& poz, const unsigned int& szerokosc);
+unsigned int PozycjaRodzic(const PozycjaNaMapie poz, const unsigned intszerokosc);
 
-void NarysujKwadrat(KolorowyKwadrat& kwadrat, const int& rozmiar);
+void NarysujKwadrat(KolorowyKwadrat& kwadrat, const int rozmiar);
 
 //Zamienia z ujemnych na dodatnie od 0 do 180 zamienia na odpowiednio 180 do 360
 float KonwersjaKatow(float Kat);

@@ -13,7 +13,7 @@ bool KolorowyKwadrat::operator==(const KolorowyKwadrat& kolorowy)
 	if (poz == kolorowy.poz) return true;
 	else return false;
 }
-bool KolorowyKwadrat::operator==(const PozycjaNaMapie& poz)
+bool KolorowyKwadrat::operator==(const PozycjaNaMapie poz)
 {
 	if (this->poz == poz) return true;
 	else return false;
@@ -117,19 +117,19 @@ int Manhatan(PozycjaNaMapie A, PozycjaNaMapie B)
 {
 	return (B.x - A.x) + (B.y - A.y);
 }
-int Koszt(const PozycjaNaMapie& A, const PozycjaNaMapie& B)
+int Koszt(const PozycjaNaMapie A, const PozycjaNaMapie B)
 {
 	if (abs(B.x - A.x) > abs(B.y - A.y)) return (abs(B.x - A.x) - abs(B.y - A.y)) * 10 + abs(B.y - A.y) * 14;
 	else if (abs(B.x - A.x) < abs(B.y - A.y)) return (abs(B.y - A.y) - abs(B.x - A.x)) * 10 + abs(B.x - A.x) * 14;
 	else return abs((B.x - A.x) * 14);
 }
 
-PozycjaNaMapie RodzicPozycja(const unsigned int& Rodzic, const unsigned int& szerokosc)
+PozycjaNaMapie RodzicPozycja(const unsigned int Rodzic, const unsigned int szerokosc)
 {
 	return { static_cast<int>(Rodzic % szerokosc),static_cast<int>(Rodzic / szerokosc) };
 }
 
-unsigned int PozycjaRodzic(const PozycjaNaMapie& poz, const unsigned int& szerokosc)
+unsigned int PozycjaRodzic(const PozycjaNaMapie poz, const unsigned int szerokosc)
 {
 	return  static_cast<unsigned int>(poz.x) + static_cast<unsigned int>(poz.y) * szerokosc;
 }

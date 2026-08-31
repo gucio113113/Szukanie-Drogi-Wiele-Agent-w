@@ -88,8 +88,8 @@ public:
 	Druzyny zwrocSojusz();
 	Druzyny zwrocWlasciciel();
 	//checks if two objects have the same team
-	bool SprawdzSojusz(const Sojusze& sojusz1);
-	Sojusze operator=(const Sojusze &sojusz1);
+	bool SprawdzSojusz(const Sojusze sojusz1);
+	Sojusze operator=(const Sojusze sojusz1);
 };
 
 

@@ -27,8 +27,8 @@ public:
 	virtual ~Damage();
 	void NaliczTick(CzasLogiki &czasLogiki);
 	virtual bool Sprawdz(Obiekt *& obiekt, Mapa& mapa, TablicaAnimacji &tablicanimacji);
-	virtual PozycjaNaMapie DolnyZasieg(const unsigned int & rozmiarKlatek);
-	virtual PozycjaNaMapie GornyZasieg(const unsigned int& rozmiarKlatek);
+	virtual PozycjaNaMapie DolnyZasieg(const unsigned int rozmiarKlatek);
+	virtual PozycjaNaMapie GornyZasieg(const unsigned int rozmiarKlatek);
 	friend class SystemObrazen;
 	friend class Pocisk;
 
@@ -43,8 +43,8 @@ class DamageKolo : public Damage
 public:
 	DamageKolo(Vector2 Pozycja, float Promien, unsigned int CzasTrwania, unsigned int KiedyZadaje, unsigned int IleZadaje);
 	virtual bool Sprawdz(Obiekt*& obiekt, Mapa &mapa, TablicaAnimacji& tablicanimacji) override;
-	PozycjaNaMapie DolnyZasieg(const unsigned int& rozmiarKlatek) override;
-	PozycjaNaMapie GornyZasieg(const unsigned int& rozmiarKlatek) override;
+	PozycjaNaMapie DolnyZasieg(const unsigned int rozmiarKlatek) override;
+	PozycjaNaMapie GornyZasieg(const unsigned int rozmiarKlatek) override;
 	friend class SystemObrazen;
 	Damage* ZwrocKopie(Vector2 Pozycja) override;
 };
@@ -55,8 +55,8 @@ class DamageProstokat : public Damage
 public:
 	DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int CzasTrwania, unsigned int KiedyZadaje, unsigned int IleZadaje);
 	virtual bool Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji) override;
-	PozycjaNaMapie DolnyZasieg(const unsigned int& rozmiarKlatek) override;
-	PozycjaNaMapie GornyZasieg(const unsigned int& rozmiarKlatek) override;
+	PozycjaNaMapie DolnyZasieg(const unsigned int rozmiarKlatek) override;
+	PozycjaNaMapie GornyZasieg(const unsigned int rozmiarKlatek) override;
 	friend class SystemObrazen;
 	Damage* ZwrocKopie(Vector2 Pozycja) override;
 };

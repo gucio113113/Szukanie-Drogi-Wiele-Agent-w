@@ -24,28 +24,29 @@ enum class KierunkiSwiata : unsigned char
  POLUDNIE_ZACHOD = POLUDNIE | ZACHOD,
  ZADEN           =0b00000000
 };
-inline constexpr KierunkiSwiata operator | (const KierunkiSwiata& kierunki0, const KierunkiSwiata& kierunki1)
+inline constexpr KierunkiSwiata operator | (KierunkiSwiata kierunki0,  KierunkiSwiata kierunki1)
 {
 	return static_cast<KierunkiSwiata>(static_cast<unsigned char>(kierunki0) | static_cast<unsigned char>(kierunki1));
 }
-inline constexpr KierunkiSwiata operator & (const KierunkiSwiata& kierunki0, const KierunkiSwiata& kierunki1)
+inline constexpr KierunkiSwiata operator & (KierunkiSwiata kierunki0,  KierunkiSwiata kierunki1)
 {
 	return static_cast<KierunkiSwiata>(static_cast<unsigned char>(kierunki0) & static_cast<unsigned char>(kierunki1));
 }
-inline constexpr bool operator !(const KierunkiSwiata& kierunki0)
+
+inline constexpr bool operator ==( KierunkiSwiata kierunki0,  KierunkiSwiata kierunki1)
 {
-	return static_cast<unsigned char>(kierunki0)==0;
+	return static_cast<unsigned char>(kierunki0)==static_cast<unsigned char>(kierunki1);
 }
-inline constexpr unsigned char ZwrocIndexKlatki(const KierunkiSwiata& kierunki0)
+inline constexpr unsigned char ZwrocIndexKlatki( KierunkiSwiata kierunki0)
 {
-	 if (!!(kierunki0 & KierunkiSwiata::POLUDNIE_ZACHOD)) return 1;
-	else if (!!(kierunki0 & KierunkiSwiata::POLNOC_ZACHOD)) return 3;
-	else if (!!(kierunki0 & KierunkiSwiata::POLNOC_WSCHOD)) return 5;
-	else if (!!(kierunki0 & KierunkiSwiata::POLUDNIE_WSCHOD)) return 7;
-	else if (!!(kierunki0 & KierunkiSwiata::POLUDNIE)) return 0;
-	else if (!!(kierunki0 & KierunkiSwiata::ZACHOD)) return 2;
-	else if (!!(kierunki0 & KierunkiSwiata::POLNOC)) return 4;
-	else if (!!(kierunki0 & KierunkiSwiata::WSCHOD)) return 6;
+	 if     ((kierunki0 == KierunkiSwiata::POLUDNIE_ZACHOD)) return 1;
+	else if ((kierunki0 == KierunkiSwiata::POLNOC_ZACHOD)) return 3;
+	else if ((kierunki0 == KierunkiSwiata::POLNOC_WSCHOD)) return 5;
+	else if ((kierunki0 == KierunkiSwiata::POLUDNIE_WSCHOD)) return 7;
+	else if ((kierunki0 == KierunkiSwiata::POLUDNIE)) return 0;
+	else if ((kierunki0 == KierunkiSwiata::ZACHOD)) return 2;
+	else if ((kierunki0 == KierunkiSwiata::POLNOC)) return 4;
+	else if ((kierunki0 == KierunkiSwiata::WSCHOD)) return 6;
 	else return 0;
 }
 enum TypyAnimacji
@@ -141,7 +142,7 @@ public:
 
 	void ZnajdzZasob(std::string NazwaAnimacji,TablicaAnimacji &tablicaAnimacji);
 	void ZnajdzTypAnimacji(TypyAnimacji typAnimacji);
-	void Rysuj(CzasLogiki &czasLogiki,Vector2 &Pozycja, const unsigned int& rozmiarKlatki,TablicaAnimacji &tablicaAnimacji);
+	void Rysuj(CzasLogiki &czasLogiki,Vector2 Pozycja, const unsigned int rozmiarKlatki,TablicaAnimacji &tablicaAnimacji);
 	void UstawTypAnimacji(TypyAnimacji typ);
 	void UstawKierunek(KierunkiSwiata kierunek);
 

@@ -33,7 +33,7 @@ Druzyny Sojusze::zwrocWlasciciel()
 	return wlasciciel;
 }
 //checks if two objects have the same team
-bool Sojusze::SprawdzSojusz(const Sojusze& sojusz1)
+bool Sojusze::SprawdzSojusz(const Sojusze sojusz1)
 {
 #ifdef SYSTEMNAMIERZANIA_DEBUG
 
@@ -45,7 +45,7 @@ bool Sojusze::SprawdzSojusz(const Sojusze& sojusz1)
 	return (!!(sojusz & sojusz1.sojusz));
 #endif
 }
-Sojusze Sojusze::operator=(const Sojusze& sojusz1)
+Sojusze Sojusze::operator=(const Sojusze sojusz1)
 {
 	this->sojusz = sojusz1.sojusz;
 	this->wlasciciel = sojusz1.wlasciciel;

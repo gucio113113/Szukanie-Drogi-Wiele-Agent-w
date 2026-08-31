@@ -32,11 +32,11 @@ bool Damage::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacj
 	std::cout << "Sprawdza Damage \n";
 	return false;
 }
-PozycjaNaMapie Damage::DolnyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie Damage::DolnyZasieg(const unsigned int rozmiarKlatek)
 {
 	return { static_cast<int>(Pozycja.x) / static_cast<int>(rozmiarKlatek),static_cast<int>(Pozycja.y) / static_cast<int>(rozmiarKlatek) };
 }
-PozycjaNaMapie Damage::GornyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie Damage::GornyZasieg(const unsigned int rozmiarKlatek)
 {
 	return { static_cast<int>(Pozycja.x) / static_cast<int>(rozmiarKlatek),static_cast<int>(Pozycja.y) / static_cast<int>(rozmiarKlatek) };
 }
@@ -66,7 +66,7 @@ bool DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanim
 	}
 	return false;
 }
-PozycjaNaMapie DamageKolo::DolnyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie DamageKolo::DolnyZasieg(const unsigned int rozmiarKlatek)
 {
 
 	PozycjaNaMapie poz=Damage::DolnyZasieg(rozmiarKlatek);
@@ -77,7 +77,7 @@ PozycjaNaMapie DamageKolo::DolnyZasieg(const unsigned int& rozmiarKlatek)
 
 
 }
-PozycjaNaMapie DamageKolo::GornyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie DamageKolo::GornyZasieg(const unsigned int rozmiarKlatek)
 {
 	PozycjaNaMapie poz = Damage::GornyZasieg(rozmiarKlatek);
 	poz.x = poz.x - (Promien / rozmiarKlatek);
@@ -129,7 +129,7 @@ DamageProstokat::DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int 
 
 
 }
- PozycjaNaMapie DamageProstokat::DolnyZasieg(const unsigned int& rozmiarKlatek)
+ PozycjaNaMapie DamageProstokat::DolnyZasieg(const unsigned int rozmiarKlatek)
  {
 	 PozycjaNaMapie poz = Damage::DolnyZasieg(rozmiarKlatek);
 	 poz.x = poz.x + (Rozmiar.x / rozmiarKlatek);
@@ -140,7 +140,7 @@ DamageProstokat::DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int 
 
 
  }
- PozycjaNaMapie DamageProstokat::GornyZasieg(const unsigned int& rozmiarKlatek)
+ PozycjaNaMapie DamageProstokat::GornyZasieg(const unsigned int rozmiarKlatek)
  {
 	 PozycjaNaMapie poz = Damage::GornyZasieg(rozmiarKlatek);
 	 poz.x = poz.x - (Rozmiar.x / rozmiarKlatek);
