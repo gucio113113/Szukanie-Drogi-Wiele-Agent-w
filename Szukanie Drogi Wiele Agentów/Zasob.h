@@ -38,14 +38,14 @@ inline constexpr bool operator !(const KierunkiSwiata& kierunki0)
 }
 inline constexpr unsigned char ZwrocIndexKlatki(const KierunkiSwiata& kierunki0)
 {
-	if (!!(kierunki0 & KierunkiSwiata::POLUDNIE)) return 0;
-	else if (!!(kierunki0 & KierunkiSwiata::POLUDNIE_ZACHOD)) return 1;
-	else if (!!(kierunki0 & KierunkiSwiata::ZACHOD)) return 2;
+	 if (!!(kierunki0 & KierunkiSwiata::POLUDNIE_ZACHOD)) return 1;
 	else if (!!(kierunki0 & KierunkiSwiata::POLNOC_ZACHOD)) return 3;
-	else if (!!(kierunki0 & KierunkiSwiata::POLNOC)) return 4;
 	else if (!!(kierunki0 & KierunkiSwiata::POLNOC_WSCHOD)) return 5;
-	else if (!!(kierunki0 & KierunkiSwiata::WSCHOD)) return 6;
 	else if (!!(kierunki0 & KierunkiSwiata::POLUDNIE_WSCHOD)) return 7;
+	else if (!!(kierunki0 & KierunkiSwiata::POLUDNIE)) return 0;
+	else if (!!(kierunki0 & KierunkiSwiata::ZACHOD)) return 2;
+	else if (!!(kierunki0 & KierunkiSwiata::POLNOC)) return 4;
+	else if (!!(kierunki0 & KierunkiSwiata::WSCHOD)) return 6;
 	else return 0;
 }
 enum TypyAnimacji

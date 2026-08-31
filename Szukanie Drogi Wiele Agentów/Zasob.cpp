@@ -54,7 +54,7 @@ KierunkiSwiata ZwrocKierunek(PozycjaNaMapie A, PozycjaNaMapie B)
 	if (poz.y > 0) kierunek = kierunek | KierunkiSwiata::POLUDNIE;
 	else if (poz.y < 0) kierunek = kierunek | KierunkiSwiata::POLNOC;
 
-
+	return kierunek;
 }
 
 
