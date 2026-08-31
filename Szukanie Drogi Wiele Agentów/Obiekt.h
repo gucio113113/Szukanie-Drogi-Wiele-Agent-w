@@ -25,6 +25,8 @@
 
 
 
+
+
 enum class Druzyny : unsigned char
 {
 	NEUTRALNA= 0b00000000,

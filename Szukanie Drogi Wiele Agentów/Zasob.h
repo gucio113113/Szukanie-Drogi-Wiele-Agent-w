@@ -11,18 +11,43 @@
 #include <DyrektywyDebugowania.h>
 
 
-enum KierunkiSwiata
+enum class KierunkiSwiata : unsigned char
 {
- POLUDNIE =0,
- POLUDNIE_ZACHOD,
- ZACHOD,
- POLNOC_ZACHOD,
- POLNOC,
- POLNOC_WSCHOD,
- WSCHOD,
- POLUDNIEWCHOD,
- ZADEN
+ POLUDNIE        = 0b00000001,
+ ZACHOD          = 0b00000010,
+ POLNOC          = 0b00000100,
+ WSCHOD          = 0b00001000,
+
+ POLNOC_ZACHOD   = POLNOC | ZACHOD ,
+ POLNOC_WSCHOD   = POLNOC | WSCHOD,
+ POLUDNIE_WSCHOD = POLUDNIE | WSCHOD,
+ POLUDNIE_ZACHOD = POLUDNIE | ZACHOD,
+ ZADEN           =0b00000000
 };
+inline constexpr KierunkiSwiata operator | (const KierunkiSwiata& kierunki0, const KierunkiSwiata& kierunki1)
+{
+	return static_cast<KierunkiSwiata>(static_cast<unsigned char>(kierunki0) | static_cast<unsigned char>(kierunki1));
+}
+inline constexpr KierunkiSwiata operator & (const KierunkiSwiata& kierunki0, const KierunkiSwiata& kierunki1)
+{
+	return static_cast<KierunkiSwiata>(static_cast<unsigned char>(kierunki0) & static_cast<unsigned char>(kierunki1));
+}
+inline constexpr bool operator !(const KierunkiSwiata& kierunki0)
+{
+	return static_cast<unsigned char>(kierunki0)==0;
+}
+inline constexpr unsigned char ZwrocIndexKlatki(const KierunkiSwiata& kierunki0)
+{
+	if (!!(kierunki0 & KierunkiSwiata::POLUDNIE)) return 0;
+	else if (!!(kierunki0 & KierunkiSwiata::POLUDNIE_ZACHOD)) return 1;
+	else if (!!(kierunki0 & KierunkiSwiata::ZACHOD)) return 2;
+	else if (!!(kierunki0 & KierunkiSwiata::POLNOC_ZACHOD)) return 3;
+	else if (!!(kierunki0 & KierunkiSwiata::POLNOC)) return 4;
+	else if (!!(kierunki0 & KierunkiSwiata::POLNOC_WSCHOD)) return 5;
+	else if (!!(kierunki0 & KierunkiSwiata::WSCHOD)) return 6;
+	else if (!!(kierunki0 & KierunkiSwiata::POLUDNIE_WSCHOD)) return 7;
+	else return 0;
+}
 enum TypyAnimacji
 {
 	STANIE=0,

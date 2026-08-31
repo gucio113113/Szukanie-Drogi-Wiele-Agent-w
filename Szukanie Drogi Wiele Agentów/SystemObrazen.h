@@ -26,7 +26,7 @@ public:
 	Damage(Vector2 Pozycja={0,0}, unsigned int CzasTrwania=0, unsigned int KiedyZadaje=0, unsigned int IleZadaje=0);
 	virtual ~Damage();
 	void NaliczTick(CzasLogiki &czasLogiki);
-	virtual void Sprawdz(Obiekt *& obiekt, Mapa& mapa, TablicaAnimacji &tablicanimacji);
+	virtual bool Sprawdz(Obiekt *& obiekt, Mapa& mapa, TablicaAnimacji &tablicanimacji);
 	virtual PozycjaNaMapie DolnyZasieg(const unsigned int & rozmiarKlatek);
 	virtual PozycjaNaMapie GornyZasieg(const unsigned int& rozmiarKlatek);
 	friend class SystemObrazen;
@@ -42,7 +42,7 @@ class DamageKolo : public Damage
 	float Promien;
 public:
 	DamageKolo(Vector2 Pozycja, float Promien, unsigned int CzasTrwania, unsigned int KiedyZadaje, unsigned int IleZadaje);
-	virtual void Sprawdz(Obiekt*& obiekt, Mapa &mapa, TablicaAnimacji& tablicanimacji) override;
+	virtual bool Sprawdz(Obiekt*& obiekt, Mapa &mapa, TablicaAnimacji& tablicanimacji) override;
 	PozycjaNaMapie DolnyZasieg(const unsigned int& rozmiarKlatek) override;
 	PozycjaNaMapie GornyZasieg(const unsigned int& rozmiarKlatek) override;
 	friend class SystemObrazen;
@@ -54,7 +54,7 @@ class DamageProstokat : public Damage
 	Vector2 Rozmiar;
 public:
 	DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int CzasTrwania, unsigned int KiedyZadaje, unsigned int IleZadaje);
-	virtual void Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji) override;
+	virtual bool Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji) override;
 	PozycjaNaMapie DolnyZasieg(const unsigned int& rozmiarKlatek) override;
 	PozycjaNaMapie GornyZasieg(const unsigned int& rozmiarKlatek) override;
 	friend class SystemObrazen;
@@ -66,7 +66,11 @@ class SystemObrazen
 	unsigned int RozmiarSystemu;
 	std::vector<std::vector<unsigned int>> IndexyObiektow;
 	std::vector<Damage*> Obrazenia;
+
 public:
+
+	std::vector<unsigned int> PodOstrzalem;
+
 	friend class Pocisk;
 	SystemObrazen(unsigned int RozmiarKlatek=100, unsigned int RozmiarSystemu=10);
 	void ZmapujObiekty(std::vector<Obiekt*>& Obiekty);

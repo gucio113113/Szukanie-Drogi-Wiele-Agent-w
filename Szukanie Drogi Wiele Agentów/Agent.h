@@ -22,6 +22,7 @@
 
 
 
+
 struct KlatkaRuchu
 {
 	PozycjaNaMapie pozycja;
@@ -52,10 +53,61 @@ struct KlatkaCelu
 	bool operator==(const KlatkaCelu& koszt);
 
 	KlatkaCelu operator=(const KlatkaCelu& koszt);
-
-
-
 };
+// Do decyzji 
+enum class Bodziec : unsigned char
+{
+	WYKRYTO_PRZECZWNIKA = 0b00000001,
+	PODOSTRZALEM = 0b00000010,
+	ZAJMUJETEREN = 0b00000100
+};
+inline constexpr Bodziec operator|(Bodziec a, Bodziec b) {
+	return static_cast<Bodziec>(static_cast<unsigned char>(a) | static_cast<unsigned char>(b));
+}
+inline constexpr Bodziec operator&(Bodziec a, Bodziec b) {
+	return static_cast<Bodziec>(static_cast<unsigned char>(a) & static_cast<unsigned char>(b));
+}
+inline constexpr bool operator!(Bodziec a) {
+	return static_cast<unsigned char>(a) == 0;
+}
+enum class Decyzje : unsigned char
+{
+	IDZ_POLNOC = 0,
+	IDZ_POLNOC_WSCHOD = 1,
+	IDZ_WSCHOD = 2,
+	IDZ_POLUDNIE_WSCHOD = 3,
+	IDZ_POLUDNIE = 4,
+	IDZ_POLUDNIE_ZACHOD = 5,
+	IDZ_ZACHOD = 6,
+	IDZ_POLNOC_ZACHOD = 7,
+	STOJ = 8,
+	STRZELAJ = 9
+};
+enum class Rozkazy : unsigned char
+{
+	IDZ = 0,
+	ATAKUJACY_RUCH = 1,
+	UNIKAJ = 2
+};
+struct DecyzjaWCzasie
+{
+	unsigned int TickPoczatkowy;
+	unsigned int TickKoncowy;
+	Decyzje decyzja;
+	DecyzjaWCzasie(unsigned int TickPoczatkowy=std::numeric_limits<unsigned int>::infinity(), unsigned int TickKoncowy=std::numeric_limits<unsigned int>::infinity(), Decyzje decyzja=Decyzje::STOJ);
+};
+
+class Agent;
+void WykryjBodzcze(Bodziec& bodziec, SystemNamierzania& systemnamierzania, SystemObrazen& systemObrazen, Mapa& mapa, std::vector<Obiekt*>& Obiekty, std::vector<unsigned int>& Namierzane, float& Zasieg, unsigned int& IndexObiektu);
+void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWCzasie, CzasLogiki& czaslogiki, Bodziec& bodziec, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen, std::vector<Obiekt*>& Obiekty);
+
+
+
+
+
+
+
+
 
 
 
@@ -78,7 +130,15 @@ class Agent : public Obiekt
 
 	Bron bron;
 
+	//Do Rozkazow oraz decyzji
+	Rozkazy rozkaz;
+	DecyzjaWCzasie decyzjaWCzasie;
+	Bodziec bodziec;
 
+
+
+
+	
 
 	
 

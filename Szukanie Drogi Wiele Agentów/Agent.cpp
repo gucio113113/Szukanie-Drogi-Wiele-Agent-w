@@ -96,7 +96,52 @@ KlatkaCelu KlatkaCelu::operator=(const KlatkaCelu& klatka)
 	this->KosztH = klatka.KosztH;
 	return *this;
 }
+DecyzjaWCzasie::DecyzjaWCzasie(unsigned int TickPoczatkowy, unsigned int TickKoncowy, Decyzje decyzja)
+{
+	this->TickPoczatkowy = TickPoczatkowy;
+	this->TickKoncowy = TickKoncowy;
+	this->decyzja = decyzja;
+}
+void WykryjBodzcze(Bodziec& bodziec, SystemNamierzania& systemnamierzania, SystemObrazen& systemObrazen, Mapa& mapa, std::vector<Obiekt*>& Obiekty, std::vector<unsigned int>& Namierzane, float& Zasieg, unsigned int& IndexObiektu)
+{
+	systemnamierzania.ZwrocSpelniajaceZasieg(IndexObiektu, Zasieg, Namierzane, Obiekty, mapa);
+	if (Namierzane.empty() == false) bodziec = bodziec | Bodziec::WYKRYTO_PRZECZWNIKA;
+	auto CzyPod = std::find(systemObrazen.PodOstrzalem.begin(), systemObrazen.PodOstrzalem.end(), IndexObiektu);
+	if (CzyPod != systemObrazen.PodOstrzalem.end()) bodziec = bodziec | Bodziec::PODOSTRZALEM;
+}
+void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWCzasie, float& predkosc, CzasLogiki& czaslogiki, Bodziec& bodziec, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen)
+{
+	
+	switch (rozkaz)
+	{
+	case Rozkazy::IDZ:
+	{
 
+
+		break;
+	}
+	case Rozkazy::ATAKUJACY_RUCH:
+	{
+
+
+
+		break;
+	}
+	case Rozkazy::UNIKAJ:
+	{
+
+
+		break;
+	}
+	default:
+		break;
+	}
+
+
+
+
+
+}
 
 
 
@@ -132,7 +177,6 @@ KlatkaCelu Agent::ZwrocMinimalne(std::vector<KlatkaCelu>& Klatki)
 		}
 		return minimalna;
 	}
-
 }
 void Agent::SzukanieDrogi(PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, Mapa& mapa, CzasLogiki& czaslogiki)
 {

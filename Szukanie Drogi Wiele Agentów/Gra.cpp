@@ -66,8 +66,7 @@ void Gra::Logika()
 	if (czas.CzasTrwania() == true)
 	{
 		systemnamierzania.UstawSystem(Obiekty);
-		systemobrazen.ZmapujObiekty(Obiekty);
-
+		//systemobrazen.ZmapujObiekty(Obiekty);
 		systemobrazen.LogikaSystemu(Obiekty,czas, mapa, tablica);
 
 #ifdef GRA_DEBUG

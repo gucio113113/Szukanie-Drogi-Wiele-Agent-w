@@ -27,9 +27,10 @@ void Damage::NaliczTick(CzasLogiki& czasLogiki)
 		
 		
 }
-void Damage::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
+bool Damage::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
 {
 	std::cout << "Sprawdza Damage \n";
+	return false;
 }
 PozycjaNaMapie Damage::DolnyZasieg(const unsigned int& rozmiarKlatek)
 {
@@ -49,7 +50,7 @@ DamageKolo::DamageKolo(Vector2 Pozycja, float Promien, unsigned int CzasTrwania,
 	this->Tick = 0;
 }
 
-void DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanimacji)
+bool DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanimacji)
 {
 	//Rectangle kwadrat1={}
 	if (obiekt != nullptr)
@@ -60,8 +61,10 @@ void DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanim
 		{
 			if (obiekt->Zdrowie - IleZadaje > 0) obiekt->Zdrowie -= IleZadaje;
 			else obiekt->Zdrowie = 0;
+			return true;
 		}
 	}
+	return false;
 }
 PozycjaNaMapie DamageKolo::DolnyZasieg(const unsigned int& rozmiarKlatek)
 {
@@ -99,7 +102,7 @@ DamageProstokat::DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int 
 }
 
 
- void DamageProstokat::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
+ bool DamageProstokat::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
 {
 	 if (obiekt != nullptr)
 	 {
@@ -116,11 +119,13 @@ DamageProstokat::DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int 
 			 {
 				 if (obiekt->Zdrowie - IleZadaje > 0) obiekt->Zdrowie -= IleZadaje;
 				 else obiekt->Zdrowie = 0;
+				 return true;
 			 }
 
 		 }
 
 	 }
+	 return false;
 
 
 }
@@ -164,14 +169,16 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 	 this->RozmiarSystemu = RozmiarSystemu;
 
 	 this->IndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu, {});
+	 this->PodOstrzalem.reserve(30);
  }
  void SystemObrazen::ZmapujObiekty(std::vector<Obiekt*>& Obiekty)
  {
+	 PodOstrzalem.clear();
 	 MapowanieObiektow(Obiekty, IndexyObiektow, RozmiarKlatek, RozmiarSystemu,Typy::SYSTEM_OBRAZEN);
  }
  void SystemObrazen::LogikaSystemu(std::vector<Obiekt*>& Obiekty, CzasLogiki& Czaslogiki, Mapa& mapa,TablicaAnimacji & tablicanimacji)
  {
-	// ZmapujObiekty(Obiekty);
+	 ZmapujObiekty(Obiekty);
 	 for (Damage*& damage : Obrazenia)
 	 {
 		 if (damage != nullptr)
@@ -189,10 +196,13 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 				 {
 					 for (unsigned int& indexobiektu : IndexyObiektow[x+(y * RozmiarSystemu)])
 					 {
-						 Obiekt*& obiekt = Obiekty[indexobiektu];
+						 Obiekt * obiekt = ZwrocObiekt(indexobiektu,Obiekty);
 						 if (obiekt != nullptr)
 						 {
-							 damage->Sprawdz(obiekt, mapa, tablicanimacji);
+							 if (damage->Sprawdz(obiekt, mapa, tablicanimacji) == true)
+							 {
+								 PodOstrzalem.emplace_back(indexobiektu);
+							 }
 						 }
 					#ifdef SYSTEM_OBRAZEN_DEBUG
 						 else

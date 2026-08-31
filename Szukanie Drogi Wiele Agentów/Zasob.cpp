@@ -4,15 +4,15 @@ std::string ZwrocNazweKierunku(KierunkiSwiata kierunki)
 {
 	switch (kierunki)
 	{
-	case POLUDNIE: return "POLUDNIE";
-	case POLUDNIE_ZACHOD:  return "POLUDNIE_ZACHOD";
-	case ZACHOD:  return "ZACHOD";
-	case POLNOC_ZACHOD: return "POLNOC_ZACHOD";
-	case POLNOC: return "POLNOC";
-	case POLNOC_WSCHOD: return "POLNOC_WSCHOD";
-	case WSCHOD: return "WSCHOD";
-	case POLUDNIEWCHOD: return "POLUDNIEWCHOD";
-	default: ZADEN: return "ZADEN";
+	case KierunkiSwiata::POLUDNIE: return "POLUDNIE";
+	case KierunkiSwiata::POLUDNIE_ZACHOD:  return "POLUDNIE_ZACHOD";
+	case KierunkiSwiata::ZACHOD:  return "ZACHOD";
+	case KierunkiSwiata::POLNOC_ZACHOD: return "POLNOC_ZACHOD";
+	case KierunkiSwiata::POLNOC: return "POLNOC";
+	case KierunkiSwiata::POLNOC_WSCHOD: return "POLNOC_WSCHOD";
+	case KierunkiSwiata::WSCHOD: return "WSCHOD";
+	case KierunkiSwiata::POLUDNIE_WSCHOD: return "POLUDNIEWCHOD";
+	case KierunkiSwiata::ZADEN: return "ZADEN";
 	}
 }
 KierunkiSwiata ZwrocKierunekZNazwy(std::string NazwaKierunku)
@@ -24,7 +24,7 @@ KierunkiSwiata ZwrocKierunekZNazwy(std::string NazwaKierunku)
 	else if (NazwaKierunku == "POLNOC") return KierunkiSwiata::POLNOC;
 	else if (NazwaKierunku == "POLNOC_WSCHOD")return KierunkiSwiata::POLNOC_WSCHOD;
 	else if (NazwaKierunku == "WSCHOD") return KierunkiSwiata::WSCHOD;
-	else if (NazwaKierunku == "POLUDNIEWCHOD")return KierunkiSwiata::POLUDNIEWCHOD;
+	else if (NazwaKierunku == "POLUDNIEWCHOD")return KierunkiSwiata::POLUDNIE_WSCHOD;
 	else return KierunkiSwiata::ZADEN;
 }
 TypyAnimacji ZwrocTypAnimacji(std::string NazwaAnimacji)
@@ -48,15 +48,13 @@ std::string ZwrocNazweAnimacji(TypyAnimacji typanimacji)
 KierunkiSwiata ZwrocKierunek(PozycjaNaMapie A, PozycjaNaMapie B)
 {
 	PozycjaNaMapie poz = { B.x - A.x,B.y- A.y };
-	if (poz.x == 0 && poz.y == 1) return KierunkiSwiata::POLUDNIE;
-	else if (poz.x == -1 && poz.y == 1) return KierunkiSwiata::POLUDNIE_ZACHOD;
-	else if (poz.x == -1 && poz.y == 0) return KierunkiSwiata::ZACHOD;
-	else if (poz.x == -1 && poz.y == -1) return KierunkiSwiata::POLNOC_ZACHOD;
-	else if (poz.x == 0 && poz.y == -1) return KierunkiSwiata::POLNOC;
-	else if (poz.x == 1 && poz.y == -1) return KierunkiSwiata::POLNOC_WSCHOD;
-	else if (poz.x == 1 && poz.y == 0) return KierunkiSwiata::WSCHOD;
-	else if (poz.x == 1 && poz.y == 1) return KierunkiSwiata::POLUDNIEWCHOD;
-	else return KierunkiSwiata::ZADEN;
+	KierunkiSwiata kierunek=KierunkiSwiata::ZADEN;
+	if (poz.x > 0) kierunek = kierunek | KierunkiSwiata::WSCHOD;
+	else if (poz.x < 0) kierunek = kierunek | KierunkiSwiata::ZACHOD;
+	if (poz.y > 0) kierunek = kierunek | KierunkiSwiata::POLUDNIE;
+	else if (poz.y < 0) kierunek = kierunek | KierunkiSwiata::POLNOC;
+
+
 }
 
 
@@ -83,7 +81,7 @@ Rectangle Animacja::ZwrocKlatke(KierunkiSwiata kierunki, Vector2& Rozmiar, const
 	Rectangle prostokat;
 
 	prostokat.x = Klatka * Rozmiar.x;
-	prostokat.y = kierunki * Rozmiar.y;
+	prostokat.y = ZwrocIndexKlatki(kierunki) * Rozmiar.y;
 	prostokat.width = Rozmiar.x;
 	prostokat.height = Rozmiar.y;
 
