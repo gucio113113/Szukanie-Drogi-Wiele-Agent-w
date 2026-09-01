@@ -101,7 +101,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 	UstawIndexObiektu(Obiekty);
 }
 
- void Obiekt::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica,  std::vector<Obiekt*>& Obiekty)
+ void Obiekt::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& systemobrazen, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica,  std::vector<Obiekt*>& Obiekty)
 {
 	 std::cout << "Akcja Obiekt \n";
 

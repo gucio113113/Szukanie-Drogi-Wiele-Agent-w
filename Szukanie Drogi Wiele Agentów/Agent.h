@@ -83,23 +83,52 @@ enum class Decyzje : unsigned char
 	STOJ = 8,
 	STRZELAJ = 9
 };
+inline constexpr Decyzje  ZwrocDecyzje(KierunkiSwiata kierunek)
+{
+	switch (kierunek)
+	{
+	case KierunkiSwiata::POLUDNIE: return Decyzje::IDZ_POLUDNIE;
+		break;
+	case KierunkiSwiata::ZACHOD: return Decyzje::IDZ_ZACHOD;
+		break;
+	case KierunkiSwiata::POLNOC: return Decyzje::IDZ_POLNOC;
+		break;
+	case KierunkiSwiata::WSCHOD: return Decyzje::IDZ_WSCHOD;
+		break;
+	case KierunkiSwiata::POLNOC_ZACHOD: return Decyzje::IDZ_POLNOC_ZACHOD;
+		break;
+	case KierunkiSwiata::POLNOC_WSCHOD: return Decyzje::IDZ_POLNOC_WSCHOD;
+		break;
+	case KierunkiSwiata::POLUDNIE_WSCHOD: return Decyzje::IDZ_POLUDNIE_WSCHOD;
+		break;
+	case KierunkiSwiata::POLUDNIE_ZACHOD: return Decyzje::IDZ_POLUDNIE_ZACHOD;
+		break;
+	case KierunkiSwiata::ZADEN: return Decyzje::STOJ;
+		break;
+	default:
+		break;
+	}
+}
 enum class Rozkazy : unsigned char
 {
 	IDZ = 0,
 	ATAKUJACY_RUCH = 1,
-	UNIKAJ = 2
+	UNIKAJ = 2,
+	ZNISZCZ=3,
+	PILNUJ=4
 };
 struct DecyzjaWCzasie
 {
-	unsigned int TickPoczatkowy;
-	unsigned int TickKoncowy;
+	unsigned int Tick;
+	unsigned int CzasTrwania;
+	bool Spelniona;
 	Decyzje decyzja;
-	DecyzjaWCzasie(unsigned int TickPoczatkowy=std::numeric_limits<unsigned int>::infinity(), unsigned int TickKoncowy=std::numeric_limits<unsigned int>::infinity(), Decyzje decyzja=Decyzje::STOJ);
+	DecyzjaWCzasie();
 };
 
-class Agent;
-void WykryjBodzcze(Bodziec& bodziec, SystemNamierzania& systemnamierzania, SystemObrazen& systemObrazen, Mapa& mapa, std::vector<Obiekt*>& Obiekty, std::vector<unsigned int>& Namierzane, float& Zasieg, unsigned int& IndexObiektu);
-void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWCzasie, CzasLogiki& czaslogiki, Bodziec& bodziec, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen, std::vector<Obiekt*>& Obiekty);
+// 2026 - 08 - 31
+//Trzeba cale te funkcje dac d o agenta i nadpisac logike odpowiadajaca za poruszanie sie 
+
 
 
 
@@ -116,6 +145,7 @@ void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWC
 
 class Agent : public Obiekt
 {
+protected:
 	float Predkosc;
 	
 
@@ -135,7 +165,17 @@ class Agent : public Obiekt
 	DecyzjaWCzasie decyzjaWCzasie;
 	Bodziec bodziec;
 
+	//Odpowiada Za ruch jaki decyzje Agenta
 
+	void WykryjBodzcze( SystemNamierzania& systemnamierzania, SystemObrazen& systemObrazen, Mapa& mapa, std::vector<Obiekt*>& Obiekty, std::vector<unsigned int>& Namierzane);
+	void UstawRuch( CzasLogiki& czasLogiki, Mapa& mapa);
+	void DecyzjeOChodzeniu(CzasLogiki& czaslogiki, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen, ParametryPociskow& parametry, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica);
+public:
+	void WydajRozkaz(Rozkazy rozkaz,Vector2 CelGlobalny,Mapa &mapa,CzasLogiki &czaslogiki);
+protected:
+
+
+	//
 
 
 	
@@ -170,6 +210,8 @@ class Agent : public Obiekt
 
 	virtual void ZajmowaniePozycjiCzasowych(PozycjaNaMapie& Poczatek, CzasLogiki& czaslogiki, Mapa& mapa);
 
+	//Ponisza funkcja ponownie wyszukuje cel w celu dotarcia do celu glownego
+	void ZnajdywaniePonowne(Mapa &mapa,CzasLogiki &czaslogiki);
 
 	//Wybiera Najmniejsza Klatke o najkmniejsse jlicx zbie krokow i robi tam eskpansje
 
@@ -180,9 +222,6 @@ class Agent : public Obiekt
 	void NajbliszyCel(bool& Znaleziono, Vector2 Poczatek, Vector2& ZwracanyCel, Mapa& mapa, CzasLogiki& czaslogiki);
 	//metody ruchu
 
-	void PoruszPierwszy(PozycjaNaMapie pozycjaA, PozycjaNaMapie pozycjaB, Mapa& mapa);
-	void PoruszDrugi(PozycjaNaMapie pozycjaA, PozycjaNaMapie pozycjaB, Mapa& mapa);
-
 public:
 
 
@@ -191,7 +230,7 @@ public:
 
 	friend void ZnajdzDroge();
 	friend void WypiszInformacje(Agent& agent, Mapa& mapa);
-
+	friend void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWCzasie, float& predkosc, CzasLogiki& czaslogiki, Bodziec& bodziec, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen);
 	void AlgorytmDrogi(Mapa& mapa, CzasLogiki& czaslogiki);
 
 	void ZnajdzCelLokalny(Mapa& mapa, CzasLogiki& czaslogiki);
@@ -207,7 +246,7 @@ public:
 
 	
 
-	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica,std::vector<Obiekt*> &Obiekty) override;
+	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& systemobrazen, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica,std::vector<Obiekt*> &Obiekty) override;
 
 	virtual void Render(Mapa& mapa,CzasLogiki& czasLogiki, TablicaAnimacji& tablica) override;
 };

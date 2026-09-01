@@ -189,7 +189,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 	 this->typ = typ;
 
  }
- void Bron::Strzelanie(const unsigned int& Index,CzasLogiki& czasLogiki, SystemNamierzania& namierzania, std::vector<Obiekt*>& Obiekty,Mapa &mapa, ParametryPociskow& parametrypociskow, TablicaAnimacji& tablica)
+ void Bron::Strzelanie(const unsigned int& Index,CzasLogiki& czasLogiki, std::vector<unsigned int>& Indexy, std::vector<Obiekt*>& Obiekty,Mapa &mapa, ParametryPociskow& parametrypociskow, TablicaAnimacji& tablica)
  {
 
 	 if (czasLogiki.StanCzasu() == true)
@@ -199,8 +199,8 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 		#ifdef STRZELANIE_DEBUG
 			 std::cout << "Strzal \n";
 		#endif // STRZELANIE_DEBUG
-			 std::vector<unsigned int> Indexy;
-			 namierzania.ZwrocSpelniajaceZasieg(Index, Zasieg, Indexy, Obiekty, mapa);
+			 
+			
 
 
 			 if (Indexy.empty() == false)

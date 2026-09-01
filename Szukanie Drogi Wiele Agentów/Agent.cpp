@@ -96,32 +96,134 @@ KlatkaCelu KlatkaCelu::operator=(const KlatkaCelu& klatka)
 	this->KosztH = klatka.KosztH;
 	return *this;
 }
-DecyzjaWCzasie::DecyzjaWCzasie(unsigned int TickPoczatkowy, unsigned int TickKoncowy, Decyzje decyzja)
+DecyzjaWCzasie::DecyzjaWCzasie()
 {
-	this->TickPoczatkowy = TickPoczatkowy;
-	this->TickKoncowy = TickKoncowy;
-	this->decyzja = decyzja;
+	this->Tick = 0;
+	this->CzasTrwania = std::numeric_limits<unsigned int>::infinity();
+	this->Spelniona = true;
+	this->decyzja = Decyzje::STOJ;
 }
-void WykryjBodzcze(Bodziec& bodziec, SystemNamierzania& systemnamierzania, SystemObrazen& systemObrazen, Mapa& mapa, std::vector<Obiekt*>& Obiekty, std::vector<unsigned int>& Namierzane, float& Zasieg, unsigned int& IndexObiektu)
+
+
+void Agent::WykryjBodzcze(SystemNamierzania& systemnamierzania, SystemObrazen& systemObrazen, Mapa& mapa, std::vector<Obiekt*>& Obiekty, std::vector<unsigned int>& Namierzane)
 {
-	systemnamierzania.ZwrocSpelniajaceZasieg(IndexObiektu, Zasieg, Namierzane, Obiekty, mapa);
+	systemnamierzania.ZwrocSpelniajaceZasieg(IndexObiektu, bron.Zasieg, Namierzane, Obiekty, mapa);
 	if (Namierzane.empty() == false) bodziec = bodziec | Bodziec::WYKRYTO_PRZECZWNIKA;
 	auto CzyPod = std::find(systemObrazen.PodOstrzalem.begin(), systemObrazen.PodOstrzalem.end(), IndexObiektu);
 	if (CzyPod != systemObrazen.PodOstrzalem.end()) bodziec = bodziec | Bodziec::PODOSTRZALEM;
+
+
+	}
+void Agent::UstawRuch(CzasLogiki& czasLogiki, Mapa& mapa)
+{
+	PozycjaNaMapie poz = { static_cast<int>(pozycja.x / mapa.RozmiarKlatki),static_cast<int>(pozycja.y / mapa.RozmiarKlatki) };
+
+	
+
+	switch (decyzjaWCzasie.decyzja)
+	{
+	case Decyzje::IDZ_POLNOC: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({ poz.x,poz.y + 1 }),pozycja);
+		break;
+	case Decyzje::IDZ_POLNOC_WSCHOD: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({ poz.x+1,poz.y - 1 }), pozycja);
+		break;
+	case Decyzje::IDZ_WSCHOD: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({ poz.x + 1,poz.y }), pozycja);
+		break;
+	case Decyzje::IDZ_POLUDNIE_WSCHOD: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({ poz.x + 1,poz.y +1 }), pozycja);
+		break;
+	case Decyzje::IDZ_POLUDNIE: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({ poz.x,poz.y + 1 }), pozycja);
+		break;
+	case Decyzje::IDZ_POLUDNIE_ZACHOD: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({ poz.x - 1,poz.y + 1 }), pozycja);
+		break;
+	case Decyzje::IDZ_ZACHOD: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({poz.x - 1,poz.y}), pozycja);
+		break;
+	case Decyzje::IDZ_POLNOC_ZACHOD: ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola({ poz.x - 1,poz.y -1 }), pozycja);
+		break;
+	}
+
+
 }
-void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWCzasie, float& predkosc, CzasLogiki& czaslogiki, Bodziec& bodziec, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen)
+void Agent::DecyzjeOChodzeniu(CzasLogiki& czaslogiki, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen,  ParametryPociskow& parametry, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica)
 {
 	
 	switch (rozkaz)
 	{
 	case Rozkazy::IDZ:
 	{
-
-
+		WykonujDroge(mapa, czaslogiki);
 		break;
 	}
 	case Rozkazy::ATAKUJACY_RUCH:
 	{
+			if (droga.empty() == false)
+			{
+				if (player.animacja != nullptr && player.animacja->typ != TypyAnimacji::CHODZENIE) player.ZnajdzTypAnimacji(TypyAnimacji::CHODZENIE);
+				if (ruch.Dotarlo() == true )
+				{
+					std::vector<unsigned int> Namierzone;
+					WykryjBodzcze(SystemNamierzania, SystemObrazen, mapa, Obiekty, Namierzone);
+					if (!(bodziec & Bodziec::WYKRYTO_PRZECZWNIKA))
+					{
+						ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola(droga.front()), pozycja);
+						if (mapa.Kordynat(pozycja) != droga.front())
+							player.kierunek = ZwrocKierunek(mapa.Kordynat(pozycja), droga.front());
+						//	std::cout << "Wykonalem \n";
+						droga.pop();
+					}
+					else 
+					{
+						bron.Strzelanie(IndexObiektu, czaslogiki, Namierzone,Obiekty, mapa, parametry, tablica);
+					}
+
+				}
+				else
+				{
+					ruch.Porusz(Predkosc * static_cast<float>(mapa.RozmiarKlatki) * czaslogiki.DeltaTimeTick(), pozycja);
+				}
+			}
+			else
+			{
+				ZnajdywaniePonowne(mapa, czaslogiki);
+			}
+		
+		break;
+	}
+	case Rozkazy::PILNUJ:
+	{
+		if (droga.empty() == false)
+		{
+			if (player.animacja != nullptr && player.animacja->typ != TypyAnimacji::CHODZENIE) player.ZnajdzTypAnimacji(TypyAnimacji::CHODZENIE);
+			if (ruch.Dotarlo() == true)
+			{
+				ruch.ZdefiniujRuch(pozycja, mapa.SrodekPola(droga.front()), pozycja);
+				if (mapa.Kordynat(pozycja) != droga.front())
+					player.kierunek = ZwrocKierunek(mapa.Kordynat(pozycja), droga.front());
+				//	std::cout << "Wykonalem \n";
+				droga.pop();
+
+				
+			}
+			else
+			{
+				ruch.Porusz(Predkosc * static_cast<float>(mapa.RozmiarKlatki) * czaslogiki.DeltaTimeTick(), pozycja);
+			}
+		}
+		else
+		{
+			ZnajdywaniePonowne(mapa, czaslogiki);
+			if (CelGlobalny.x == std::numeric_limits<float>::infinity() && CelGlobalny.y == std::numeric_limits<unsigned int>::infinity())
+			{
+				std::vector<unsigned int> Namierzane;
+				 WykryjBodzcze(SystemNamierzania, SystemObrazen, mapa, Obiekty, Namierzane);
+				 if (!!(bodziec & Bodziec::WYKRYTO_PRZECZWNIKA))
+					{
+					 bron.Strzelanie(IndexObiektu, czaslogiki, Namierzane, Obiekty, mapa, parametry, tablica);
+					}
+			}
+
+				
+			
+			//if(strz)
+		}
 
 
 
@@ -139,10 +241,13 @@ void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWC
 
 
 
-
-
+	}
+void Agent::WydajRozkaz(Rozkazy rozkaz, Vector2 CelGlobalny, Mapa& mapa, CzasLogiki& czaslogiki)
+{
+	this->rozkaz = rozkaz;
+	this->CelGlobalny = CelGlobalny;
+	ZnajdywaniePonowne(mapa,czaslogiki);
 }
-
 
 
 
@@ -295,15 +400,35 @@ void Agent::ZajmowaniePozycjiCzasowych(PozycjaNaMapie &Poczatek,CzasLogiki &czas
 }
 
 
+//Ponisza funkcja ponownie wyszukuje cel w celu dotarcia do celu glownego
+void Agent::ZnajdywaniePonowne(Mapa& mapa, CzasLogiki& czaslogiki)
+{
+	if (CelGlobalny.x != std::numeric_limits<float>::infinity() && CelGlobalny.y != std::numeric_limits<float>::infinity())
+	{
+
+		if (mapa.Kordynat(CelGlobalny) == mapa.Kordynat(pozycja))
+		{
+			CelGlobalny.x = std::numeric_limits<float>::infinity();
+			CelGlobalny.y = std::numeric_limits<float>::infinity();
+			player.ZnajdzTypAnimacji(TypyAnimacji::STANIE);
+
+		}
+		else
+		{
+			if (mapa.CzyPozyjaZajentaWNieskonczonosc(mapa.Kordynat(CelGlobalny), IndexObiektu) == false && mapa.CzyPozyjaZajentaWNieskonczonosc(mapa.Kordynat(CelGlobalny)) == true)
+			{
+				bool szukanie;
+				NajbliszyCel(szukanie, CelGlobalny, CelGlobalny, mapa, czaslogiki);
+				if (szukanie == true) CelLokalny = CelGlobalny;
+			}
+			ZnajdzCelLokalny(mapa, czaslogiki);
+			AlgorytmDrogi(mapa, czaslogiki);
+			player.ZnajdzTypAnimacji(TypyAnimacji::CHODZENIE);
+		}
+	}
 
 
-
-
-
-
-
-
-
+}
 void Agent::Roszerz(Mapa& mapa, std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, PozycjaNaMapie& docelu, bool& SzukajDrogi, CzasLogiki& czasLogiki)
 {
 
@@ -684,13 +809,6 @@ void Agent::WizuDrogi(Mapa& mapa)
 
 void Agent::WykonujDroge(Mapa& mapa, CzasLogiki& czaslogiki)
 {
-
-
-
-
-
-
-
 	if (droga.empty() == false)
 	{
 		if (player.animacja != nullptr && player.animacja->typ != TypyAnimacji::CHODZENIE) player.ZnajdzTypAnimacji(TypyAnimacji::CHODZENIE);
@@ -711,42 +829,14 @@ void Agent::WykonujDroge(Mapa& mapa, CzasLogiki& czaslogiki)
 	}
 	else
 	{
-		if (CelGlobalny.x != std::numeric_limits<float>::infinity() && CelGlobalny.y != std::numeric_limits<float>::infinity())
-		{
-
-			if (mapa.Kordynat(CelGlobalny) == mapa.Kordynat(pozycja))
-			{
-				CelGlobalny.x = std::numeric_limits<float>::infinity();
-				CelGlobalny.y = std::numeric_limits<float>::infinity();
-				player.ZnajdzTypAnimacji(TypyAnimacji::STANIE);
-
-			}
-			else
-			{
-				std::cout << "Hej dzije sie cos \n";
-				if (mapa.CzyPozyjaZajentaWNieskonczonosc(mapa.Kordynat(CelGlobalny),IndexObiektu)==false && mapa.CzyPozyjaZajentaWNieskonczonosc(mapa.Kordynat(CelGlobalny))==true)
-				{
-					bool szukanie;
-					NajbliszyCel(szukanie, CelGlobalny, CelGlobalny, mapa, czaslogiki);
-					if (szukanie == true) CelLokalny = CelGlobalny;
-				}
-				//mapa.UsunPozycjeCzasoweDlaObiektu(IndexObiektu);
-				ZnajdzCelLokalny(mapa, czaslogiki);
-				AlgorytmDrogi(mapa, czaslogiki);
-				player.ZnajdzTypAnimacji(TypyAnimacji::CHODZENIE);
-			}
-		}
-		
-
-
-		ruch.procent = 1;
+		ZnajdywaniePonowne(mapa, czaslogiki);
 	}
 }
- void Agent::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty)
+ void Agent::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& systemobrazen, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty)
 {
-	 bron.Strzelanie(IndexObiektu,czasLogiki, systemnamierzania, Obiekty, mapa, parametry, tablica);
+	// bron.Strzelanie(IndexObiektu,czasLogiki, systemnamierzania, Obiekty, mapa, parametry, tablica);
 
-	 WykonujDroge(mapa, czasLogiki);
+	 DecyzjeOChodzeniu(czasLogiki, mapa, systemnamierzania, systemobrazen,parametry, Obiekty,tablica);
 }
  void Agent::Render(Mapa& mapa,CzasLogiki& czasLogiki, TablicaAnimacji& tablica)
  {

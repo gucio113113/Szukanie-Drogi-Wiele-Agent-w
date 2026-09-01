@@ -27,6 +27,11 @@ KierunkiSwiata ZwrocKierunekZNazwy(std::string NazwaKierunku)
 	else if (NazwaKierunku == "POLUDNIEWCHOD")return KierunkiSwiata::POLUDNIE_WSCHOD;
 	else return KierunkiSwiata::ZADEN;
 }
+
+
+
+
+
 TypyAnimacji ZwrocTypAnimacji(std::string NazwaAnimacji)
 {
 	if (NazwaAnimacji == "STRZELANIE" || NazwaAnimacji=="STRZELANIE.png") return TypyAnimacji::STRZELANIE;
@@ -45,6 +50,7 @@ std::string ZwrocNazweAnimacji(TypyAnimacji typanimacji)
 		break;
 	}
 }
+//Zwraca akierunek swiata na pdostawie rozniczy dwoch pozycji
 KierunkiSwiata ZwrocKierunek(PozycjaNaMapie A, PozycjaNaMapie B)
 {
 	PozycjaNaMapie poz = { B.x - A.x,B.y- A.y };

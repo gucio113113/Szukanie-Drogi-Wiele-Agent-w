@@ -120,7 +120,7 @@ public:
 	
 	Obiekt( Vector2 pozycja = {}, unsigned int Zdrowie = 100,Sojusze sojusz={Druzyny::NEUTRALNA,Druzyny::NEUTRALNA},Typy typ=Typy::ZADEN);
 	Obiekt(std::string NazwaAnimacji , Vector2 pozycja , unsigned int Zdrowie , Sojusze sojusz, Typy typ,std::vector<Obiekt*> &Obiekty,TablicaAnimacji &tablica );
-	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty);
+	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& systemobrazen, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty);
 	virtual void Render(Mapa& mapa,CzasLogiki &czasLogiki,TablicaAnimacji &tablica);
 
 	// This command allow us for own terms of deleting the object from the engine and it saves all deleted object from the current state to the table

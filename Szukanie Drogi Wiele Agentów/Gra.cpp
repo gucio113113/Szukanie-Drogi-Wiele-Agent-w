@@ -40,7 +40,7 @@ void Gra::Sterowanie()
 		{
 			if (Agent* agent = dynamic_cast<Agent*>(obiekt))
 			{
-				agent->UstawGlownyCel(mapa.Wysrodkuj({ GetMouseX(),GetMouseY() }),mapa,czas);
+				agent->WydajRozkaz(Rozkazy::PILNUJ, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
 			}
 		}
 	}
