@@ -211,7 +211,11 @@ protected:
 	virtual void ZajmowaniePozycjiCzasowych(PozycjaNaMapie& Poczatek, CzasLogiki& czaslogiki, Mapa& mapa);
 
 	//Ponisza funkcja ponownie wyszukuje cel w celu dotarcia do celu glownego
-	void ZnajdywaniePonowne(Mapa &mapa,CzasLogiki &czaslogiki);
+	bool ZnajdywaniePonowne(Mapa &mapa,CzasLogiki &czaslogiki);
+
+	//Gdy Droga jest znaleziona ponisza funkcja bedzie szukac trasy z do Celu
+	void WykonanieDrogiWlasciwe(Mapa &mapa,CzasLogiki &czaslogiki);
+
 
 	//Wybiera Najmniejsza Klatke o najkmniejsse jlicx zbie krokow i robi tam eskpansje
 

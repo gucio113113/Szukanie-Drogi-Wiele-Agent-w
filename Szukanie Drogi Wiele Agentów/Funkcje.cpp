@@ -133,7 +133,7 @@ unsigned int PozycjaRodzic(const PozycjaNaMapie poz, const unsigned int szerokos
 {
 	return  static_cast<unsigned int>(poz.x) + static_cast<unsigned int>(poz.y) * szerokosc;
 }
-void NarysujKwadrat(KolorowyKwadrat& kwadrat, const  int& rozmiar)
+void NarysujKwadrat(KolorowyKwadrat& kwadrat, const  int rozmiar)
 {
 
 	DrawRectangle(static_cast<int>(kwadrat.poz.x * rozmiar), static_cast<int>(kwadrat.poz.y * rozmiar), static_cast<int>(rozmiar), static_cast<int>(rozmiar), kwadrat.kolor);

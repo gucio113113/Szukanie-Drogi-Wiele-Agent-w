@@ -56,7 +56,7 @@ ParametryPociskow::ParametryPociskow()
 }
 void ParametryPociskow::Inicjuj()
 {
-	ParametrPocisk parametr(100,"Pocisk",4,true,1,200,new DamageKolo({0,0},5,2,1,5));
+	ParametrPocisk parametr(100,"Pocisk",4,true,1,200,new DamageKolo({0,0},30,40,1,5));
 #ifdef ZASOBY_DEBUG
 	parametr.WyswietlParametry();
 #endif
@@ -116,11 +116,22 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 
  void Pocisk::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty)
  {
+	 std::cout << "Akcja \n";
 	 if (czasLogiki.StanCzasu() == true)
 	 {
 		 NaLiczZycie(czasLogiki);
+		 
+		 if (ruch.Dotarlo() == true)
+		 {
 
-		 if (ruch.Dotarlo() == true) Zdrowie = 0;
+			 this->CzyZyje = false;
+			 if (parametr != nullptr)
+			 {
+				 Damage* damage = parametr->damage->ZwrocKopie(pozycja);
+				 system.Obrazenia.emplace_back(damage);
+			 }
+
+		 }
 		 else
 		 {
 			 if (this->parametr != nullptr)
@@ -128,11 +139,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 				 ruch.Porusz(parametr->Predkosc, pozycja);
 			 }
 		 }
-		 if (parametr != nullptr && Zdrowie == 0)
-		 {
-			 this->CzyZyje = false;
-			 system.Obrazenia.emplace_back(parametr->damage->ZwrocKopie(pozycja));
-		 }
+		 
 	 }
 
 }

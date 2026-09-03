@@ -57,7 +57,7 @@ bool DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanim
 	{
 		Rectangle kwadrat = { obiekt->pozycja.x - static_cast<float>(mapa.RozmiarKlatki / 2),obiekt->pozycja.y - static_cast<float>(mapa.RozmiarKlatki / 2),static_cast<float>(mapa.RozmiarKlatki),static_cast<float>(mapa.RozmiarKlatki) };
 
-		if (CheckCollisionCircleRec(obiekt->pozycja, Promien, kwadrat) == true && Tick % KiedyZadaje == 0)
+		if (CheckCollisionCircleRec(obiekt->pozycja, Promien * static_cast<float>(mapa.RozmiarKlatki), kwadrat) == true && Tick % KiedyZadaje == 0)
 		{
 			if (obiekt->Zdrowie - IleZadaje > 0) obiekt->Zdrowie -= IleZadaje;
 			else obiekt->Zdrowie = 0;
@@ -100,19 +100,35 @@ DamageProstokat::DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int 
 
 
 }
+#ifdef SYSTEM_OBRAZEN_DEBUG
+
+void Damage::NarysujDamage(unsigned int rozmiarKlatki)
+{
+	std::cout << "Narysuj \n";
+ }
+void DamageProstokat::NarysujDamage(unsigned int rozmiarKlatki)
+{
+	DrawRectangle(this->Pozycja.x, this->Pozycja.y, this->Rozmiar.x * static_cast<int>(rozmiarKlatki), this->Rozmiar.y * static_cast<int>(rozmiarKlatki), RED);
+}
+void DamageKolo::NarysujDamage(unsigned int rozmiarKlatki)
+{
+	DrawCircle(this->Pozycja.x, this->Pozycja.y, this->Promien * static_cast<int>(rozmiarKlatki), RED);
+
+}
+#endif
 
 
  bool DamageProstokat::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
 {
 	 if (obiekt != nullptr)
 	 {
-		 ZestawAnimacji*& Zestaw = obiekt->player.zestawAnimacji;
+		 ZestawAnimacji * Zestaw = obiekt->player.ZwrocZestaw();
 
 		 if (Zestaw != nullptr)
 		 {
 
 			 Rectangle kwadrat0 = { obiekt->pozycja.x - static_cast<float>(Zestaw->Rozmiar.x / 2),obiekt->pozycja.y - static_cast<float>(Zestaw->Rozmiar.y / 2),static_cast<float>(Zestaw->Rozmiar.x),static_cast<float>(Zestaw->Rozmiar.y) };
-			 Rectangle kwadrat1 = { Pozycja.x - (Rozmiar.x / 2),Pozycja.y - (Rozmiar.y / 2),Rozmiar.x,Rozmiar.y };
+			 Rectangle kwadrat1 = { Pozycja.x - (Rozmiar.x*static_cast<float>(mapa.RozmiarKlatki) / 2),Pozycja.y - (Rozmiar.y*static_cast<float>(mapa.RozmiarKlatki) / 2),Rozmiar.x * static_cast<float>(mapa.RozmiarKlatki),Rozmiar.y * static_cast<float>(mapa.RozmiarKlatki) };
 
 
 			 if (CheckCollisionRecs(kwadrat0, kwadrat1) == true && Tick % KiedyZadaje == 0)
@@ -243,8 +259,13 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 	 this->IndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu, {});
  }
 #ifdef SYSTEM_OBRAZEN_DEBUG
- void SystemObrazen::Debug()
+ void SystemObrazen::Debug(unsigned int Rozmiar)
  {
-	 NarysujSiatke(IndexyObiektow, RozmiarSystemu, RozmiarKlatek, POMARANCZOWY, RED);
+	 std::cout << "Ilosc Damagow :" << Obrazenia.size() << "\n";
+	 NarysujSiatke(IndexyObiektow, RozmiarSystemu, RozmiarKlatek, POMARANCZOWY,{0,0,0,0});
+	 for (Damage* damage : Obrazenia)
+	 {
+		 damage->NarysujDamage(Rozmiar);
+	 }
  }
 #endif

@@ -40,7 +40,19 @@ void Gra::Sterowanie()
 		{
 			if (Agent* agent = dynamic_cast<Agent*>(obiekt))
 			{
-				agent->WydajRozkaz(Rozkazy::PILNUJ, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
+				if (IsKeyDown(KEY_A) == true)
+				{
+					agent->WydajRozkaz(Rozkazy::ATAKUJACY_RUCH, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
+				}
+				else if (IsKeyDown(KEY_G) == true)
+				{
+					agent->WydajRozkaz(Rozkazy::PILNUJ, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
+				}
+				else
+				{
+					agent->WydajRozkaz(Rozkazy::IDZ, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
+				}
+
 			}
 		}
 	}
@@ -121,7 +133,7 @@ void Gra::Render()
 	systemnamierzania.Debug();
 	#endif
 	#ifdef SYSTEM_OBRAZEN_DEBUG
-	systemobrazen.Debug();
+	systemobrazen.Debug(mapa.RozmiarKlatki);
 	#endif
 	for (Obiekt*& obiekt : Obiekty)
 	{

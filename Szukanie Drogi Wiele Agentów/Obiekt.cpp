@@ -79,10 +79,10 @@ Obiekt::Obiekt(Vector2 pozycja , unsigned int Zdrowie,  Sojusze sojusz , Typy ty
 	
 
 	
-	player.kierunek = KierunkiSwiata::POLUDNIE;
-	player.Klatka = 0;
-	player.ObecnyTick = 0;
-	player.typAnimacji = TypyAnimacji::STANIE;
+	player.UstawKierunek(KierunkiSwiata::POLUDNIE);
+	player.UstawKlatke(0);
+	player.UstawObecnyTick(0);
+	player.UstawTypAnimacji(TypyAnimacji::STANIE);
 	this->IndexObiektu = 0;
 }
 Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie, Sojusze sojusz, Typy typ, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica)
@@ -92,12 +92,14 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 	this->sojusze = sojusz;
 	this->typ = typ;
 
-	player.typAnimacji = TypyAnimacji::STANIE;
+
 	player.ZnajdzZasob(NazwaAnimacji, tablica);
-	player.kierunek = KierunkiSwiata::POLUDNIE;
-	player.Klatka = 0;
-	player.ObecnyTick = 0;
-	
+
+	player.UstawTypAnimacji(TypyAnimacji::STANIE);
+	player.UstawKlatke(0);
+	player.UstawObecnyTick(0);
+	player.UstawKierunek(KierunkiSwiata::POLUDNIE);
+
 	UstawIndexObiektu(Obiekty);
 }
 
@@ -122,7 +124,10 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 		  }
 	  }
   }
-
+  PlayerAnimacji * Obiekt::ZwrocPlayerAnimacji()
+  {
+	  return &player;
+  }
   unsigned int Obiekt::DostanIdnex()
   {
 	  return IndexObiektu;

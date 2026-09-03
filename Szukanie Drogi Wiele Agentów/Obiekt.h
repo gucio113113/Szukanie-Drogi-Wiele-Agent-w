@@ -126,6 +126,7 @@ public:
 	// This command allow us for own terms of deleting the object from the engine and it saves all deleted object from the current state to the table
 	virtual void SprawdzCzyUsunObiekt(std::vector<unsigned int> &IndexyUsuwanych);
 
+	PlayerAnimacji * ZwrocPlayerAnimacji();
 
 	unsigned int DostanIdnex();
 	

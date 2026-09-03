@@ -33,7 +33,9 @@ public:
 	friend class Pocisk;
 
 	virtual Damage *ZwrocKopie(Vector2 Pozycja);
-	
+#ifdef SYSTEM_OBRAZEN_DEBUG
+	virtual void NarysujDamage(unsigned int rozmiarKlatki);
+#endif // AGENT_DEBUG
 
 };
 class DamageKolo : public Damage
@@ -47,6 +49,10 @@ public:
 	PozycjaNaMapie GornyZasieg(const unsigned int rozmiarKlatek) override;
 	friend class SystemObrazen;
 	Damage* ZwrocKopie(Vector2 Pozycja) override;
+
+#ifdef SYSTEM_OBRAZEN_DEBUG
+	 void NarysujDamage(unsigned int rozmiarKlatki) override;
+#endif
 };
 class DamageProstokat : public Damage
 {
@@ -59,6 +65,9 @@ public:
 	PozycjaNaMapie GornyZasieg(const unsigned int rozmiarKlatek) override;
 	friend class SystemObrazen;
 	Damage* ZwrocKopie(Vector2 Pozycja) override;
+#ifdef SYSTEM_OBRAZEN_DEBUG
+	void NarysujDamage(unsigned int rozmiarKlatki) override;
+#endif
 };
 class SystemObrazen
 {
@@ -77,8 +86,10 @@ public:
 	void LogikaSystemu(std::vector<Obiekt*> &Obiekty,CzasLogiki &Czaslogiki,Mapa &mapa, TablicaAnimacji& tablicanimacji);
 	void UstawParametry(unsigned int RozmiarSystemu,Mapa &mapa);
 #ifdef SYSTEM_OBRAZEN_DEBUG
-	void Debug();
+	void Debug(unsigned int Rozmiar);
 #endif // SYSTEM_OBRAZEN
+
+
 };
 
 #endif // !SYSTEMOBRAZEN

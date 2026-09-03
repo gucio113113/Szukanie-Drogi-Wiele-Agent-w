@@ -93,6 +93,7 @@ class ZestawAnimacji
 	std::string NazwaAnimacji;
 	std::vector<Animacja> animacje;
 	Vector2 Rozmiar;
+	Vector2 RozmiarSkalowalny;
 	void WczytajKtoryTyp(TypyAnimacji typAnimacji, blmp::Obiekt& obiekt);
 	public:
 		friend class PlayerAnimacji;
@@ -131,20 +132,30 @@ class PlayerAnimacji
 
 public:
 
-	friend class Obiekt;
-	friend class Agent;
-	friend class Pocisk;
-	friend class Damage;
-	friend class DamageKolo;
-	friend class DamageProstokat;
+
+	unsigned int ZwrocObecnyTick();
+	unsigned int ZwrocKlatke();
+	TypyAnimacji ZwrocTypAnimacji();
+	KierunkiSwiata ZwrocKierunek();
+	Vector2 ZwrocRozmiar(unsigned int RozmiarKlatki);
+
+	ZestawAnimacji* ZwrocZestaw();
+	Animacja* ZwrocAnimacje();
+
+	void UstawObecnyTick(unsigned int ObecnyTick);
+	void UstawKlatke(unsigned int Klatka);
+	void UstawKierunek(KierunkiSwiata Kierunek);
+	void UstawTypAnimacji(TypyAnimacji typ);
+
+	
 
 	PlayerAnimacji(std::string NazwaAnimacji="");
 
 	void ZnajdzZasob(std::string NazwaAnimacji,TablicaAnimacji &tablicaAnimacji);
-	void ZnajdzTypAnimacji(TypyAnimacji typAnimacji);
+	
 	void Rysuj(CzasLogiki &czasLogiki,Vector2 Pozycja, const unsigned int rozmiarKlatki,TablicaAnimacji &tablicaAnimacji);
-	void UstawTypAnimacji(TypyAnimacji typ);
-	void UstawKierunek(KierunkiSwiata kierunek);
+	
+	
 
 };
 

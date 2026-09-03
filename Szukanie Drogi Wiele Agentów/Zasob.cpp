@@ -79,7 +79,7 @@ Animacja::Animacja(unsigned int CoKtoryTick,   std::string AdresTekstury, TypyAn
 #endif
 	}
 #ifdef ZASOBY_DEBUG
-	else std::cout << "Animacja zostala wczytana \n";
+	else std::cout << "Animacja zostala wczytana: "<<AdresTekstury<<"\n";
 #endif
 }
 Rectangle Animacja::ZwrocKlatke(KierunkiSwiata kierunki, Vector2& Rozmiar, const unsigned int Klatka)
@@ -125,7 +125,8 @@ void ZestawAnimacji::WczytajKtoryTyp(TypyAnimacji typAnimacji, blmp::Obiekt& obi
 
 ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 {
-	
+	this->RozmiarSkalowalny.x = 1;
+	this->RozmiarSkalowalny.y = 1;
 
 	std::filesystem::path SciezkaInfo = std::filesystem::path{ Folder.string() + "/info.obi" };
 #ifdef ZASOBY_DEBUG
@@ -173,6 +174,8 @@ ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 			
 			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIARX",Rozmiar.x);
 			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIARY", Rozmiar.y);
+			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIAR_SKALOWALNY_X", RozmiarSkalowalny.x);
+			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIAR_SKALOWALNY_Y", RozmiarSkalowalny.y);
 
 			WczytajKtoryTyp(TypyAnimacji::STANIE, obiekt);
 			WczytajKtoryTyp(TypyAnimacji::CHODZENIE, obiekt);
@@ -252,6 +255,8 @@ void StworzZestawAnimacji(std::filesystem::path Folder,std::string NazwaAnimacji
 				blmp::Obiekt obiekt(NazwaAnimacji, {
 					{"ROZMIARX",blmp::Dane(Rozmiar.x)},
 					{"ROZMIARY",blmp::Dane(Rozmiar.y)},
+					{"ROZMIAR_SKALOWALNY_X",blmp::Dane(1.0f)},
+					{"ROZMIAR_SKALOWALNY_Y",blmp::Dane(1.0f)},
 					{ZwrocNazweAnimacji(TypyAnimacji::STANIE),blmp::Dane(0u)},
 					{ZwrocNazweAnimacji(TypyAnimacji::CHODZENIE),blmp::Dane(0u)},
 					{ZwrocNazweAnimacji(TypyAnimacji::STRZELANIE),blmp::Dane(0u)}
@@ -325,39 +330,8 @@ void PlayerAnimacji::ZnajdzZasob(std::string NazwaAnimacji, TablicaAnimacji& tab
 #ifdef 	ZASOBY_DEBUG
 	if (zestawAnimacji == nullptr) std::cout << "Nie znaleziono Zestawu Animacji \n";
 #endif
-	ZnajdzTypAnimacji(typAnimacji);
+	UstawTypAnimacji(typAnimacji);
 }
-void PlayerAnimacji::ZnajdzTypAnimacji(TypyAnimacji typAnimacji)
-{
-	if (zestawAnimacji != nullptr)
-	{
-		
-		auto iterator = std::find_if(zestawAnimacji->animacje.begin(), zestawAnimacji->animacje.end(), [&](const Animacja& animacja) { return animacja.typ == typAnimacji; });
-#ifdef 	ZASOBY_DEBUG
-		std::cout << "Ile jest animacji :" << zestawAnimacji->animacje.size() << "\n";
-#endif
-		if (iterator != zestawAnimacji->animacje.end())
-		{
-			this->typAnimacji = typAnimacji;
-			animacja = iterator._Ptr;
-#ifdef 	ZASOBY_DEBUG
-			std::cout << "Znaleziono Typ Animacji \n";
-#endif
-		}
-#ifdef 	ZASOBY_DEBUG
-		else std::cout << "Nie znaleziono typu animacji \n";
-#endif
-	}
-#ifdef 	ZASOBY_DEBUG
-	else std::cout << "Zestaw Animacji nie zostal znaleziony \n";
-#endif
-}
-
-
-
-
-
-
 void PlayerAnimacji::Rysuj(CzasLogiki &czasLogiki, Vector2 Pozycja,const unsigned int rozmiarKlatki, TablicaAnimacji& tablicaAnimacji)
 {
 	if (animacja != nullptr && zestawAnimacji!=nullptr )
@@ -385,10 +359,75 @@ void PlayerAnimacji::Rysuj(CzasLogiki &czasLogiki, Vector2 Pozycja,const unsigne
 	}
 	else DrawRectangle(static_cast<int>(Pozycja.x) - static_cast<int>(rozmiarKlatki/2), static_cast<int>(Pozycja.y)-static_cast<int>(rozmiarKlatki/2), static_cast<int>(rozmiarKlatki), static_cast<int>(rozmiarKlatki), MAGENTA);
 }
+
+unsigned int PlayerAnimacji::ZwrocObecnyTick()
+{
+	return ObecnyTick;
+
+}
+unsigned int PlayerAnimacji::ZwrocKlatke()
+{
+	return Klatka;
+
+	}
+TypyAnimacji PlayerAnimacji::ZwrocTypAnimacji()
+{
+	return typAnimacji;
+}
+KierunkiSwiata PlayerAnimacji::ZwrocKierunek()
+{
+	return kierunek;
+}
+Vector2 PlayerAnimacji::ZwrocRozmiar(unsigned int RozmiarKlatki)
+{
+	if (this->zestawAnimacji != nullptr)
+	{
+		return { static_cast<float>(RozmiarKlatki)/zestawAnimacji->Rozmiar.x * zestawAnimacji->RozmiarSkalowalny.x,static_cast<float>(RozmiarKlatki)/zestawAnimacji->Rozmiar.y * zestawAnimacji->RozmiarSkalowalny.y };
+	}
+	else return { 0,0 };
+}
+
+ZestawAnimacji* PlayerAnimacji::ZwrocZestaw()
+{
+	return zestawAnimacji;
+}
+Animacja* PlayerAnimacji::ZwrocAnimacje()
+{
+	return animacja;
+}
+void PlayerAnimacji::UstawObecnyTick(unsigned int ObecnyTick)
+{
+	this->ObecnyTick = ObecnyTick;
+}
+void PlayerAnimacji::UstawKlatke(unsigned int Klatka)
+{
+	this->Klatka = Klatka;
+}
 void PlayerAnimacji::UstawTypAnimacji(TypyAnimacji typ)
 {
-	this->typAnimacji = typAnimacji;
+	if (zestawAnimacji != nullptr)
+	{
+
+		auto iterator = std::find_if(zestawAnimacji->animacje.begin(), zestawAnimacji->animacje.end(), [&](const Animacja& animacja) { return animacja.typ == typ; });
+#ifdef 	ZASOBY_DEBUG
+		std::cout << "Ile jest animacji :" << zestawAnimacji->animacje.size() << "\n";
+#endif
+		if (iterator != zestawAnimacji->animacje.end())
+		{
+			this->typAnimacji = typ;
+			animacja = iterator._Ptr;
+#ifdef 	ZASOBY_DEBUG
+			std::cout << "Znaleziono Typ Animacji \n";
+#endif
+		}
+#ifdef 	ZASOBY_DEBUG
+		else std::cout << "Nie znaleziono typu animacji \n";
+#endif
 	}
+#ifdef 	ZASOBY_DEBUG
+	else std::cout << "Zestaw Animacji nie zostal znaleziony \n";
+#endif
+}
 void PlayerAnimacji::UstawKierunek(KierunkiSwiata kierunek)
 {
 	this->kierunek = kierunek;
