@@ -110,17 +110,21 @@ public:
 	void ustawPozycjeWychodzaca(PozycjaNaMapie pozycja, unsigned int wychodzacy,const unsigned int &IndexObiektu);
 
 	bool CzyPozycjaZajenta(PozycjaNaMapie poz);
-
 	bool czyPozycjaZajentaWCzasie(PozycjaNaMapie poz,unsigned int const Tick);
 
+	bool CzyPozycjaZajentaWCzasieDlaObiektu(PozycjaNaMapie poz,unsigned int const Tick,const unsigned int IndexObiektu);
+	
 	bool CzyPozyjaZajentaWNieskonczonosc(PozycjaNaMapie poz);
-	bool CzyPozyjaZajentaWNieskonczonosc(PozycjaNaMapie poz,unsigned int indexObiektu);
+	bool CzyPozyjaZajentaWNieskonczonoscDlaObiektu(PozycjaNaMapie poz,unsigned int indexObiektu);
 
 	void UsunPozycjeWCzasie(const unsigned int Tick);
 
 	void UsunPozycjeCzasoweDlaObiektu(unsigned int IndexObiektu);
 
 	/// 
+	unsigned int ZwrocSzerokosc();
+	unsigned int ZwrocWysokosc();
+	unsigned int ZwrocRozmiarKlatki();
 	
 
 	TypPola ZwrocTypPola(const PozycjaNaMapie &poz);

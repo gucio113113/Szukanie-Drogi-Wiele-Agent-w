@@ -238,8 +238,10 @@ public:
 	void AlgorytmDrogi(Mapa& mapa, CzasLogiki& czaslogiki);
 
 	void ZnajdzCelLokalny(Mapa& mapa, CzasLogiki& czaslogiki);
-
 	void UstawGlownyCel(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki);
+
+
+
 
 	//wizualizajca drogi Agenta
 #ifdef  AGENT_DEBUG
@@ -247,7 +249,7 @@ public:
 #endif // AGENT_DEBUG
 	virtual void WykonujDroge(Mapa& mapa, CzasLogiki& czaslogiki);
 
-
+	
 	
 
 	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& systemobrazen, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica,std::vector<Obiekt*> &Obiekty) override;
