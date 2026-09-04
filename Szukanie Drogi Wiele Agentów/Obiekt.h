@@ -127,6 +127,8 @@ public:
 	virtual void SprawdzCzyUsunObiekt(std::vector<unsigned int> &IndexyUsuwanych);
 
 	PlayerAnimacji * ZwrocPlayerAnimacji();
+	Animacja* ZwrocAnimacje();
+	ZestawAnimacji * ZwrocZestawAnimacji();
 
 	unsigned int DostanIdnex();
 	

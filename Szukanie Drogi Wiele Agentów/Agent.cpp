@@ -399,7 +399,7 @@ bool Agent::ZnajdywaniePonowne(Mapa& mapa, CzasLogiki& czaslogiki)
 		}
 		else
 		{
-			if (mapa.CzyPozyjaZajentaWNieskonczonosc(mapa.Kordynat(CelGlobalny), IndexObiektu) == false && mapa.CzyPozyjaZajentaWNieskonczonosc(mapa.Kordynat(CelGlobalny)) == true)
+			if (mapa.CzyPozyjaZajentaWNieskonczonoscDlaObiektu(mapa.Kordynat(CelGlobalny), IndexObiektu) == false && mapa.CzyPozyjaZajentaWNieskonczonosc(mapa.Kordynat(CelGlobalny)) == true)
 			{
 				bool szukanie;
 				NajbliszyCel(szukanie, CelGlobalny, CelGlobalny, mapa, czaslogiki);

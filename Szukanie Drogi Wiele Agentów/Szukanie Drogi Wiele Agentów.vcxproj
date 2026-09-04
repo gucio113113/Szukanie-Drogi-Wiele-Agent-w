@@ -139,6 +139,7 @@
     <ClCompile Include="PozycjeNaMapie.cpp" />
     <ClCompile Include="SystemNamierzania.cpp" />
     <ClCompile Include="SystemObrazen.cpp" />
+    <ClCompile Include="SystemZajmowania.cpp" />
     <ClCompile Include="Zasob.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,7 @@
     <ClInclude Include="rayguiimplementacja.h" />
     <ClInclude Include="SystemNamierzania.h" />
     <ClInclude Include="SystemObrazen.h" />
+    <ClInclude Include="SystemZajmowania.h" />
     <ClInclude Include="Zasob.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -13,6 +13,7 @@
 #include "Kolory.h"
 #include <algorithm>
 #include <vector>
+#include <random>
 
 struct KolorowyKwadrat
 {

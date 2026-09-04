@@ -128,6 +128,14 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   {
 	  return &player;
   }
+  Animacja* Obiekt::ZwrocAnimacje()
+  {
+	  return player.ZwrocAnimacje();
+  }
+  ZestawAnimacji* Obiekt::ZwrocZestawAnimacji()
+  {
+	  return player.ZwrocZestaw();
+  }
   unsigned int Obiekt::DostanIdnex()
   {
 	  return IndexObiektu;
