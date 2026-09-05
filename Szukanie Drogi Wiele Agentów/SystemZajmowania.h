@@ -9,49 +9,50 @@
 #include <array>
 #include <raylib.h>
 #include "Funkcje.h"
+#include <generator>
+#include "CzasLogiki.h"
+#include "PodstawaSystemu.h"
 
 
-class SystemZajmowaniaSojuszy
+class SystemZajmowaniaSojuszy : public PodstawaSystemu
 {
 	bool StanInicjacji;
-
-	unsigned int RozmiarSystemu;
-	unsigned int RozmiarKlatek;
 
 	std::vector<std::array<Vector2,4>> TablicaPunktyTerenu;
 	std::vector<Druzyny> TablicaDruzynyZajmujaceTeren;
 	std::vector<std::vector<unsigned int>> TablicaZmapowaneTereny;
-	std::vector<std::unordered_map<Druzyny,std::vector<unsigned int>>> TablicaIloscObiektowDanejDruzyny;
 	std::vector<unsigned int> TablicaPrzychody;
 	std::vector<unsigned int> TablicaZajmowanieTick;
 	std::vector<unsigned int> TablicaZajmowanieCzasZajmowania;
-#ifdef SYSTEM_ZAJMOWANIA
-	std::vector<KolorowyKwadrat> Kolorowe;
-#endif // !SYSTEM_ZAJMOWANIA
 
-	//Funkcje Inline
-
-	inline unsigned int ZwrocIndex(unsigned int x, unsigned int y)
-	{ 
-		return x + (y * RozmiarSystemu); 
-	};
-	inline bool CzyMozeOdczytac(unsigned int x, unsigned int y) 
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+	std::vector<Vector2> LosowePunkciki;
+	enum class PokazWartosciDebug : unsigned char
 	{
-#ifdef SYSTEM_ZAJMOWANIA
-		if (StanInicjacji == false)
-		{
-			std::cout << "Systemu Zajmowania Nie Zainicjowanao \n";
-		}
-#endif // !SYSTEM_ZAJMOWANIA
-
-		return (x < RozmiarSystemu && y < RozmiarSystemu && StanInicjacji == true);
+		PRZYCHOD_DEBUG,
+		ZAJMOWANIA_TICK_DEBUG,
+		ZAJMOWANIA_CZASZAJMOWANIA_DEBUG,
+		ZMAPOWANY_TEREN_DEBUG,
+		ILOSCOBIEKTOW_DANEJ_DRUZYNY_DEBUG
 	};
+	PokazWartosciDebug pokazwartoscidebug=PokazWartosciDebug::ILOSCOBIEKTOW_DANEJ_DRUZYNY_DEBUG;
 
+
+#endif // SYSTEM_ZAJMOWANIA_DEBUG
 
 	void RozpocznijZajmowanie(unsigned int x,unsigned int y);
 	
+	void ZmapujObiekty(std::vector<Obiekt*>& Obiekty);
+	void OdMapujObiekty();
+
+
 
 public:
+
+	SystemZajmowaniaSojuszy(unsigned int RozmiarSystemu=20, unsigned int RozmiarKlatek=50);
+
+
+	//void DopasujDoRozmiarow(unsigned int RozmiarMapy);
 
 	void UstawRozmiarSystemu(unsigned int RozmiarSystemu);
 	void UstawRozmiarKlatek(unsigned int RozmiarKlatek);
@@ -69,12 +70,17 @@ public:
 
 	//Zwraca Zbiotry
 
-	unsigned int ZwrocIloscObiektowDruzyny(Druzyny druzyna, unsigned int x, unsigned int y);
-	const std::vector<unsigned int> * ZwrocTabliceObiektow(Druzyny druzyna,unsigned int x,unsigned int y);
+	unsigned int ZwrocIloscObiektowDruzyny(std::vector<Obiekt*> &Obiekty,Druzyny druzyna, unsigned int x, unsigned int y);
+	std::vector<unsigned int>  ZwrocTabliceObiektow(std::vector<Obiekt*> &Obiekty,Druzyny druzyna,unsigned int x,unsigned int y);
 
-	void GenerujSystem(CzasLogiki& czasLogik);
-	void ZmapujObiekty(std::vector<Obiekt*> &Obiekty);
+	void GenerujSystem(const unsigned int TickRate);
+
 	void Logika(std::vector<Obiekt*> &Obiekty,CzasLogiki &Czas);
+	
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+	void Debug();
+#endif // SYSTEM_ZAJMOWANIA_DEBUG
+
 	
 	
 	

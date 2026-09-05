@@ -183,17 +183,11 @@ void NarysujSiatke(std::vector<std::vector<unsigned int>>& Klatki,  int RozmiarS
 			DrawText(std::to_string(Klatki[index].size()).c_str(), (index % RozmiarSystemu) * RozmiarKlatki + ((RozmiarKlatki - rozmiarTekstu) / 2), (index / RozmiarSystemu) * RozmiarKlatki + (RozmiarKlatki / 2), RozmiarKlatki / 10, BLACK);
 
 		}
-
-
-
-
 	}
-
-
-
-
-
-
+}
+ int ZwrocWysrodkowanePrzesuniencie(std::string& napis, unsigned int RozmiarCzionki,unsigned int RozmiarObszaru)
+{
+	return  static_cast<int>((napis.length()* RozmiarCzionki - RozmiarObszaru)/2);
 }
 
 

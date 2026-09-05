@@ -194,7 +194,7 @@ protected:
 #ifdef AGENT_DEBUG
 	std::vector<KolorowyKwadrat> KoloroweKwadraty;
 #endif
-	bool Rezerwacja(std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, Mapa& mapa,CzasLogiki &Czaslogiki);
+	bool RezerwacjaKlatekRuchu(std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, Mapa& mapa,CzasLogiki &Czaslogiki);
 
 	//Metody Szukania drogi
 
@@ -215,7 +215,6 @@ protected:
 
 	//Gdy Droga jest znaleziona ponisza funkcja bedzie szukac trasy z do Celu
 	void WykonanieDrogiWlasciwe(Mapa &mapa,CzasLogiki &czaslogiki);
-
 
 	//Wybiera Najmniejsza Klatke o najkmniejsse jlicx zbie krokow i robi tam eskpansje
 

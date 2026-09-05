@@ -66,8 +66,14 @@
     <ClCompile Include="GraczISter.cpp">
       <Filter>Pliki źródłowe\Logika</Filter>
     </ClCompile>
-    <ClCompile Include="SystemZajmowania.cpp">
+    <ClCompile Include="Sojusze.cpp">
       <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="PodstawaSystemu.cpp">
+      <Filter>Pliki źródłowe\Systemy</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemZajmowania.cpp">
+      <Filter>Pliki źródłowe\Systemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +126,12 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="SystemZajmowania.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="PodstawaSystemu.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Sojusze.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

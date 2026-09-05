@@ -163,7 +163,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 	 if (obiekt != nullptr)
 	 {
 		 this->obiekt = obiekt;
-		 this->IndexObiektuCel = this->obiekt->DostanIdnex();
+		 this->IndexObiektuCel = this->obiekt->ZwrocIndexObiektu();
 
 		 this->kat = katRozpoczeczeczia;
 

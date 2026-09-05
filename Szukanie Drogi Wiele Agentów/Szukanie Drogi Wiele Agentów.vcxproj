@@ -136,7 +136,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mapa.cpp" />
     <ClCompile Include="Obiekt.cpp" />
+    <ClCompile Include="PodstawaSystemu.cpp" />
     <ClCompile Include="PozycjeNaMapie.cpp" />
+    <ClCompile Include="Sojusze.cpp" />
     <ClCompile Include="SystemNamierzania.cpp" />
     <ClCompile Include="SystemObrazen.cpp" />
     <ClCompile Include="SystemZajmowania.cpp" />
@@ -153,9 +155,11 @@
     <ClInclude Include="Kolory.h" />
     <ClInclude Include="Mapa.h" />
     <ClInclude Include="Obiekt.h" />
+    <ClInclude Include="PodstawaSystemu.h" />
     <ClInclude Include="PozycjeNaMapie.h" />
     <ClInclude Include="raygui.h" />
     <ClInclude Include="rayguiimplementacja.h" />
+    <ClInclude Include="Sojusze.h" />
     <ClInclude Include="SystemNamierzania.h" />
     <ClInclude Include="SystemObrazen.h" />
     <ClInclude Include="SystemZajmowania.h" />

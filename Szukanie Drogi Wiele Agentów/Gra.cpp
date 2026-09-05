@@ -135,6 +135,9 @@ void Gra::Render()
 	#ifdef SYSTEM_OBRAZEN_DEBUG
 	systemobrazen.Debug(mapa.RozmiarKlatki);
 	#endif
+	#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+	systemzajmowaniasojuszy.Debug();
+	#endif
 	for (Obiekt*& obiekt : Obiekty)
 	{
 		obiekt->Render(mapa, czas, tablica);

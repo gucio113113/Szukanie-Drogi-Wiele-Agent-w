@@ -11,6 +11,7 @@
 #include "Zasob.h"
 #include "GraczISter.h"
 #include <DyrektywyDebugowania.h>
+#include "SystemZajmowania.h"
 
 class Gra
 {
@@ -24,6 +25,7 @@ class Gra
 
 	SystemNamierzania systemnamierzania;
 	SystemObrazen systemobrazen;
+	SystemZajmowaniaSojuszy systemzajmowaniasojuszy;
 
 	GraczISter graczSter;
 	ParametryPociskow parametrypociskow;

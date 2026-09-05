@@ -1,57 +1,5 @@
 #include "Obiekt.h"
 
-Sojusze::Sojusze(Druzyny wlasciciel, Druzyny sojusz)
-{
-	this->wlasciciel = wlasciciel;
-	this->sojusz = sojusz;
-}
-Sojusze::Sojusze(Druzyny wlasciciel)
-{
-	this->wlasciciel = wlasciciel;
-	this->sojusz = wlasciciel;
-}
-void Sojusze::UstawWlasciciel(Druzyny wlasciciel)
-{
-	this->sojusz = this->sojusz & ~this->wlasciciel;
-	this->wlasciciel = wlasciciel;
-	this->sojusz = this->sojusz | sojusz;
-}
-void Sojusze::UstawSojusz(Druzyny sojusz)
-{
-	this->sojusz = this->sojusz | sojusz;
-}
-void Sojusze::UsunSojusz(Druzyny sojusz)
-{
-	this->sojusz = this->sojusz ^ sojusz;
-}
-Druzyny Sojusze::zwrocSojusz()
-{
-	return sojusz;
-}
-Druzyny Sojusze::zwrocWlasciciel()
-{
-	return wlasciciel;
-}
-//checks if two objects have the same team
-bool Sojusze::SprawdzSojusz(const Sojusze sojusz1)
-{
-#ifdef SYSTEMNAMIERZANIA_DEBUG
-
-	bool so = (!!(sojusz & sojusz1.sojusz));
-	if (so == true) std::cout << "Sa sojusz \n";
-	else "Nie ma sojusz \n";
-	return so;
-#else // SYSTEMNAMIERZANIA_DEBUG
-	return (!!(sojusz & sojusz1.sojusz));
-#endif
-}
-Sojusze Sojusze::operator=(const Sojusze sojusz1)
-{
-	this->sojusz = sojusz1.sojusz;
-	this->wlasciciel = sojusz1.wlasciciel;
-	return *this;
-}
-
 
 
 void Obiekt::UstawIndexObiektu(std::vector<Obiekt*>& Obiekty)
@@ -136,9 +84,59 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   {
 	  return player.ZwrocZestaw();
   }
-  unsigned int Obiekt::DostanIdnex()
+  unsigned int Obiekt::ZwrocIndexObiektu()
   {
 	  return IndexObiektu;
+  }
+  unsigned int Obiekt::ZwrocZdrowie()
+  {
+	  return Zdrowie;
+  }
+  Sojusze Obiekt::ZwrocSojusz()
+  {
+	  return sojusze;
+  }
+  Typy Obiekt::ZwrocTypy()
+  {
+	  return typ;
+  }
+  bool Obiekt::ZwrocCzyZyje()
+  {
+	  return CzyZyje;
+  }
+  Vector2 Obiekt::ZwrocPozycje()
+  {
+	  return pozycja;
+  }
+  Vector2 Obiekt::ZwrocPoprzedniaPozycje()
+  {
+	  return pozycjapoprzednia;
+  }
+
+  void Obiekt::UstawZdrowie(unsigned int Zdrowie)
+  {
+	  this->Zdrowie = Zdrowie;
+  }
+  void Obiekt::UstawSojusze(Druzyny wlasciciel, Druzyny sojusz)
+  {
+	  this->sojusze.UstawSojusz(sojusz);
+	  this->sojusze.UstawWlasciciel(wlasciciel);
+  }
+  void Obiekt::UstawTypy(Typy typ)
+  {
+	  this->typ = typ;
+  }
+  void Obiekt::UstawCzyZyje(bool CzyZyje)
+  {
+	  this->CzyZyje = CzyZyje;
+  }
+  void Obiekt::UstawPozycje(Vector2 pozycja)
+  {
+	  this->pozycja = pozycja;
+  }
+  void Obiekt::UstawPozycjePoprzednia(Vector2 pozycjapoprzednia)
+  {
+	  this->pozycjapoprzednia = pozycjapoprzednia;
   }
   bool Obiekt::operator== (Obiekt*& obiekt)
   {

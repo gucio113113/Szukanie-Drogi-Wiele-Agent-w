@@ -81,5 +81,13 @@ float IloczynWektorowy(Vector2 A, Vector2 B);
 
 void NarysujSiatke(std::vector<std::vector<unsigned int>>& Klatki,  int RozmiarSystemu,  int RozmiarKlatki,Color ZObiektem,Color BezObiektu);
 
+int ZwrocWysrodkowanePrzesuniencie(std::string& napis,unsigned int RozmiarCzionki,unsigned int RozmiarObszaru);
+
+inline void NarysujTekst(std::string& napis, int RozmiarCzionki, int x, int y,Color Kolor)
+{
+	int rozmiar = napis.size() * (RozmiarCzionki);
+	DrawText(napis.c_str(), x-(rozmiar/2), y, RozmiarCzionki,Kolor);
+
+}
 
 #endif // !FUNKCJE_H
