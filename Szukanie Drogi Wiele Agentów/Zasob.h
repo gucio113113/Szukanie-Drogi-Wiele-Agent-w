@@ -11,18 +11,44 @@
 #include <DyrektywyDebugowania.h>
 
 
-enum KierunkiSwiata
+enum class KierunkiSwiata : unsigned char
 {
- POLUDNIE =0,
- POLUDNIE_ZACHOD,
- ZACHOD,
- POLNOC_ZACHOD,
- POLNOC,
- POLNOC_WSCHOD,
- WSCHOD,
- POLUDNIEWCHOD,
- ZADEN
+ POLUDNIE        = 0b00000001,
+ ZACHOD          = 0b00000010,
+ POLNOC          = 0b00000100,
+ WSCHOD          = 0b00001000,
+
+ POLNOC_ZACHOD   = POLNOC | ZACHOD ,
+ POLNOC_WSCHOD   = POLNOC | WSCHOD,
+ POLUDNIE_WSCHOD = POLUDNIE | WSCHOD,
+ POLUDNIE_ZACHOD = POLUDNIE | ZACHOD,
+ ZADEN           =0b00000000
 };
+inline constexpr KierunkiSwiata operator | (KierunkiSwiata kierunki0,  KierunkiSwiata kierunki1)
+{
+	return static_cast<KierunkiSwiata>(static_cast<unsigned char>(kierunki0) | static_cast<unsigned char>(kierunki1));
+}
+inline constexpr KierunkiSwiata operator & (KierunkiSwiata kierunki0,  KierunkiSwiata kierunki1)
+{
+	return static_cast<KierunkiSwiata>(static_cast<unsigned char>(kierunki0) & static_cast<unsigned char>(kierunki1));
+}
+
+inline constexpr bool operator ==( KierunkiSwiata kierunki0,  KierunkiSwiata kierunki1)
+{
+	return static_cast<unsigned char>(kierunki0)==static_cast<unsigned char>(kierunki1);
+}
+inline constexpr unsigned char ZwrocIndexKlatki( KierunkiSwiata kierunki0)
+{
+	 if     ((kierunki0 == KierunkiSwiata::POLUDNIE_ZACHOD)) return 1;
+	else if ((kierunki0 == KierunkiSwiata::POLNOC_ZACHOD)) return 3;
+	else if ((kierunki0 == KierunkiSwiata::POLNOC_WSCHOD)) return 5;
+	else if ((kierunki0 == KierunkiSwiata::POLUDNIE_WSCHOD)) return 7;
+	else if ((kierunki0 == KierunkiSwiata::POLUDNIE)) return 0;
+	else if ((kierunki0 == KierunkiSwiata::ZACHOD)) return 2;
+	else if ((kierunki0 == KierunkiSwiata::POLNOC)) return 4;
+	else if ((kierunki0 == KierunkiSwiata::WSCHOD)) return 6;
+	else return 0;
+}
 enum TypyAnimacji
 {
 	STANIE=0,
@@ -67,6 +93,7 @@ class ZestawAnimacji
 	std::string NazwaAnimacji;
 	std::vector<Animacja> animacje;
 	Vector2 Rozmiar;
+	Vector2 RozmiarSkalowalny;
 	void WczytajKtoryTyp(TypyAnimacji typAnimacji, blmp::Obiekt& obiekt);
 	public:
 		friend class PlayerAnimacji;
@@ -105,20 +132,30 @@ class PlayerAnimacji
 
 public:
 
-	friend class Obiekt;
-	friend class Agent;
-	friend class Pocisk;
-	friend class Damage;
-	friend class DamageKolo;
-	friend class DamageProstokat;
+
+	unsigned int ZwrocObecnyTick();
+	unsigned int ZwrocKlatke();
+	TypyAnimacji ZwrocTypAnimacji();
+	KierunkiSwiata ZwrocKierunek();
+	Vector2 ZwrocRozmiar(unsigned int RozmiarKlatki);
+
+	ZestawAnimacji* ZwrocZestaw();
+	Animacja* ZwrocAnimacje();
+
+	void UstawObecnyTick(unsigned int ObecnyTick);
+	void UstawKlatke(unsigned int Klatka);
+	void UstawKierunek(KierunkiSwiata Kierunek);
+	void UstawTypAnimacji(TypyAnimacji typ);
+
+	
 
 	PlayerAnimacji(std::string NazwaAnimacji="");
 
 	void ZnajdzZasob(std::string NazwaAnimacji,TablicaAnimacji &tablicaAnimacji);
-	void ZnajdzTypAnimacji(TypyAnimacji typAnimacji);
-	void Rysuj(CzasLogiki &czasLogiki,Vector2 &Pozycja, const unsigned int& rozmiarKlatki,TablicaAnimacji &tablicaAnimacji);
-	void UstawTypAnimacji(TypyAnimacji typ);
-	void UstawKierunek(KierunkiSwiata kierunek);
+	
+	void Rysuj(CzasLogiki &czasLogiki,Vector2 Pozycja, const unsigned int rozmiarKlatki,TablicaAnimacji &tablicaAnimacji);
+	
+	
 
 };
 

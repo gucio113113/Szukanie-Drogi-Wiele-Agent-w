@@ -13,6 +13,8 @@
 #include "CzasLogiki.h"
 #include "Funkcje.h"
 #include "SystemObrazen.h"
+#include "Sojusze.h"
+#include "PodstawaSystemu.h"
 
 
 
@@ -25,70 +27,6 @@
 
 
 
-enum class Druzyny : unsigned char
-{
-	NEUTRALNA= 0b00000000,
-	PRZECZIWNA=0b11111111,
-	DRUZYNA1 = 0b00000001,
-	DRUZYNA2 = 0b00000010,
-	DRUZYNA3 = 0b00000100,
-	DRUZYNA4 = 0b00001000,
-	DRUZYNA5 = 0b00010000,
-	DRUZYNA6 = 0b00100000,
-	DRUZYNA7 = 0b01000000,
-	DRUZYNA8 = 0b10000000,
-};
-inline constexpr Druzyny operator|(Druzyny a, Druzyny b) {
-	return static_cast<Druzyny>(static_cast<unsigned char>(a) | static_cast<unsigned char>(b));
-}
-inline constexpr Druzyny operator&(Druzyny a, Druzyny b) {
-	return static_cast<Druzyny>(static_cast<unsigned char>(a) & static_cast<unsigned char>(b));
-}
-inline constexpr Druzyny operator^(Druzyny a, Druzyny b) {
-	return static_cast<Druzyny>(static_cast<unsigned char>(a) ^ static_cast<unsigned char>(b));
-}
-inline constexpr Druzyny operator~(Druzyny a) {
-	return static_cast<Druzyny>(~static_cast<unsigned char>(a));
-}
-inline constexpr bool operator!(Druzyny a) {
-	return static_cast<unsigned char>(a)==0;
-}
-
-
-enum class Typy : unsigned char
-{
-	ZADEN       =		  0b00000000,
-	SYSTEM_OBRAZEN      = 0b00000001,  //typ druzyny polega na tym ze nie jest traktowana przez system namierzania jako cel do namierzania
-	SYSTEM_NAMIERZANIA =  0b00000010,
-	SYSTEM_USUWANIA    =  0b00000100	
-};
-inline constexpr Typy operator|(Typy a, Typy b) {
-	return static_cast<Typy>(static_cast<unsigned char>(a) | static_cast<unsigned char>(b));
-}
-inline constexpr Typy operator&(Typy a, Typy b) {
-	return static_cast<Typy>(static_cast<unsigned char>(a) & static_cast<unsigned char>(b));
-}
-inline constexpr bool operator!(Typy a) {
-	return static_cast<unsigned char>(a) == 0;
-}
-
-class Sojusze
-{
-	Druzyny sojusz;
-	Druzyny wlasciciel;
-
-public:
-	Sojusze(Druzyny wlasciciel=Druzyny::NEUTRALNA, Druzyny Sojusz=Druzyny::NEUTRALNA);
-	Sojusze(Druzyny wlasciciel);
-	void UstawWlasciciel(Druzyny wlasciciel);
-	void UstawSojusz(Druzyny sojusz);
-	void UsunSojusz(Druzyny sojusz);
-	Druzyny zwrocSojusz();
-	Druzyny zwrocWlasciciel();
-	//checks if two objects have the same team
-	bool SprawdzSojusz(const Sojusze& sojusz1);
-	Sojusze operator=(const Sojusze &sojusz1);
-};
 
 
 
@@ -104,6 +42,9 @@ class TablicaAnimacji;
 class Obiekt
 {
 protected:
+
+
+	Vector2 pozycjapoprzednia;
 	Vector2 pozycja;
 	PlayerAnimacji player;
 	unsigned int Zdrowie;
@@ -118,17 +59,36 @@ public:
 	
 	Obiekt( Vector2 pozycja = {}, unsigned int Zdrowie = 100,Sojusze sojusz={Druzyny::NEUTRALNA,Druzyny::NEUTRALNA},Typy typ=Typy::ZADEN);
 	Obiekt(std::string NazwaAnimacji , Vector2 pozycja , unsigned int Zdrowie , Sojusze sojusz, Typy typ,std::vector<Obiekt*> &Obiekty,TablicaAnimacji &tablica );
-	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty);
+	virtual void Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& systemobrazen, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica, std::vector<Obiekt*>& Obiekty);
 	virtual void Render(Mapa& mapa,CzasLogiki &czasLogiki,TablicaAnimacji &tablica);
 
 	// This command allow us for own terms of deleting the object from the engine and it saves all deleted object from the current state to the table
 	virtual void SprawdzCzyUsunObiekt(std::vector<unsigned int> &IndexyUsuwanych);
 
+	PlayerAnimacji * ZwrocPlayerAnimacji();
+	Animacja* ZwrocAnimacje();
+	ZestawAnimacji * ZwrocZestawAnimacji();
 
-	unsigned int DostanIdnex();
+	unsigned int ZwrocIndexObiektu();
+	unsigned int ZwrocZdrowie();
+	Sojusze ZwrocSojusz();
+	Typy ZwrocTypy();
+	bool ZwrocCzyZyje();
+	Vector2 ZwrocPozycje();
+	Vector2 ZwrocPoprzedniaPozycje();
+	virtual bool ZwrocCzyZaktualizowacSystemy();
+
+	void UstawZdrowie(unsigned int Zdrowie);
+	void UstawSojusze(Druzyny wlasciciel,Druzyny sojusz);
+	void UstawTypy(Typy typ);
+	void UstawCzyZyje(bool CzyZyje);
+	void UstawPozycje(Vector2 pozycja);
+	void UstawPozycjePoprzednia(Vector2 pozycjapoprzednia);
 	
 	bool operator== (Obiekt*& obiekt);
 	bool operator!=(Obiekt*& obiekt);
+
+	//Do usuniencia
 
 	friend class Bron;
 	friend class Damage;
@@ -141,6 +101,8 @@ public:
 	friend class Gra;
 	friend void MapowanieObiektow(std::vector<Obiekt*>& Obiekty, std::vector<std::vector<unsigned int>> &KlatkiSystemu, unsigned int RozmiarKlatek, unsigned int RozmiarSystemu, Typy typ);
 	friend Obiekt* ZwrocObiekt(unsigned indexObiektu, std::vector<Obiekt*>& Obiekty);
+
+	//Do usuniencia
 };
 // ---------------------------------------
 Obiekt* ZwrocObiekt(unsigned indexObiektu, std::vector<Obiekt*>& Obiekty);

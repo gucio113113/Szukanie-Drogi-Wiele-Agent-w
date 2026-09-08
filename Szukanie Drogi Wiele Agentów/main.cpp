@@ -13,22 +13,6 @@
 
 std::vector<Agent> Agenci;
 
-void InicjalizacjaAgentow()
-{
-
-
-
-
-}
-void SzuaknieDrogiDlaWszystkich()
-{
-
-
-
-
-}
-
-
 
 
 

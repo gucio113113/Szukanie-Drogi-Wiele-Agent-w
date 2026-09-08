@@ -13,7 +13,7 @@ bool KolorowyKwadrat::operator==(const KolorowyKwadrat& kolorowy)
 	if (poz == kolorowy.poz) return true;
 	else return false;
 }
-bool KolorowyKwadrat::operator==(const PozycjaNaMapie& poz)
+bool KolorowyKwadrat::operator==(const PozycjaNaMapie poz)
 {
 	if (this->poz == poz) return true;
 	else return false;
@@ -81,59 +81,59 @@ void NowyKwadrat(PozycjaNaMapie poz, Color kolor, unsigned int rodzic, int koszt
 	}
 	else tablica.emplace_back(poz, kolor, std::to_string(kosztH) + "H " + std::to_string(kosztG) + "G", std::to_string(rodzic));
 }
-float Interpolacja(float x0, float y0, float x1, float y1, float obecna)
+float ZwrocInterpolacja(float x0, float y0, float x1, float y1, float obecna)
 {
 	return  ((y0 + (y1 - y0)) * (x1 - obecna) / (x1 - x0));
 }
-float Interpolacja(float x0, float x1, float procent)
+float ZwrocInterpolacja(float x0, float x1, float procent)
 {
 	return x0 + (x1 - x0) * procent;
 }
 
 
 
-float TickRuchu(Vector2 pozA, Vector2 pozB, float Predkosc, const float tickrate, float procent)
+float ZwrocTickRuchu(Vector2 pozA, Vector2 pozB, float Predkosc, const float tickrate, float procent)
 {
-	return ((Dlugosc({ pozB.x - pozA.x,pozB.y - pozA.y }) * procent) / Predkosc) * tickrate;
+	return ((ZwrocDlugosc({ pozB.x - pozA.x,pozB.y - pozA.y }) * procent) / Predkosc) * tickrate;
 }
-float Dlugosc(Vector2 wektor)
+float ZwrocDlugosc(Vector2 wektor)
 {
 	return sqrtf(wektor.x * wektor.x + wektor.y * wektor.y);
 }
-Vector2 Normalizacja(Vector2 wektor)
+Vector2 ZwrocNormalizacja(Vector2 wektor)
 {
-	float dl= Dlugosc(wektor);
+	float dl= ZwrocDlugosc(wektor);
 	if (dl != 0)
 		return { wektor.x / dl,wektor.y / dl };
 	else return { std::numeric_limits<float>::infinity(),std::numeric_limits<float>::infinity() };
 }
 
-int WInterwale(float t)
+int ZwrocWInterwale(float t)
 {
 	if (static_cast<int>(t) < t) return static_cast<int>(t) + 1;
 	else return  static_cast<int>(t);
 }
-int Manhatan(PozycjaNaMapie A, PozycjaNaMapie B)
+int ZwrocManhatan(PozycjaNaMapie A, PozycjaNaMapie B)
 {
 	return (B.x - A.x) + (B.y - A.y);
 }
-int Koszt(const PozycjaNaMapie& A, const PozycjaNaMapie& B)
+int ZwrocKoszt(const PozycjaNaMapie A, const PozycjaNaMapie B)
 {
 	if (abs(B.x - A.x) > abs(B.y - A.y)) return (abs(B.x - A.x) - abs(B.y - A.y)) * 10 + abs(B.y - A.y) * 14;
 	else if (abs(B.x - A.x) < abs(B.y - A.y)) return (abs(B.y - A.y) - abs(B.x - A.x)) * 10 + abs(B.x - A.x) * 14;
 	else return abs((B.x - A.x) * 14);
 }
 
-PozycjaNaMapie RodzicPozycja(const unsigned int& Rodzic, const unsigned int& szerokosc)
+PozycjaNaMapie ZwrocRodzicPozycja(const unsigned int Rodzic, const unsigned int szerokosc)
 {
 	return { static_cast<int>(Rodzic % szerokosc),static_cast<int>(Rodzic / szerokosc) };
 }
 
-unsigned int PozycjaRodzic(const PozycjaNaMapie& poz, const unsigned int& szerokosc)
+unsigned int ZwrocPozycjaRodzic(const PozycjaNaMapie poz, const unsigned int szerokosc)
 {
 	return  static_cast<unsigned int>(poz.x) + static_cast<unsigned int>(poz.y) * szerokosc;
 }
-void NarysujKwadrat(KolorowyKwadrat& kwadrat, const  int& rozmiar)
+void NarysujKwadrat(KolorowyKwadrat& kwadrat, const  int rozmiar)
 {
 
 	DrawRectangle(static_cast<int>(kwadrat.poz.x * rozmiar), static_cast<int>(kwadrat.poz.y * rozmiar), static_cast<int>(rozmiar), static_cast<int>(rozmiar), kwadrat.kolor);
@@ -160,11 +160,11 @@ float OdwrocenieKonta(float Kat, bool WKtoraStrone)
 	}
 }
 
-float IloczynSkalarny(Vector2 A, Vector2 B)
+float ZwrocIloczynSkalarny(Vector2 A, Vector2 B)
 {
 	return (A.x * B.x) + (A.y * B.y);
 }
-float IloczynWektorowy(Vector2 A, Vector2 B)
+float ZwrocIloczynWektorowy(Vector2 A, Vector2 B)
 {
 	return (A.x * B.y) - (B.x * A.y);
 }
@@ -183,17 +183,11 @@ void NarysujSiatke(std::vector<std::vector<unsigned int>>& Klatki,  int RozmiarS
 			DrawText(std::to_string(Klatki[index].size()).c_str(), (index % RozmiarSystemu) * RozmiarKlatki + ((RozmiarKlatki - rozmiarTekstu) / 2), (index / RozmiarSystemu) * RozmiarKlatki + (RozmiarKlatki / 2), RozmiarKlatki / 10, BLACK);
 
 		}
-
-
-
-
 	}
-
-
-
-
-
-
+}
+ int ZwrocWysrodkowanePrzesuniencie(std::string& napis, unsigned int RozmiarCzionki,unsigned int RozmiarObszaru)
+{
+	return  static_cast<int>((napis.length()* RozmiarCzionki - RozmiarObszaru)/2);
 }
 
 

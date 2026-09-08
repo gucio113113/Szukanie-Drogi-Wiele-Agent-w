@@ -27,15 +27,16 @@ void Damage::NaliczTick(CzasLogiki& czasLogiki)
 		
 		
 }
-void Damage::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
+bool Damage::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
 {
 	std::cout << "Sprawdza Damage \n";
+	return false;
 }
-PozycjaNaMapie Damage::DolnyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie Damage::DolnyZasieg(const unsigned int rozmiarKlatek)
 {
 	return { static_cast<int>(Pozycja.x) / static_cast<int>(rozmiarKlatek),static_cast<int>(Pozycja.y) / static_cast<int>(rozmiarKlatek) };
 }
-PozycjaNaMapie Damage::GornyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie Damage::GornyZasieg(const unsigned int rozmiarKlatek)
 {
 	return { static_cast<int>(Pozycja.x) / static_cast<int>(rozmiarKlatek),static_cast<int>(Pozycja.y) / static_cast<int>(rozmiarKlatek) };
 }
@@ -49,21 +50,23 @@ DamageKolo::DamageKolo(Vector2 Pozycja, float Promien, unsigned int CzasTrwania,
 	this->Tick = 0;
 }
 
-void DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanimacji)
+bool DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanimacji)
 {
 	//Rectangle kwadrat1={}
 	if (obiekt != nullptr)
 	{
 		Rectangle kwadrat = { obiekt->pozycja.x - static_cast<float>(mapa.RozmiarKlatki / 2),obiekt->pozycja.y - static_cast<float>(mapa.RozmiarKlatki / 2),static_cast<float>(mapa.RozmiarKlatki),static_cast<float>(mapa.RozmiarKlatki) };
 
-		if (CheckCollisionCircleRec(obiekt->pozycja, Promien, kwadrat) == true && Tick % KiedyZadaje == 0)
+		if (CheckCollisionCircleRec(obiekt->pozycja, Promien * static_cast<float>(mapa.RozmiarKlatki), kwadrat) == true && Tick % KiedyZadaje == 0)
 		{
 			if (obiekt->Zdrowie - IleZadaje > 0) obiekt->Zdrowie -= IleZadaje;
 			else obiekt->Zdrowie = 0;
+			return true;
 		}
 	}
+	return false;
 }
-PozycjaNaMapie DamageKolo::DolnyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie DamageKolo::DolnyZasieg(const unsigned int rozmiarKlatek)
 {
 
 	PozycjaNaMapie poz=Damage::DolnyZasieg(rozmiarKlatek);
@@ -74,7 +77,7 @@ PozycjaNaMapie DamageKolo::DolnyZasieg(const unsigned int& rozmiarKlatek)
 
 
 }
-PozycjaNaMapie DamageKolo::GornyZasieg(const unsigned int& rozmiarKlatek)
+PozycjaNaMapie DamageKolo::GornyZasieg(const unsigned int rozmiarKlatek)
 {
 	PozycjaNaMapie poz = Damage::GornyZasieg(rozmiarKlatek);
 	poz.x = poz.x - (Promien / rozmiarKlatek);
@@ -97,34 +100,52 @@ DamageProstokat::DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int 
 
 
 }
+#ifdef SYSTEM_OBRAZEN_DEBUG
+
+void Damage::NarysujDamage(unsigned int rozmiarKlatki)
+{
+	std::cout << "Narysuj \n";
+ }
+void DamageProstokat::NarysujDamage(unsigned int rozmiarKlatki)
+{
+	DrawRectangle(this->Pozycja.x, this->Pozycja.y, this->Rozmiar.x * static_cast<int>(rozmiarKlatki), this->Rozmiar.y * static_cast<int>(rozmiarKlatki), RED);
+}
+void DamageKolo::NarysujDamage(unsigned int rozmiarKlatki)
+{
+	DrawCircle(this->Pozycja.x, this->Pozycja.y, this->Promien * static_cast<int>(rozmiarKlatki), RED);
+
+}
+#endif
 
 
- void DamageProstokat::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
+ bool DamageProstokat::Sprawdz(Obiekt*& obiekt, Mapa& mapa, TablicaAnimacji& tablicanimacji)
 {
 	 if (obiekt != nullptr)
 	 {
-		 ZestawAnimacji*& Zestaw = obiekt->player.zestawAnimacji;
+		 ZestawAnimacji * Zestaw = obiekt->player.ZwrocZestaw();
 
 		 if (Zestaw != nullptr)
 		 {
 
 			 Rectangle kwadrat0 = { obiekt->pozycja.x - static_cast<float>(Zestaw->Rozmiar.x / 2),obiekt->pozycja.y - static_cast<float>(Zestaw->Rozmiar.y / 2),static_cast<float>(Zestaw->Rozmiar.x),static_cast<float>(Zestaw->Rozmiar.y) };
-			 Rectangle kwadrat1 = { Pozycja.x - (Rozmiar.x / 2),Pozycja.y - (Rozmiar.y / 2),Rozmiar.x,Rozmiar.y };
+			 Rectangle kwadrat1 = { Pozycja.x - (Rozmiar.x*static_cast<float>(mapa.RozmiarKlatki) / 2),Pozycja.y - (Rozmiar.y*static_cast<float>(mapa.RozmiarKlatki) / 2),Rozmiar.x * static_cast<float>(mapa.RozmiarKlatki),Rozmiar.y * static_cast<float>(mapa.RozmiarKlatki) };
 
 
 			 if (CheckCollisionRecs(kwadrat0, kwadrat1) == true && Tick % KiedyZadaje == 0)
 			 {
 				 if (obiekt->Zdrowie - IleZadaje > 0) obiekt->Zdrowie -= IleZadaje;
 				 else obiekt->Zdrowie = 0;
+				 return true;
 			 }
 
 		 }
 
 	 }
+	 return false;
 
 
 }
- PozycjaNaMapie DamageProstokat::DolnyZasieg(const unsigned int& rozmiarKlatek)
+ PozycjaNaMapie DamageProstokat::DolnyZasieg(const unsigned int rozmiarKlatek)
  {
 	 PozycjaNaMapie poz = Damage::DolnyZasieg(rozmiarKlatek);
 	 poz.x = poz.x + (Rozmiar.x / rozmiarKlatek);
@@ -135,7 +156,7 @@ DamageProstokat::DamageProstokat(Vector2 Pozycja, Vector2 Rozmiar, unsigned int 
 
 
  }
- PozycjaNaMapie DamageProstokat::GornyZasieg(const unsigned int& rozmiarKlatek)
+ PozycjaNaMapie DamageProstokat::GornyZasieg(const unsigned int rozmiarKlatek)
  {
 	 PozycjaNaMapie poz = Damage::GornyZasieg(rozmiarKlatek);
 	 poz.x = poz.x - (Rozmiar.x / rozmiarKlatek);
@@ -162,16 +183,18 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
  {
 	 this->RozmiarKlatek = RozmiarKlatek;
 	 this->RozmiarSystemu = RozmiarSystemu;
+ }
 
-	 this->IndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu, {});
- }
- void SystemObrazen::ZmapujObiekty(std::vector<Obiekt*>& Obiekty)
+ void SystemObrazen::LogikaSystemuObrazen(std::vector<Obiekt*>& Obiekty, CzasLogiki& Czaslogiki, Mapa& mapa,TablicaAnimacji & tablicanimacji)
  {
-	 MapowanieObiektow(Obiekty, IndexyObiektow, RozmiarKlatek, RozmiarSystemu,Typy::SYSTEM_OBRAZEN);
- }
- void SystemObrazen::LogikaSystemu(std::vector<Obiekt*>& Obiekty, CzasLogiki& Czaslogiki, Mapa& mapa,TablicaAnimacji & tablicanimacji)
- {
-	// ZmapujObiekty(Obiekty);
+	 for (Obiekt*& obiekt : Obiekty)
+	 {
+		 ZmapujObiekt(obiekt->ZwrocIndexObiektu(), obiekt->ZwrocCzyZaktualizowacSystemy(), obiekt->ZwrocPozycje(), obiekt->ZwrocPoprzedniaPozycje(), obiekt->ZwrocTypy());
+	}
+
+
+
+
 	 for (Damage*& damage : Obrazenia)
 	 {
 		 if (damage != nullptr)
@@ -187,12 +210,15 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 			 {
 				 for (unsigned int y = gornyRog.y; y <= dolnyRog.y; y++)
 				 {
-					 for (unsigned int& indexobiektu : IndexyObiektow[x+(y * RozmiarSystemu)])
+					 for (unsigned int& indexobiektu : ZmapowaneObiekty[ZwrocIndexKlatki(x,y)])
 					 {
-						 Obiekt*& obiekt = Obiekty[indexobiektu];
+						 Obiekt * obiekt = ZwrocObiekt(indexobiektu,Obiekty);
 						 if (obiekt != nullptr)
 						 {
-							 damage->Sprawdz(obiekt, mapa, tablicanimacji);
+							 if (damage->Sprawdz(obiekt, mapa, tablicanimacji) == true)
+							 {
+								 PodOstrzalem.emplace_back(indexobiektu);
+							 }
 						 }
 					#ifdef SYSTEM_OBRAZEN_DEBUG
 						 else
@@ -226,15 +252,15 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 	 }
 
  }
- void SystemObrazen::UstawParametry(unsigned int RozmiarSystemu, Mapa& mapa)
- {
-	 this->RozmiarSystemu = RozmiarSystemu;
-	 this->RozmiarKlatek = mapa.szerokosc * mapa.RozmiarKlatki / RozmiarSystemu;
-	 this->IndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu, {});
- }
+
 #ifdef SYSTEM_OBRAZEN_DEBUG
- void SystemObrazen::Debug()
+ void SystemObrazen::Debug(unsigned int Rozmiar)
  {
-	 NarysujSiatke(IndexyObiektow, RozmiarSystemu, RozmiarKlatek, POMARANCZOWY, RED);
+	 std::cout << "Ilosc Damagow :" << Obrazenia.size() << "\n";
+	 NarysujSiatke(IndexyObiektow, RozmiarSystemu, RozmiarKlatek, POMARANCZOWY,{0,0,0,0});
+	 for (Damage* damage : Obrazenia)
+	 {
+		 damage->NarysujDamage(Rozmiar);
+	 }
  }
 #endif

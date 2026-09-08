@@ -1,57 +1,5 @@
 #include "Obiekt.h"
 
-Sojusze::Sojusze(Druzyny wlasciciel, Druzyny sojusz)
-{
-	this->wlasciciel = wlasciciel;
-	this->sojusz = sojusz;
-}
-Sojusze::Sojusze(Druzyny wlasciciel)
-{
-	this->wlasciciel = wlasciciel;
-	this->sojusz = wlasciciel;
-}
-void Sojusze::UstawWlasciciel(Druzyny wlasciciel)
-{
-	this->sojusz = this->sojusz & ~this->wlasciciel;
-	this->wlasciciel = wlasciciel;
-	this->sojusz = this->sojusz | sojusz;
-}
-void Sojusze::UstawSojusz(Druzyny sojusz)
-{
-	this->sojusz = this->sojusz | sojusz;
-}
-void Sojusze::UsunSojusz(Druzyny sojusz)
-{
-	this->sojusz = this->sojusz ^ sojusz;
-}
-Druzyny Sojusze::zwrocSojusz()
-{
-	return sojusz;
-}
-Druzyny Sojusze::zwrocWlasciciel()
-{
-	return wlasciciel;
-}
-//checks if two objects have the same team
-bool Sojusze::SprawdzSojusz(const Sojusze& sojusz1)
-{
-#ifdef SYSTEMNAMIERZANIA_DEBUG
-
-	bool so = (!!(sojusz & sojusz1.sojusz));
-	if (so == true) std::cout << "Sa sojusz \n";
-	else "Nie ma sojusz \n";
-	return so;
-#else // SYSTEMNAMIERZANIA_DEBUG
-	return (!!(sojusz & sojusz1.sojusz));
-#endif
-}
-Sojusze Sojusze::operator=(const Sojusze& sojusz1)
-{
-	this->sojusz = sojusz1.sojusz;
-	this->wlasciciel = sojusz1.wlasciciel;
-	return *this;
-}
-
 
 
 void Obiekt::UstawIndexObiektu(std::vector<Obiekt*>& Obiekty)
@@ -79,10 +27,10 @@ Obiekt::Obiekt(Vector2 pozycja , unsigned int Zdrowie,  Sojusze sojusz , Typy ty
 	
 
 	
-	player.kierunek = KierunkiSwiata::POLUDNIE;
-	player.Klatka = 0;
-	player.ObecnyTick = 0;
-	player.typAnimacji = TypyAnimacji::STANIE;
+	player.UstawKierunek(KierunkiSwiata::POLUDNIE);
+	player.UstawKlatke(0);
+	player.UstawObecnyTick(0);
+	player.UstawTypAnimacji(TypyAnimacji::STANIE);
 	this->IndexObiektu = 0;
 }
 Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie, Sojusze sojusz, Typy typ, std::vector<Obiekt*>& Obiekty, TablicaAnimacji& tablica)
@@ -92,16 +40,18 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 	this->sojusze = sojusz;
 	this->typ = typ;
 
-	player.typAnimacji = TypyAnimacji::STANIE;
+
 	player.ZnajdzZasob(NazwaAnimacji, tablica);
-	player.kierunek = KierunkiSwiata::POLUDNIE;
-	player.Klatka = 0;
-	player.ObecnyTick = 0;
-	
+
+	player.UstawTypAnimacji(TypyAnimacji::STANIE);
+	player.UstawKlatke(0);
+	player.UstawObecnyTick(0);
+	player.UstawKierunek(KierunkiSwiata::POLUDNIE);
+
 	UstawIndexObiektu(Obiekty);
 }
 
- void Obiekt::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& system, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica,  std::vector<Obiekt*>& Obiekty)
+ void Obiekt::Akcja(Mapa& mapa, CzasLogiki& czasLogiki, SystemObrazen& systemobrazen, SystemNamierzania& systemnamierzania, ParametryPociskow& parametry, TablicaAnimacji& tablica,  std::vector<Obiekt*>& Obiekty)
 {
 	 std::cout << "Akcja Obiekt \n";
 
@@ -122,10 +72,80 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 		  }
 	  }
   }
-
-  unsigned int Obiekt::DostanIdnex()
+  PlayerAnimacji * Obiekt::ZwrocPlayerAnimacji()
+  {
+	  return &player;
+  }
+  Animacja* Obiekt::ZwrocAnimacje()
+  {
+	  return player.ZwrocAnimacje();
+  }
+  ZestawAnimacji* Obiekt::ZwrocZestawAnimacji()
+  {
+	  return player.ZwrocZestaw();
+  }
+  unsigned int Obiekt::ZwrocIndexObiektu()
   {
 	  return IndexObiektu;
+  }
+  unsigned int Obiekt::ZwrocZdrowie()
+  {
+	  return Zdrowie;
+  }
+  Sojusze Obiekt::ZwrocSojusz()
+  {
+	  return sojusze;
+  }
+  Typy Obiekt::ZwrocTypy()
+  {
+	  return typ;
+  }
+  bool Obiekt::ZwrocCzyZyje()
+  {
+	  return CzyZyje;
+  }
+  Vector2 Obiekt::ZwrocPozycje()
+  {
+	  return pozycja;
+  }
+  Vector2 Obiekt::ZwrocPoprzedniaPozycje()
+  {
+	  return pozycjapoprzednia;
+  }
+  bool Obiekt::ZwrocCzyZaktualizowacSystemy()
+  {
+	  if (pozycjapoprzednia.x != pozycja.x && pozycjapoprzednia.y != pozycja.y)
+	  {
+		  this->pozycjapoprzednia = pozycja;
+		  return true;
+	  }
+	  else return false;
+  }
+
+  void Obiekt::UstawZdrowie(unsigned int Zdrowie)
+  {
+	  this->Zdrowie = Zdrowie;
+  }
+  void Obiekt::UstawSojusze(Druzyny wlasciciel, Druzyny sojusz)
+  {
+	  this->sojusze.UstawSojusz(sojusz);
+	  this->sojusze.UstawWlasciciel(wlasciciel);
+  }
+  void Obiekt::UstawTypy(Typy typ)
+  {
+	  this->typ = typ;
+  }
+  void Obiekt::UstawCzyZyje(bool CzyZyje)
+  {
+	  this->CzyZyje = CzyZyje;
+  }
+  void Obiekt::UstawPozycje(Vector2 pozycja)
+  {
+	  this->pozycja = pozycja;
+  }
+  void Obiekt::UstawPozycjePoprzednia(Vector2 pozycjapoprzednia)
+  {
+	  this->pozycjapoprzednia = pozycjapoprzednia;
   }
   bool Obiekt::operator== (Obiekt*& obiekt)
   {
@@ -154,7 +174,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   {
 	  if (predkosc != 0)
 	  {
-		  return Dlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }) / predkosc;
+		  return ZwrocDlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }) / predkosc;
 	  }
 	  else return std::numeric_limits<float>::infinity();
   }
@@ -162,7 +182,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   {
 	  if (predkosc != 0)
 	  {
-		  return  (Dlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }) / predkosc) * procent;
+		  return  (ZwrocDlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }) / predkosc) * procent;
 	  }
 	  else return std::numeric_limits<float>::infinity();
   }
@@ -177,8 +197,8 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 
   void Ruch::ZmienPozycje(Vector2& Pozycja)
   {
-	  Pozycja.x = Interpolacja(PunktA.x, PunktB.x, procent);
-	  Pozycja.y = Interpolacja(PunktA.y, PunktB.y, procent);
+	  Pozycja.x = ZwrocInterpolacja(PunktA.x, PunktB.x, procent);
+	  Pozycja.y = ZwrocInterpolacja(PunktA.y, PunktB.y, procent);
   }
   void Ruch::Porusz(float Predkosc, Vector2& Pozycja)
   {
@@ -190,9 +210,9 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 	  else
 	  {
 		  //	std::cout << "Predkosc :" << Predkosc << "\n";
-		  if (Dlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }) != 0)
+		  if (ZwrocDlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }) != 0)
 		  {
-			  procent = procent + ((Predkosc) / Dlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }));
+			  procent = procent + ((Predkosc) / ZwrocDlugosc({ PunktB.x - PunktA.x,PunktB.y - PunktA.y }));
 			  ZmienPozycje(Pozycja);
 		  }
 	  }
@@ -219,7 +239,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 	  this->kat = kat;
 	  
 	  Vector2 Kierunkowy = { cosf(kat / 180 * LICZBA_PI), sinf(kat / 180 * LICZBA_PI) };
-	  float Iloczyn = IloczynWektorowy(Kierunkowy, Normalizacja(Odleglosc));
+	  float Iloczyn = ZwrocIloczynWektorowy(Kierunkowy, ZwrocNormalizacja(Odleglosc));
 	 
 
 	  if (static_cast<int>(Iloczyn) == 0)
@@ -236,7 +256,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   {
 	  if (stanruchu!=NATRAJEKTORI && Promien != 0)
 	  {
-		  float dosrodkowe = powf(Dlugosc(Predkosc), 2) / Promien;
+		  float dosrodkowe = powf(ZwrocDlugosc(Predkosc), 2) / Promien;
 		  
 
 		  
@@ -244,7 +264,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 		  Vector2 Odleglosc = { Cel.x - Pozycja.x,Cel.y - Pozycja.y };
 		  Vector2 Kierunkowy = { cosf(kat * 180/LICZBA_PI),sinf(kat * 180 /LICZBA_PI)};
 		  
-		  float Iloczyn = IloczynWektorowy(Kierunkowy, Normalizacja(Odleglosc));
+		  float Iloczyn = ZwrocIloczynWektorowy(Kierunkowy, ZwrocNormalizacja(Odleglosc));
 		  
 
 		  if (Iloczyn == 0)
@@ -258,7 +278,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 			  float nastepnyKat = (katowe) * 180 / LICZBA_PI;
 
 			  Vector2 NastepnaKierunkowa = { cosf(katowe),sinf(katowe) };
-			  float NastepnyIloczyn = IloczynWektorowy(NastepnaKierunkowa, Normalizacja(Odleglosc));
+			  float NastepnyIloczyn = ZwrocIloczynWektorowy(NastepnaKierunkowa, ZwrocNormalizacja(Odleglosc));
 
 			  this->kat = nastepnyKat;
 			  Predkosc.x = Predkosc.x + ( Kierunkowy.y * dosrodkowe);
@@ -280,7 +300,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 			  float nastepnyKat = (katowe) * 180 / LICZBA_PI;
 
 			  Vector2 NastepnaKierunkowa = { cosf(katowe),sinf(katowe) };
-			  float NastepnyIloczyn = IloczynWektorowy(NastepnaKierunkowa, Normalizacja(Odleglosc));
+			  float NastepnyIloczyn = ZwrocIloczynWektorowy(NastepnaKierunkowa, ZwrocNormalizacja(Odleglosc));
 
 			  this->kat = nastepnyKat;
 			  Predkosc.x = Predkosc.x + (-Kierunkowy.y * dosrodkowe);

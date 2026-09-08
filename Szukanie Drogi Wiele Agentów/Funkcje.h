@@ -13,6 +13,7 @@
 #include "Kolory.h"
 #include <algorithm>
 #include <vector>
+#include <random>
 
 struct KolorowyKwadrat
 {
@@ -24,7 +25,7 @@ struct KolorowyKwadrat
 
 	KolorowyKwadrat(PozycjaNaMapie poz = { 0,0 }, Color kolor = ZIELONY, std::string Napis = "", std::string Napis2 = "");
 	bool operator==(const KolorowyKwadrat& kolorowy);
-	bool operator==(const PozycjaNaMapie& poz);
+	bool operator==(const PozycjaNaMapie poz);
 };
 
 //--------------------------------------------------
@@ -46,39 +47,47 @@ void UstawRodzica(PozycjaNaMapie poz, unsigned int Rodzic, std::vector<KolorowyK
 void NowyKwadrat(PozycjaNaMapie poz, Color kolor, unsigned int rodzic, int kosztG, int kosztH, std::vector<KolorowyKwadrat>& tablica);
 
 
-float Interpolacja(float x0, float y0, float x1, float y1, float obecna);
-float Interpolacja(float x0, float x1, float procent);
+float ZwrocInterpolacja(float x0, float y0, float x1, float y1, float obecna);
+float ZwrocInterpolacja(float x0, float x1, float procent);
 
-float TickRuchu(Vector2 pozA, Vector2 pozB, float Predkosc, const float tickrate, float procent = 0.5);
+float ZwrocTickRuchu(Vector2 pozA, Vector2 pozB, float Predkosc, const float tickrate, float procent = 0.5);
 
-float Dlugosc(Vector2 wektor);
+float ZwrocDlugosc(Vector2 wektor);
 
-Vector2 Normalizacja(Vector2 wektor);
+Vector2 ZwrocNormalizacja(Vector2 wektor);
 
-int WInterwale(float t);
+int ZwrocWInterwale(float t);
 
-int Manhatan(PozycjaNaMapie A, PozycjaNaMapie B);
+int ZwrocManhatan(PozycjaNaMapie A, PozycjaNaMapie B);
 
-int Koszt(const PozycjaNaMapie& A, const PozycjaNaMapie& B);
+int ZwrocKoszt(const PozycjaNaMapie A, const PozycjaNaMapie B);
 
 //konwersja rodzicza na wektor
 
-PozycjaNaMapie RodzicPozycja(const unsigned int& Rodzic, const unsigned int& szerokosc);
+PozycjaNaMapie ZwrocRodzicPozycja(const unsigned int Rodzic, const unsigned int szerokosc);
 
-unsigned int PozycjaRodzic(const PozycjaNaMapie& poz, const unsigned int& szerokosc);
+unsigned int ZwrocPozycjaRodzic(const PozycjaNaMapie poz, const unsigned int szerokosc);
 
-void NarysujKwadrat(KolorowyKwadrat& kwadrat, const int& rozmiar);
+void NarysujKwadrat(KolorowyKwadrat& kwadrat, const int rozmiar);
 
 //Zamienia z ujemnych na dodatnie od 0 do 180 zamienia na odpowiednio 180 do 360
 float KonwersjaKatow(float Kat);
 float OdwrocenieKonta(float Kat,bool WKtoraStrone);
 
-float IloczynSkalarny(Vector2 A, Vector2 B);
-float IloczynWektorowy(Vector2 A, Vector2 B);
+float ZwrocIloczynSkalarny(Vector2 A, Vector2 B);
+float ZwrocIloczynWektorowy(Vector2 A, Vector2 B);
 
 //Sluzy donarysowanie siatki sluzy do przedstawienia ilosci elementow na danym polu
 
 void NarysujSiatke(std::vector<std::vector<unsigned int>>& Klatki,  int RozmiarSystemu,  int RozmiarKlatki,Color ZObiektem,Color BezObiektu);
 
+int ZwrocWysrodkowanePrzesuniencie(std::string& napis,unsigned int RozmiarCzionki,unsigned int RozmiarObszaru);
+
+inline void NarysujTekst(std::string& napis, int RozmiarCzionki, int x, int y,Color Kolor)
+{
+	int rozmiar = napis.size() * (RozmiarCzionki);
+	DrawText(napis.c_str(), x-(rozmiar/2), y, RozmiarCzionki,Kolor);
+
+}
 
 #endif // !FUNKCJE_H

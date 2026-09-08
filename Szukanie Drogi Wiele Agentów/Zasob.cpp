@@ -4,15 +4,15 @@ std::string ZwrocNazweKierunku(KierunkiSwiata kierunki)
 {
 	switch (kierunki)
 	{
-	case POLUDNIE: return "POLUDNIE";
-	case POLUDNIE_ZACHOD:  return "POLUDNIE_ZACHOD";
-	case ZACHOD:  return "ZACHOD";
-	case POLNOC_ZACHOD: return "POLNOC_ZACHOD";
-	case POLNOC: return "POLNOC";
-	case POLNOC_WSCHOD: return "POLNOC_WSCHOD";
-	case WSCHOD: return "WSCHOD";
-	case POLUDNIEWCHOD: return "POLUDNIEWCHOD";
-	default: ZADEN: return "ZADEN";
+	case KierunkiSwiata::POLUDNIE: return "POLUDNIE";
+	case KierunkiSwiata::POLUDNIE_ZACHOD:  return "POLUDNIE_ZACHOD";
+	case KierunkiSwiata::ZACHOD:  return "ZACHOD";
+	case KierunkiSwiata::POLNOC_ZACHOD: return "POLNOC_ZACHOD";
+	case KierunkiSwiata::POLNOC: return "POLNOC";
+	case KierunkiSwiata::POLNOC_WSCHOD: return "POLNOC_WSCHOD";
+	case KierunkiSwiata::WSCHOD: return "WSCHOD";
+	case KierunkiSwiata::POLUDNIE_WSCHOD: return "POLUDNIEWCHOD";
+	case KierunkiSwiata::ZADEN: return "ZADEN";
 	}
 }
 KierunkiSwiata ZwrocKierunekZNazwy(std::string NazwaKierunku)
@@ -24,9 +24,14 @@ KierunkiSwiata ZwrocKierunekZNazwy(std::string NazwaKierunku)
 	else if (NazwaKierunku == "POLNOC") return KierunkiSwiata::POLNOC;
 	else if (NazwaKierunku == "POLNOC_WSCHOD")return KierunkiSwiata::POLNOC_WSCHOD;
 	else if (NazwaKierunku == "WSCHOD") return KierunkiSwiata::WSCHOD;
-	else if (NazwaKierunku == "POLUDNIEWCHOD")return KierunkiSwiata::POLUDNIEWCHOD;
+	else if (NazwaKierunku == "POLUDNIEWCHOD")return KierunkiSwiata::POLUDNIE_WSCHOD;
 	else return KierunkiSwiata::ZADEN;
 }
+
+
+
+
+
 TypyAnimacji ZwrocTypAnimacji(std::string NazwaAnimacji)
 {
 	if (NazwaAnimacji == "STRZELANIE" || NazwaAnimacji=="STRZELANIE.png") return TypyAnimacji::STRZELANIE;
@@ -45,18 +50,17 @@ std::string ZwrocNazweAnimacji(TypyAnimacji typanimacji)
 		break;
 	}
 }
+//Zwraca akierunek swiata na pdostawie rozniczy dwoch pozycji
 KierunkiSwiata ZwrocKierunek(PozycjaNaMapie A, PozycjaNaMapie B)
 {
 	PozycjaNaMapie poz = { B.x - A.x,B.y- A.y };
-	if (poz.x == 0 && poz.y == 1) return KierunkiSwiata::POLUDNIE;
-	else if (poz.x == -1 && poz.y == 1) return KierunkiSwiata::POLUDNIE_ZACHOD;
-	else if (poz.x == -1 && poz.y == 0) return KierunkiSwiata::ZACHOD;
-	else if (poz.x == -1 && poz.y == -1) return KierunkiSwiata::POLNOC_ZACHOD;
-	else if (poz.x == 0 && poz.y == -1) return KierunkiSwiata::POLNOC;
-	else if (poz.x == 1 && poz.y == -1) return KierunkiSwiata::POLNOC_WSCHOD;
-	else if (poz.x == 1 && poz.y == 0) return KierunkiSwiata::WSCHOD;
-	else if (poz.x == 1 && poz.y == 1) return KierunkiSwiata::POLUDNIEWCHOD;
-	else return KierunkiSwiata::ZADEN;
+	KierunkiSwiata kierunek=KierunkiSwiata::ZADEN;
+	if (poz.x > 0) kierunek = kierunek | KierunkiSwiata::WSCHOD;
+	else if (poz.x < 0) kierunek = kierunek | KierunkiSwiata::ZACHOD;
+	if (poz.y > 0) kierunek = kierunek | KierunkiSwiata::POLUDNIE;
+	else if (poz.y < 0) kierunek = kierunek | KierunkiSwiata::POLNOC;
+
+	return kierunek;
 }
 
 
@@ -75,7 +79,7 @@ Animacja::Animacja(unsigned int CoKtoryTick,   std::string AdresTekstury, TypyAn
 #endif
 	}
 #ifdef ZASOBY_DEBUG
-	else std::cout << "Animacja zostala wczytana \n";
+	else std::cout << "Animacja zostala wczytana: "<<AdresTekstury<<"\n";
 #endif
 }
 Rectangle Animacja::ZwrocKlatke(KierunkiSwiata kierunki, Vector2& Rozmiar, const unsigned int Klatka)
@@ -83,7 +87,7 @@ Rectangle Animacja::ZwrocKlatke(KierunkiSwiata kierunki, Vector2& Rozmiar, const
 	Rectangle prostokat;
 
 	prostokat.x = Klatka * Rozmiar.x;
-	prostokat.y = kierunki * Rozmiar.y;
+	prostokat.y = ZwrocIndexKlatki(kierunki) * Rozmiar.y;
 	prostokat.width = Rozmiar.x;
 	prostokat.height = Rozmiar.y;
 
@@ -121,7 +125,8 @@ void ZestawAnimacji::WczytajKtoryTyp(TypyAnimacji typAnimacji, blmp::Obiekt& obi
 
 ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 {
-	
+	this->RozmiarSkalowalny.x = 1;
+	this->RozmiarSkalowalny.y = 1;
 
 	std::filesystem::path SciezkaInfo = std::filesystem::path{ Folder.string() + "/info.obi" };
 #ifdef ZASOBY_DEBUG
@@ -169,6 +174,8 @@ ZestawAnimacji::ZestawAnimacji(std::filesystem::path Folder)
 			
 			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIARX",Rozmiar.x);
 			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIARY", Rozmiar.y);
+			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIAR_SKALOWALNY_X", RozmiarSkalowalny.x);
+			blmp::WczytajWartoscWlasciwosci(obiekt, "ROZMIAR_SKALOWALNY_Y", RozmiarSkalowalny.y);
 
 			WczytajKtoryTyp(TypyAnimacji::STANIE, obiekt);
 			WczytajKtoryTyp(TypyAnimacji::CHODZENIE, obiekt);
@@ -248,6 +255,8 @@ void StworzZestawAnimacji(std::filesystem::path Folder,std::string NazwaAnimacji
 				blmp::Obiekt obiekt(NazwaAnimacji, {
 					{"ROZMIARX",blmp::Dane(Rozmiar.x)},
 					{"ROZMIARY",blmp::Dane(Rozmiar.y)},
+					{"ROZMIAR_SKALOWALNY_X",blmp::Dane(1.0f)},
+					{"ROZMIAR_SKALOWALNY_Y",blmp::Dane(1.0f)},
 					{ZwrocNazweAnimacji(TypyAnimacji::STANIE),blmp::Dane(0u)},
 					{ZwrocNazweAnimacji(TypyAnimacji::CHODZENIE),blmp::Dane(0u)},
 					{ZwrocNazweAnimacji(TypyAnimacji::STRZELANIE),blmp::Dane(0u)}
@@ -321,40 +330,9 @@ void PlayerAnimacji::ZnajdzZasob(std::string NazwaAnimacji, TablicaAnimacji& tab
 #ifdef 	ZASOBY_DEBUG
 	if (zestawAnimacji == nullptr) std::cout << "Nie znaleziono Zestawu Animacji \n";
 #endif
-	ZnajdzTypAnimacji(typAnimacji);
+	UstawTypAnimacji(typAnimacji);
 }
-void PlayerAnimacji::ZnajdzTypAnimacji(TypyAnimacji typAnimacji)
-{
-	if (zestawAnimacji != nullptr)
-	{
-		
-		auto iterator = std::find_if(zestawAnimacji->animacje.begin(), zestawAnimacji->animacje.end(), [&](const Animacja& animacja) { return animacja.typ == typAnimacji; });
-#ifdef 	ZASOBY_DEBUG
-		std::cout << "Ile jest animacji :" << zestawAnimacji->animacje.size() << "\n";
-#endif
-		if (iterator != zestawAnimacji->animacje.end())
-		{
-			this->typAnimacji = typAnimacji;
-			animacja = iterator._Ptr;
-#ifdef 	ZASOBY_DEBUG
-			std::cout << "Znaleziono Typ Animacji \n";
-#endif
-		}
-#ifdef 	ZASOBY_DEBUG
-		else std::cout << "Nie znaleziono typu animacji \n";
-#endif
-	}
-#ifdef 	ZASOBY_DEBUG
-	else std::cout << "Zestaw Animacji nie zostal znaleziony \n";
-#endif
-}
-
-
-
-
-
-
-void PlayerAnimacji::Rysuj(CzasLogiki &czasLogiki, Vector2& Pozycja,const unsigned int &rozmiarKlatki, TablicaAnimacji& tablicaAnimacji)
+void PlayerAnimacji::Rysuj(CzasLogiki &czasLogiki, Vector2 Pozycja,const unsigned int rozmiarKlatki, TablicaAnimacji& tablicaAnimacji)
 {
 	if (animacja != nullptr && zestawAnimacji!=nullptr )
 	{
@@ -381,10 +359,75 @@ void PlayerAnimacji::Rysuj(CzasLogiki &czasLogiki, Vector2& Pozycja,const unsign
 	}
 	else DrawRectangle(static_cast<int>(Pozycja.x) - static_cast<int>(rozmiarKlatki/2), static_cast<int>(Pozycja.y)-static_cast<int>(rozmiarKlatki/2), static_cast<int>(rozmiarKlatki), static_cast<int>(rozmiarKlatki), MAGENTA);
 }
+
+unsigned int PlayerAnimacji::ZwrocObecnyTick()
+{
+	return ObecnyTick;
+
+}
+unsigned int PlayerAnimacji::ZwrocKlatke()
+{
+	return Klatka;
+
+	}
+TypyAnimacji PlayerAnimacji::ZwrocTypAnimacji()
+{
+	return typAnimacji;
+}
+KierunkiSwiata PlayerAnimacji::ZwrocKierunek()
+{
+	return kierunek;
+}
+Vector2 PlayerAnimacji::ZwrocRozmiar(unsigned int RozmiarKlatki)
+{
+	if (this->zestawAnimacji != nullptr)
+	{
+		return { static_cast<float>(RozmiarKlatki)/zestawAnimacji->Rozmiar.x * zestawAnimacji->RozmiarSkalowalny.x,static_cast<float>(RozmiarKlatki)/zestawAnimacji->Rozmiar.y * zestawAnimacji->RozmiarSkalowalny.y };
+	}
+	else return { 0,0 };
+}
+
+ZestawAnimacji* PlayerAnimacji::ZwrocZestaw()
+{
+	return zestawAnimacji;
+}
+Animacja* PlayerAnimacji::ZwrocAnimacje()
+{
+	return animacja;
+}
+void PlayerAnimacji::UstawObecnyTick(unsigned int ObecnyTick)
+{
+	this->ObecnyTick = ObecnyTick;
+}
+void PlayerAnimacji::UstawKlatke(unsigned int Klatka)
+{
+	this->Klatka = Klatka;
+}
 void PlayerAnimacji::UstawTypAnimacji(TypyAnimacji typ)
 {
-	this->typAnimacji = typAnimacji;
+	if (zestawAnimacji != nullptr)
+	{
+
+		auto iterator = std::find_if(zestawAnimacji->animacje.begin(), zestawAnimacji->animacje.end(), [&](const Animacja& animacja) { return animacja.typ == typ; });
+#ifdef 	ZASOBY_DEBUG
+		std::cout << "Ile jest animacji :" << zestawAnimacji->animacje.size() << "\n";
+#endif
+		if (iterator != zestawAnimacji->animacje.end())
+		{
+			this->typAnimacji = typ;
+			animacja = iterator._Ptr;
+#ifdef 	ZASOBY_DEBUG
+			std::cout << "Znaleziono Typ Animacji \n";
+#endif
+		}
+#ifdef 	ZASOBY_DEBUG
+		else std::cout << "Nie znaleziono typu animacji \n";
+#endif
 	}
+#ifdef 	ZASOBY_DEBUG
+	else std::cout << "Zestaw Animacji nie zostal znaleziony \n";
+#endif
+}
 void PlayerAnimacji::UstawKierunek(KierunkiSwiata kierunek)
 {
 	this->kierunek = kierunek;

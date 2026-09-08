@@ -271,13 +271,23 @@ bool Mapa::czyPozycjaZajentaWCzasie(PozycjaNaMapie poz, unsigned int const Tick)
 	}
 	else return false;
 }
+bool Mapa::CzyPozycjaZajentaWCzasieDlaObiektu(PozycjaNaMapie poz,unsigned int const Tick,const unsigned int IndexObiektu)
+{
+	auto iterator=std::find_if(PozycjeCzasowe.begin(),PozycjeCzasowe.end(),[&](const PozycjaWCzasie& wCzasie) {return (wCzasie.poz.x==poz.x && wCzasie.poz.y == poz.y && IndexObiektu==wCzasie.IndexObiektu);});
+		if(iterator!=PozycjeCzasowe.end())
+		{
+			return iterator->wTymCzasie(Tick);
+		}
+		else return false;
+
+}
 bool Mapa::CzyPozyjaZajentaWNieskonczonosc(PozycjaNaMapie poz)
 {
 	auto iterator = std::find_if(PozycjeCzasowe.begin(), PozycjeCzasowe.end(), [&](const PozycjaWCzasie& wCzasie) { return (wCzasie.poz.x == poz.x && wCzasie.poz.y == poz.y && wCzasie.wyjscie==std::numeric_limits<unsigned int>::infinity());     });
 	if (iterator == PozycjeCzasowe.end()) return false;
 	else return true;
 }
-bool Mapa::CzyPozyjaZajentaWNieskonczonosc(PozycjaNaMapie poz, unsigned int indexObiektu)
+bool Mapa::CzyPozyjaZajentaWNieskonczonoscDlaObiektu(PozycjaNaMapie poz, unsigned int indexObiektu)
 {
 	auto iterator = std::find_if(PozycjeCzasowe.begin(), PozycjeCzasowe.end(), [&](const PozycjaWCzasie& wCzasie) { return (wCzasie.poz.x == poz.x && wCzasie.poz.y == poz.y && wCzasie.wyjscie == std::numeric_limits<unsigned int>::infinity() && indexObiektu==wCzasie.IndexObiektu);     });
 	if (iterator == PozycjeCzasowe.end()) return false;
@@ -317,6 +327,18 @@ void Mapa::UsunPozycjeCzasoweDlaObiektu(unsigned int IndexObiektu)
 		PozycjeCzasowe.erase(iterator);
 		iterator = std::find_if(PozycjeCzasowe.begin(), PozycjeCzasowe.end(), funkcjaszukajaca);
 	}
+}
+unsigned int Mapa::ZwrocSzerokosc()
+{
+	return szerokosc;
+}
+unsigned int Mapa::ZwrocWysokosc()
+{
+	return wysokosc;
+}
+unsigned int Mapa::ZwrocRozmiarKlatki()
+{
+	return RozmiarKlatki;
 }
 
 /// 

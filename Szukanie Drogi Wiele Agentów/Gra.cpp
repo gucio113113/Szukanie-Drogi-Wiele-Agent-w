@@ -25,8 +25,17 @@ void Gra::Inicjacja()
 	
 	
 
-	systemobrazen.UstawParametry(10, mapa);
-	systemnamierzania.UstawParametry(10, mapa);
+	systemobrazen.UstawRozmiarSystemu(10);
+	systemobrazen.DostosujDoRozmiaru(mapa.ZwrocRozmiarKlatki() * mapa.ZwrocSzerokosc());
+	systemobrazen.GenerujSystem();
+
+	systemnamierzania.UstawRozmiarSystemu(10);
+	systemnamierzania.DostosujDoRozmiaru(mapa.ZwrocRozmiarKlatki() * mapa.ZwrocSzerokosc());
+	systemnamierzania.GenerujSystem();
+
+	systemzajmowaniasojuszy.UstawRozmiarSystemu(5);
+	systemzajmowaniasojuszy.DostosujDoRozmiaru(mapa.ZwrocRozmiarKlatki() * mapa.ZwrocSzerokosc());
+	systemzajmowaniasojuszy.GenerujSystem(czas.ZwroctickRate());
 
 	
 	
@@ -40,7 +49,19 @@ void Gra::Sterowanie()
 		{
 			if (Agent* agent = dynamic_cast<Agent*>(obiekt))
 			{
-				agent->UstawGlownyCel(mapa.Wysrodkuj({ GetMouseX(),GetMouseY() }),mapa,czas);
+				if (IsKeyDown(KEY_A) == true)
+				{
+					agent->WydajRozkaz(Rozkazy::ATAKUJACY_RUCH, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
+				}
+				else if (IsKeyDown(KEY_G) == true)
+				{
+					agent->WydajRozkaz(Rozkazy::PILNUJ, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
+				}
+				else
+				{
+					agent->WydajRozkaz(Rozkazy::IDZ, GetScreenToWorld2D(GetMousePosition(), graczSter.kamera), mapa, czas);
+				}
+
 			}
 		}
 	}
@@ -65,10 +86,10 @@ void Gra::Logika()
 {
 	if (czas.CzasTrwania() == true)
 	{
-		systemnamierzania.UstawSystem(Obiekty);
-		systemobrazen.ZmapujObiekty(Obiekty);
-
-		systemobrazen.LogikaSystemu(Obiekty,czas, mapa, tablica);
+		systemnamierzania.LogikaSystemuNamierzania(Obiekty);
+		//systemobrazen.ZmapujObiekty(Obiekty);
+		systemobrazen.LogikaSystemuObrazen(Obiekty,czas, mapa, tablica);
+		systemzajmowaniasojuszy.Logika(Obiekty, czas);
 
 #ifdef GRA_DEBUG
 		std::cout << "Ilosc Obiektow :" << Obiekty.size() << "\n";
@@ -122,7 +143,10 @@ void Gra::Render()
 	systemnamierzania.Debug();
 	#endif
 	#ifdef SYSTEM_OBRAZEN_DEBUG
-	systemobrazen.Debug();
+	systemobrazen.Debug(mapa.RozmiarKlatki);
+	#endif
+	#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+	systemzajmowaniasojuszy.Debug();
 	#endif
 	for (Obiekt*& obiekt : Obiekty)
 	{
