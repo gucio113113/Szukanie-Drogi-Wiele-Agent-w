@@ -5,6 +5,7 @@
 #include <vector>
 #include "Zasob.h"
 #include <DyrektywyDebugowania.h>
+#include "PodstawaSystemu.h"
 
 #ifndef SYSTEMOBRAZEN
 #define SYSTEMOBRAZEN
@@ -69,22 +70,17 @@ public:
 	void NarysujDamage(unsigned int rozmiarKlatki) override;
 #endif
 };
-class SystemObrazen
+class SystemObrazen : public PodstawaSystemu
 {
-	unsigned int RozmiarKlatek;
-	unsigned int RozmiarSystemu;
-	std::vector<std::vector<unsigned int>> IndexyObiektow;
+	
 	std::vector<Damage*> Obrazenia;
-
 public:
-
 	std::vector<unsigned int> PodOstrzalem;
 
 	friend class Pocisk;
 	SystemObrazen(unsigned int RozmiarKlatek=100, unsigned int RozmiarSystemu=10);
-	void ZmapujObiekty(std::vector<Obiekt*>& Obiekty);
-	void LogikaSystemu(std::vector<Obiekt*> &Obiekty,CzasLogiki &Czaslogiki,Mapa &mapa, TablicaAnimacji& tablicanimacji);
-	void UstawParametry(unsigned int RozmiarSystemu,Mapa &mapa);
+
+	void LogikaSystemuObrazen(std::vector<Obiekt*> &Obiekty,CzasLogiki &Czaslogiki,Mapa &mapa, TablicaAnimacji& tablicanimacji);
 #ifdef SYSTEM_OBRAZEN_DEBUG
 	void Debug(unsigned int Rozmiar);
 #endif // SYSTEM_OBRAZEN

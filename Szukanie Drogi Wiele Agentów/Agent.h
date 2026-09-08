@@ -202,6 +202,9 @@ protected:
 
 	KlatkaCelu ZwrocMinimalne(std::vector<KlatkaCelu>& Klatki);
 
+	bool ZwrocCzyZaktualizowacSystemy() override;
+
+
 	//Gdy juz jest roszeszone i droga znalezione ponisza funkcja tworzy droge
 
 	virtual void SzukanieDrogi(PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, Mapa& mapa, CzasLogiki& czaslogiki);

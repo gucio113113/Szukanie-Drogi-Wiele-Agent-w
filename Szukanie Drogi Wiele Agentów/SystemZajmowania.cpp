@@ -5,6 +5,54 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 	
 
 }
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+
+
+
+Vector2 SystemZajmowaniaSojuszy::ZwrocSrodekCzworokata(std::array<Vector2, 4>& Tablica)
+{
+	return { (Tablica[0].x + Tablica[1].x + Tablica[2].x + Tablica[3].x) / 4,(Tablica[0].y + Tablica[1].y + Tablica[2].y + Tablica[3].y) / 4 };
+}
+void SystemZajmowaniaSojuszy::NarysujDebug(unsigned int x, unsigned int y)
+{
+	if (pokazwartoscidebug == PokazWartosciDebug::ZMAPOWANY_TEREN_DEBUG)
+	{
+		std::string napis=std::to_string(TablicaZmapowaneTereny[ZwrocIndexKlatki(x,y)].size());
+		NarysujTekst(napis, RozmiarKlatek / 10, (x * RozmiarKlatek) + RozmiarKlatek / 2, (y * RozmiarKlatek) + RozmiarKlatek / 2, BLACK);
+	}
+	else
+	{
+		Vector2 poz = ZwrocSrodekCzworokata(TablicaPunktyTerenu[ZwrocIndexKlatki(x, y)]);
+
+		std::string napis;
+		
+		
+
+		switch (pokazwartoscidebug)
+		{
+		case PokazWartosciDebug::PRZYCHOD_DEBUG: napis = std::to_string(TablicaPrzychody[ZwrocIndexKlatki(x, y)]);
+			break;
+		case PokazWartosciDebug::ZAJMOWANIA_TICK_DEBUG: napis = std::to_string(TablicaZajmowanieTick[ZwrocIndexKlatki(x, y)]);
+			break;
+		case PokazWartosciDebug::ZAJMOWANIA_CZASZAJMOWANIA_DEBUG: napis = std::to_string(TablicaZajmowanieCzasZajmowania[ZwrocIndexKlatki(x, y)]);
+			break;
+		case PokazWartosciDebug::ILOSCOBIEKTOW_DEBUG: napis = std::to_string(ZmapowaneObiekty[ZwrocIndexKlatki(x, y)].size());
+			break;
+		}
+		NarysujTekst(napis, RozmiarKlatek / 10, static_cast<int>(poz.x), static_cast<int>(poz.y), BLACK);
+	}
+}
+
+#endif // SYSTEM_ZAJMOWANIA_DEBUG
+
+
+float SystemZajmowaniaSojuszy::ZwrocPoleCzworokata(std::array<Vector2, 4>& Tablica)
+{
+	Vector2 a = {Tablica[2].x - Tablica[0].x,Tablica[2].y - Tablica[0].y};
+	Vector2 b = {Tablica[3].x - Tablica[1].x, Tablica[3].y - Tablica[1].y};
+	return  abs(ZwrocIloczynWektorowy(a, b) / 2);
+}
+
 	void SystemZajmowaniaSojuszy::UstawRozmiarSystemu(unsigned int RozmiarSystemu)
 	{
 		this->RozmiarSystemu = RozmiarSystemu;
@@ -15,32 +63,32 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 	}
 	void SystemZajmowaniaSojuszy::UstawDruzyne(unsigned int x, unsigned int y, Druzyny druzyna)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			TablicaDruzynyZajmujaceTeren[ZwrocIndex(x,y)] = druzyna;
+			TablicaDruzynyZajmujaceTeren[ZwrocIndexKlatki(x, y)] = druzyna;
 		}
 	}
 	void SystemZajmowaniaSojuszy::UstawPrzychod(unsigned int x, unsigned int y, unsigned int Przychod)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			 TablicaPrzychody[ZwrocIndex(x, y)] = Przychod;
+			TablicaPrzychody[ZwrocIndexKlatki(x, y)] = Przychod;
 		}
 
-		}
+	}
 	void SystemZajmowaniaSojuszy::UstawCzasZajmowania(unsigned int x, unsigned int y, unsigned int CzasZajmowania)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			TablicaZajmowanieCzasZajmowania[ZwrocIndex(x, y)] = CzasZajmowania;
+			TablicaZajmowanieCzasZajmowania[ZwrocIndexKlatki(x, y)] = CzasZajmowania;
 		}
 
 	}
 	void SystemZajmowaniaSojuszy::UstawTick(unsigned int x, unsigned int y, unsigned int Tick)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			TablicaZajmowanieTick[ZwrocIndex(x, y)] = Tick;
+			TablicaZajmowanieTick[ZwrocIndexKlatki(x, y)] = Tick;
 		}
 	}
 
@@ -52,40 +100,40 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 	{
 		return RozmiarKlatek;
 
-		}
+	}
 	Druzyny SystemZajmowaniaSojuszy::ZwrocDruzyne(unsigned int x, unsigned int y)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			return TablicaDruzynyZajmujaceTeren[ZwrocIndex(x, y)];
+			return TablicaDruzynyZajmujaceTeren[ZwrocIndexKlatki(x, y)];
 		}
 		else return Druzyny::NEUTRALNA;
 
 	}
 	unsigned int SystemZajmowaniaSojuszy::ZwrocPrzychod(unsigned int x, unsigned int y)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			return TablicaPrzychody[ZwrocIndex(x, y)];
+			return TablicaPrzychody[ZwrocIndexKlatki(x, y)];
 		}
 		else return 1;
 
-		}
+	}
 	unsigned int SystemZajmowaniaSojuszy::ZwrocCzasZajmowania(unsigned int x, unsigned int y)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			return TablicaZajmowanieCzasZajmowania[ZwrocIndex(x, y)];
+			return TablicaZajmowanieCzasZajmowania[ZwrocIndexKlatki(x, y)];
 		}
 		return 1;
 
-		}
+	}
 	unsigned int SystemZajmowaniaSojuszy::ZwrocTick(unsigned int x, unsigned int y)
 	{
 
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			return TablicaZajmowanieTick[ZwrocIndex(x, y)];
+			return TablicaZajmowanieTick[ZwrocIndexKlatki(x, y)];
 		}
 		return 1;
 	}
@@ -94,25 +142,41 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 
 	unsigned int SystemZajmowaniaSojuszy::ZwrocIloscObiektowDruzyny(std::vector<Obiekt*>& Obiekty, Druzyny druzyna, unsigned int x, unsigned int y)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			return TablicaIloscObiektowDanejDruzyny[ZwrocIndex(x, y)].at(druzyna).size();
+			unsigned int Ilosc=0;
+			for (unsigned int& Index : ZmapowaneObiekty[ZwrocIndexKlatki(x, y)])
+			{
+				Obiekt* obiekt = ZwrocObiekt(Index, Obiekty);
+				if (obiekt!=nullptr)
+				{
+					Ilosc++;
+				}
+			}
+			return Ilosc;
 		}
-		else return	1;
+		else return	0;
 	}
 	std::vector<unsigned int> SystemZajmowaniaSojuszy::ZwrocTabliceObiektow(std::vector<Obiekt*>& Obiekty, Druzyny druzyna, unsigned int x, unsigned int y)
 	{
-		if (CzyMozeOdczytac(x, y))
+		if (ZwrocCzyMozeZmapowac(x, y))
 		{
-			std::vector<unsigned int> IndexySpelniajace;
-			for()
-
+			std::vector<unsigned int> IndexyZmapowane;
+			for (unsigned int& Index : ZmapowaneObiekty[ZwrocIndexKlatki(x, y)])
+			{
+				Obiekt* obiekt = ZwrocObiekt(Index, Obiekty);
+				if (obiekt != nullptr && !!(obiekt->ZwrocSojusz().zwrocWlasciciel() & druzyna))
+				{
+					IndexyZmapowane.emplace_back(Index);
+				}
+			}
+			return IndexyZmapowane;
 		}
 		return {};
 	}
 	void SystemZajmowaniaSojuszy::GenerujSystem(const unsigned int TickRate)
 	{
-		StanInicjacji = true;
+		SystemZainicjowany = true;
 		std::default_random_engine generator;
 
 #ifndef SYSTEM_ZAJMOWANIA_DEBUG
@@ -127,7 +191,7 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 		this->TablicaZajmowanieTick.resize(RozmiarSystemu * RozmiarSystemu, 0);
 		this->TablicaZmapowaneTereny.resize(RozmiarSystemu * RozmiarSystemu, {});
 		this->TablicaPunktyTerenu.resize(RozmiarSystemu * RozmiarSystemu);
-		this->TablicaIndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu,{});
+		this->ZmapowaneObiekty.resize(RozmiarSystemu* RozmiarSystemu);
 		
 
 
@@ -189,10 +253,10 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 		{
 			for (unsigned int y = 0; y < RozmiarSystemu; y++)
 			{
-				TablicaPunktyTerenu[ZwrocIndex(x, y)][0] = LosowePunkciki[ZwrocIndexDlaPunktow(x,y)];
-				TablicaPunktyTerenu[ZwrocIndex(x, y)][1] = LosowePunkciki[ZwrocIndexDlaPunktow(x + 1, y)];
-				TablicaPunktyTerenu[ZwrocIndex(x, y)][2] = LosowePunkciki[ZwrocIndexDlaPunktow(x + 1, y + 1)];
-				TablicaPunktyTerenu[ZwrocIndex(x, y)][3] = LosowePunkciki[ZwrocIndexDlaPunktow(x, y + 1)];
+				TablicaPunktyTerenu[ZwrocIndexKlatki(x, y)][0] = LosowePunkciki[ZwrocIndexDlaPunktow(x,y)];
+				TablicaPunktyTerenu[ZwrocIndexKlatki(x, y)][1] = LosowePunkciki[ZwrocIndexDlaPunktow(x + 1, y)];
+				TablicaPunktyTerenu[ZwrocIndexKlatki(x, y)][2] = LosowePunkciki[ZwrocIndexDlaPunktow(x + 1, y + 1)];
+				TablicaPunktyTerenu[ZwrocIndexKlatki(x, y)][3] = LosowePunkciki[ZwrocIndexDlaPunktow(x, y + 1)];
 
 				PozycjaNaMapie pozA = { static_cast<int>(LosowePunkciki[ZwrocIndexDlaPunktow(x,y)].x / RozmiarKlatek),static_cast<int>(LosowePunkciki[ZwrocIndexDlaPunktow(x,y)].y / RozmiarKlatek) };
 				PozycjaNaMapie pozB = { static_cast<int>(LosowePunkciki[ZwrocIndexDlaPunktow(x + 1,y)].x / RozmiarKlatek),static_cast<int>(LosowePunkciki[ZwrocIndexDlaPunktow(x + 1,y)].y / RozmiarKlatek) };
@@ -201,100 +265,152 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 				PozycjaNaMapie pozE = { static_cast<int>(x * RozmiarKlatek+ (RozmiarKlatek/2)),static_cast<int>(y * RozmiarKlatek + (RozmiarKlatek/2))};
 
 
-				unsigned int index = ZwrocIndex(x, y);
+				TablicaPrzychody[ZwrocIndexKlatki(x, y)] = ZwrocPoleCzworokata(TablicaPunktyTerenu[ZwrocIndexKlatki(x, y)])/RozmiarKlatek;
+
+
+				unsigned int index = ZwrocIndexKlatki(x, y);
 
 				if (pozA.x < RozmiarSystemu && pozA.y < RozmiarSystemu)
 				{
-					auto iteratorA = std::find(TablicaZmapowaneTereny[ZwrocIndex(pozA.x, pozA.y)].begin(), TablicaZmapowaneTereny[ZwrocIndex(pozA.x, pozA.y)].end(), index);
-					if (iteratorA == TablicaZmapowaneTereny[ZwrocIndex(pozA.x, pozA.y)].end()) TablicaZmapowaneTereny[ZwrocIndex(pozA.x, pozA.y)].emplace_back(index);
+					auto iteratorA = std::find(TablicaZmapowaneTereny[ZwrocIndexKlatki(pozA.x, pozA.y)].begin(), TablicaZmapowaneTereny[ZwrocIndexKlatki(pozA.x, pozA.y)].end(), index);
+					if (iteratorA == TablicaZmapowaneTereny[ZwrocIndexKlatki(pozA.x, pozA.y)].end()) TablicaZmapowaneTereny[ZwrocIndexKlatki(pozA.x, pozA.y)].emplace_back(index);
 				}
 				if (pozB.x < RozmiarSystemu && pozB.y < RozmiarSystemu)
 				{
-					auto iteratorB = std::find(TablicaZmapowaneTereny[ZwrocIndex(pozB.x, pozB.y)].begin(), TablicaZmapowaneTereny[ZwrocIndex(pozB.x, pozB.y)].end(), index);
-					if (iteratorB == TablicaZmapowaneTereny[ZwrocIndex(pozB.x, pozB.y)].end()) TablicaZmapowaneTereny[ZwrocIndex(pozB.x, pozB.y)].emplace_back(index);
+					auto iteratorB = std::find(TablicaZmapowaneTereny[ZwrocIndexKlatki(pozB.x, pozB.y)].begin(), TablicaZmapowaneTereny[ZwrocIndexKlatki(pozB.x, pozB.y)].end(), index);
+					if (iteratorB == TablicaZmapowaneTereny[ZwrocIndexKlatki(pozB.x, pozB.y)].end()) TablicaZmapowaneTereny[ZwrocIndexKlatki(pozB.x, pozB.y)].emplace_back(index);
 
 				}
 				if (pozC.x < RozmiarSystemu && pozC.y < RozmiarSystemu)
 				{
-					auto iteratorC = std::find(TablicaZmapowaneTereny[ZwrocIndex(pozC.x, pozC.y)].begin(), TablicaZmapowaneTereny[ZwrocIndex(pozC.x, pozC.y)].end(), index);
-					if (iteratorC == TablicaZmapowaneTereny[ZwrocIndex(pozC.x, pozC.y)].end()) TablicaZmapowaneTereny[ZwrocIndex(pozC.x, pozC.y)].emplace_back(index);
+					auto iteratorC = std::find(TablicaZmapowaneTereny[ZwrocIndexKlatki(pozC.x, pozC.y)].begin(), TablicaZmapowaneTereny[ZwrocIndexKlatki(pozC.x, pozC.y)].end(), index);
+					if (iteratorC == TablicaZmapowaneTereny[ZwrocIndexKlatki(pozC.x, pozC.y)].end()) TablicaZmapowaneTereny[ZwrocIndexKlatki(pozC.x, pozC.y)].emplace_back(index);
 
 				}
 				if (pozD.x < RozmiarSystemu && pozD.y < RozmiarSystemu)
 				{
-					auto iteratorD = std::find(TablicaZmapowaneTereny[ZwrocIndex(pozD.x, pozD.y)].begin(), TablicaZmapowaneTereny[ZwrocIndex(pozD.x, pozD.y)].end(), index);
-					if (iteratorD == TablicaZmapowaneTereny[ZwrocIndex(pozD.x, pozD.y)].end()) TablicaZmapowaneTereny[ZwrocIndex(pozD.x, pozD.y)].emplace_back(index);
+					auto iteratorD = std::find(TablicaZmapowaneTereny[ZwrocIndexKlatki(pozD.x, pozD.y)].begin(), TablicaZmapowaneTereny[ZwrocIndexKlatki(pozD.x, pozD.y)].end(), index);
+					if (iteratorD == TablicaZmapowaneTereny[ZwrocIndexKlatki(pozD.x, pozD.y)].end()) TablicaZmapowaneTereny[ZwrocIndexKlatki(pozD.x, pozD.y)].emplace_back(index);
 				}
 				if (pozE.x < RozmiarSystemu && pozE.y < RozmiarSystemu)
 				{
-					auto iteratorE = std::find(TablicaZmapowaneTereny[ZwrocIndex(pozE.x, pozE.y)].begin(), TablicaZmapowaneTereny[ZwrocIndex(pozE.x, pozE.y)].end(), index);
-					if (iteratorE == TablicaZmapowaneTereny[ZwrocIndex(pozE.x, pozE.y)].end()) TablicaZmapowaneTereny[ZwrocIndex(pozE.x, pozE.y)].emplace_back(index);
+					auto iteratorE = std::find(TablicaZmapowaneTereny[ZwrocIndexKlatki(pozE.x, pozE.y)].begin(), TablicaZmapowaneTereny[ZwrocIndexKlatki(pozE.x, pozE.y)].end(), index);
+					if (iteratorE == TablicaZmapowaneTereny[ZwrocIndexKlatki(pozE.x, pozE.y)].end()) TablicaZmapowaneTereny[ZwrocIndexKlatki(pozE.x, pozE.y)].emplace_back(index);
 				}
-			
-
-
-			
-
 			}
 
 		}
-	}
-	void SystemZajmowaniaSojuszy::ZmapujObiekty(std::vector<Obiekt*>& Obiekty)
-	{
-		for (Obiekt*& obiekt : Obiekty)
-		{
-			if (!!(obiekt->ZwrocTypy() & Typy::SYSTEM_ZAJMOWANIA))
-			{
-				Vector2 Pozycja = obiekt->ZwrocPozycje();
-				PozycjaNaMapie poz = { static_cast<int>(Pozycja.x / RozmiarKlatek),static_cast<int>(Pozycja.y / RozmiarKlatek) };
-				Druzyny wlasciciel = obiekt->ZwrocSojusz().zwrocWlasciciel();
-				if (CzyMozeOdczytac(poz.x, poz.y) == true)
-				{
-					for (unsigned int& NumerSiatki : TablicaZmapowaneTereny[ZwrocIndex(poz.x, poz.y)])
-					{
-						std::array<Vector2, 4>& CzworoBok = TablicaPunktyTerenu[NumerSiatki];
-						if (CheckCollisionPointPoly(Pozycja, CzworoBok.data(), 4) == true)
-						{
-							std::vector<unsigned int>& tab = TablicaIloscObiektowDanejDruzyny[ZwrocIndex(poz.x, poz.y)].at(wlasciciel);
-							auto szukanie = std::find(tab.begin(), tab.end(), obiekt->ZwrocIndexObiektu());
-							if (szukanie == tab.end())
-								tab.emplace_back(obiekt->ZwrocIndexObiektu());
-#ifdef SYSTEM_ZAJMOWANIA_DEBUG
-							std::cout << "Kolizja Wykonana dla Obiektu o Indeksie :" << obiekt->ZwrocIndexObiektu() << "\n";
-#endif // SYSTEM_ZAJMOWANIA_DEBUG
-
-
-						}
-					}
-				}
-
-
-			}
-
-		}
-	}
-	void SystemZajmowaniaSojuszy::OdMapujObiekty()
-	{
-		
-		
-
-
-
 	}
 	SystemZajmowaniaSojuszy::SystemZajmowaniaSojuszy(unsigned int RozmiarSystemu, unsigned int RozmiarKlatek)
 	{
 		this->RozmiarSystemu = RozmiarSystemu;
 		this->RozmiarKlatek = RozmiarKlatek;
-		this->GenerujSystem(60);
+		this->TypSystemu = Typy::SYSTEM_ZAJMOWANIA;
+		
+	}
+	void SystemZajmowaniaSojuszy::ZmapujObiekt (const unsigned int IndexObiektu, const bool CzyZaktualizowac, const Vector2 Pozycja, const Vector2 PoprzedniaPozycja,const Typy TypObiektu)
+	{
+		if (!!(this->TypSystemu & TypObiektu) && CzyZaktualizowac == true && this->RozmiarKlatek!=0)
+		{
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+			std::cout << "To ty dzialasz ?\n";
+#endif // SYSTEM_ZAJMOWANIA_DEBUG
+			PozycjaNaMapie pozNaSiatce0 = { static_cast<int>(static_cast<int>(Pozycja.x) / RozmiarKlatek),static_cast<int>(static_cast<int>(Pozycja.y) / RozmiarKlatek) };
+			PozycjaNaMapie pozNaSiatce1 = {static_cast<int>(static_cast<int>(PoprzedniaPozycja.x)/RozmiarKlatek),static_cast<int>(static_cast<int>(PoprzedniaPozycja.y)/RozmiarKlatek)};
+
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+			std::cout << "Pozycja 0:" << pozNaSiatce0.x << ".x " << pozNaSiatce0.y << ".y \n";
+			std::cout << "Pozycja 1:" << pozNaSiatce1.x << ".x " << pozNaSiatce1.y << ".y \n";
+#endif // SYSTEM_ZAJMOWANIA_DEBUG
+
+			
+			if (ZwrocCzyMozeZmapowac(pozNaSiatce0.x, pozNaSiatce0.y) == true && ZwrocCzyMozeZmapowac(pozNaSiatce1.x, pozNaSiatce1.y)==true )
+			{
+				
+				std::vector<unsigned int> &ZmapowaneObszary0 = TablicaZmapowaneTereny[ZwrocIndexKlatki(pozNaSiatce0.x, pozNaSiatce0.y)];
+				std::vector<unsigned int> &ZmapowaneObszary1 = TablicaZmapowaneTereny[ZwrocIndexKlatki(pozNaSiatce1.x, pozNaSiatce1.y)];
+				
+				for (unsigned int IndexKlatki1 : ZmapowaneObszary1)
+				{
+					auto ZnajdzObiekt = std::find(ZmapowaneObiekty[IndexKlatki1].begin(), ZmapowaneObiekty[IndexKlatki1].end(), IndexObiektu);
+					if (ZnajdzObiekt != ZmapowaneObiekty[IndexKlatki1].end())
+					{
+						*ZnajdzObiekt = ZmapowaneObiekty[IndexKlatki1].back();
+						ZmapowaneObiekty[IndexKlatki1].pop_back();
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+						std::cout << "Wyrzuca Z IndexKlatki :"<< IndexKlatki1  <<" Obiekt :" << IndexObiektu << "\n";
+#endif
+
+					}
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+					else
+					{
+						std::cout << "Nie Wyrzuca Z IndexKlatki :" << IndexKlatki1 << " Obiekt :" << IndexObiektu << "\n";
+					}
+#endif
+					
+				}
+				
+				for (unsigned int IndexKlatki0 : ZmapowaneObszary0)
+				{
+					
+
+
+					if ( CheckCollisionPointPoly(Pozycja, TablicaPunktyTerenu[IndexKlatki0].data(), TablicaPunktyTerenu[IndexKlatki0].size()) == true)
+					{
+						auto ZnajdzObiekt = std::find(ZmapowaneObiekty[IndexKlatki0].begin(), ZmapowaneObiekty[IndexKlatki0].end(), IndexObiektu);
+
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+
+						if (ZnajdzObiekt == ZmapowaneObiekty[IndexKlatki0].end()) std::cout << "Nie znaleziono w indeksie klatki : " << IndexKlatki0 << " Obiektu : " << IndexObiektu << "\n";
+						else std::cout << "Znaleziono w indeksie klatki : " << IndexKlatki0 << " Obiektu : " << IndexObiektu << "\n";
+#endif
+						if (ZnajdzObiekt == ZmapowaneObiekty[IndexKlatki0].end())
+							ZmapowaneObiekty[IndexKlatki0].emplace_back(IndexObiektu);
+						break;
+					}
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+					else
+					{
+						std::cout << "Nie jest na polu o indeksie :" << IndexKlatki0<<"\n";
+					}
+
+#endif
+					
+				}
+			}
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+			else
+			{
+				std::cout << "Nie moze zmapowac pozycji \n";
+				std::cout<<"Czy moze zmapowac pozycje :"<< ZwrocCzyMozeZmapowac(pozNaSiatce0.x, pozNaSiatce0.y)<<"\n";
+				std::cout << "Czy moze zmapowac pozycje poprzednia:" << ZwrocCzyMozeZmapowac(pozNaSiatce1.x, pozNaSiatce1.y)<<"\n";
+				std::cout << "Czy zainicjowanao: "<<SystemZainicjowany<<"\n";
+			}
+#endif
+		}
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
+		else
+		{
+			if(RozmiarKlatek==0) std::cout << "Rozmair Sie nie zgadza \n";
+			if (CzyZaktualizowac == false) std::cout << "Nie ma aktualizacji \n";
+			std::cout << "Nie mapuje Wogole \n";
+
+
+		}
+#endif // SYSTEM_ZAJMOWANIA_DEBUG
 
 	}
 	void SystemZajmowaniaSojuszy::Logika(std::vector<Obiekt*>& Obiekty, CzasLogiki& Czas)
 	{
-		if (Czas.ZwrocTick() % Czas.ZwrocTick() == 0)
+		if (Czas.ZwrocTick() % static_cast<unsigned char>(Czas.ZwroctickRate()))
 		{
-			OdMapujObiekty();
-			ZmapujObiekty(Obiekty);
+			for (Obiekt*& obiekt : Obiekty)
+			{
+				this->ZmapujObiekt(obiekt->ZwrocIndexObiektu(), obiekt->ZwrocCzyZaktualizowacSystemy(), obiekt->ZwrocPozycje(), obiekt->ZwrocPoprzedniaPozycje(), obiekt->ZwrocTypy());
+			}
 		}
+		
 	}
 
 #ifdef SYSTEM_ZAJMOWANIA_DEBUG
@@ -322,48 +438,8 @@ void SystemZajmowaniaSojuszy::RozpocznijZajmowanie(unsigned int x, unsigned int 
 			for (int y = 0; y <= RozmiarSystemu; y++)
 			{
 				DrawCircle(x * static_cast<int>(RozmiarKlatek), static_cast<int>(RozmiarKlatek) * y, 5, GREEN);
-
-				switch (pokazwartoscidebug)
-				{
-				case SystemZajmowaniaSojuszy::PokazWartosciDebug::PRZYCHOD_DEBUG:
-				{
-					std::string napis = std::to_string(TablicaPrzychody[ZwrocIndex(x, y)]);
-					NarysujTekst(napis, RozmiarKlatek / 10, (x * RozmiarKlatek) + RozmiarKlatek / 2, (y * RozmiarKlatek) + RozmiarKlatek / 2, BLACK);
-					break;
-				}
-				case SystemZajmowaniaSojuszy::PokazWartosciDebug::ZAJMOWANIA_TICK_DEBUG:
-				{
-					std::string napis = std::to_string(TablicaZajmowanieTick[ZwrocIndex(x, y)]);
-					NarysujTekst(napis, RozmiarKlatek / 10, (x * RozmiarKlatek) + RozmiarKlatek / 2, (y * RozmiarKlatek) + RozmiarKlatek / 2, BLACK);
-
-					break;
-				}
-				case SystemZajmowaniaSojuszy::PokazWartosciDebug::ZAJMOWANIA_CZASZAJMOWANIA_DEBUG:
-				{
-					std::string napis = std::to_string(TablicaZajmowanieCzasZajmowania[ZwrocIndex(x, y)]);
-					NarysujTekst(napis, RozmiarKlatek / 10, (x * RozmiarKlatek) + RozmiarKlatek / 2, (y * RozmiarKlatek) + RozmiarKlatek / 2, BLACK);
-
-					break;
-				}
-				case SystemZajmowaniaSojuszy::PokazWartosciDebug::ZMAPOWANY_TEREN_DEBUG:
-				{
-					std::string napis = std::to_string(TablicaZmapowaneTereny[ZwrocIndex(x, y)].size());
-					NarysujTekst(napis, RozmiarKlatek / 10, (x * RozmiarKlatek) + RozmiarKlatek / 2, (y * RozmiarKlatek) + RozmiarKlatek / 2, BLACK);
-
-					break;
-				}
-				case SystemZajmowaniaSojuszy::PokazWartosciDebug::ILOSCOBIEKTOW_DANEJ_DRUZYNY_DEBUG:
-				{
-					std::string napis = std::to_string(TablicaIloscObiektowDanejDruzyny[ZwrocIndex(x,y)].at(Druzyny::DRUZYNA1).size());
-					NarysujTekst(napis, RozmiarKlatek / 10, (x * RozmiarKlatek) + RozmiarKlatek / 2, (y * RozmiarKlatek) + RozmiarKlatek / 2, BLACK);
-
-					break;
-
-				}
-
-				default:
-					break;
-				}
+				NarysujDebug(x, y);
+				
 			}
 		}
 		

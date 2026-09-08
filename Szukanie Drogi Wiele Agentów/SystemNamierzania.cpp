@@ -1,20 +1,13 @@
 #include "SystemNamierzania.h"
 
-bool SystemNamierzania::PozycjaWSystemie(PozycjaNaMapie& poz)
-{
-	if (poz.x >= 0 && poz.y >= 0 && poz.x < rozmiarSystemu && poz.y < rozmiarSystemu)
-	{
-		return true;
-	}
-	else return false;
-}
+
 void SystemNamierzania::CzyMozeNamierzyc(Obiekt*& obiekt1, Obiekt*& obiekt2, float& Zasieg, std::vector<unsigned int>& Celowe, Mapa& mapa)
 {
 	if (obiekt2 != nullptr)
 	{
 		auto TenObiekt = std::find(Celowe.begin(), Celowe.end(), obiekt2->IndexObiektu);
 
-		if (obiekt1 != nullptr && obiekt1!=obiekt2 && TenObiekt==Celowe.end() && obiekt1->sojusze.SprawdzSojusz(obiekt2->sojusze)==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= Dlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
+		if (obiekt1 != nullptr && obiekt1!=obiekt2 && TenObiekt==Celowe.end() && obiekt1->sojusze.SprawdzSojusz(obiekt2->sojusze)==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= ZwrocDlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
 		{
 			Celowe.emplace_back(obiekt2->IndexObiektu);
 		#ifdef SYSTEMNAMIERZANIA_DEBUG
@@ -23,55 +16,49 @@ void SystemNamierzania::CzyMozeNamierzyc(Obiekt*& obiekt1, Obiekt*& obiekt2, flo
 		}
 	}
 }
-SystemNamierzania::SystemNamierzania(unsigned int rozmiarKlatki, unsigned int rozmiarSystemu)
+SystemNamierzania::SystemNamierzania(unsigned int RozmiarMapy, unsigned int RozmiarSystemu)
 {
-	this->rozmiarKlatki = rozmiarKlatki;
-	this->rozmiarSystemu = rozmiarSystemu;
-	System.resize(rozmiarSystemu * rozmiarSystemu,{});
+	UstawRozmiarSystemu(RozmiarSystemu);
+	DostosujDoRozmiaru(RozmiarMapy);
+	this->TypSystemu = Typy::SYSTEM_NAMIERZANIA;
+	
 }
-void SystemNamierzania::UstawParametry(unsigned int rozmiarSystemu,Mapa& mapa)
+void SystemNamierzania::LogikaSystemuNamierzania(std::vector<Obiekt*>& Obiekty)
 {
-	this->rozmiarSystemu = rozmiarSystemu;
-	System.clear();
-	System.resize(rozmiarSystemu * rozmiarSystemu, {});
-	 rozmiarKlatki= mapa.szerokosc* mapa.RozmiarKlatki/rozmiarSystemu;
+	for (Obiekt*& obiekt : Obiekty)
+	{
+		if (obiekt != nullptr)
+			ZmapujObiekt(obiekt->ZwrocIndexObiektu(), obiekt->ZwrocCzyZaktualizowacSystemy(), obiekt->ZwrocPozycje(), obiekt->ZwrocPoprzedniaPozycje(), obiekt->ZwrocTypy());
+	}
 }
-void SystemNamierzania::UstawSystem(std::vector<Obiekt*>& Obiekty)
-{
-	MapowanieObiektow(Obiekty, System, rozmiarKlatki, rozmiarSystemu,Typy::SYSTEM_NAMIERZANIA);
 
-}
+
 void SystemNamierzania::ZwrocSpelniajaceZasieg(unsigned int indexObiektu, float Zasieg, std::vector<unsigned int>& ListaObiektow, std::vector<Obiekt*>& Obiekty, Mapa& mapa)
 {
 #ifdef SYSTEMNAMIERZANIA_DEBUG
 	std::cout << "Wywolujesz Sie Systemie namierzania ? \n";
 #endif // !SYSTEMNAMIERZANIA_DEBUG
 	Obiekt* obiekt = ZwrocObiekt(indexObiektu,Obiekty);
-	if (obiekt != nullptr && System.empty()==false )
+	if (obiekt != nullptr && SystemZainicjowany==true )
 	{
 		PozycjaNaMapie pozStartowa;
 		PozycjaNaMapie pozKoncowa;
 
-		pozStartowa.x = (obiekt->pozycja.x - static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
-		pozStartowa.y = (obiekt->pozycja.y - static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
-		pozKoncowa.x = (obiekt->pozycja.x + static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
-		pozKoncowa.y = (obiekt->pozycja.y + static_cast<float>(Zasieg * mapa.RozmiarKlatki)) / rozmiarKlatki;
+		pozStartowa.x = (obiekt->pozycja.x - static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
+		pozStartowa.y = (obiekt->pozycja.y - static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
+		pozKoncowa.x = (obiekt->pozycja.x + static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
+		pozKoncowa.y = (obiekt->pozycja.y + static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
 
 		if (pozStartowa.x < 0) pozStartowa.x = 0;
 		if (pozStartowa.y < 0) pozStartowa.y = 0;
-		if (pozKoncowa.x >= rozmiarSystemu) pozKoncowa.x = rozmiarSystemu - 1;
-		if (pozKoncowa.y >= rozmiarSystemu) pozKoncowa.y = rozmiarSystemu - 1;
+		if (pozKoncowa.x >= RozmiarSystemu) pozKoncowa.x = RozmiarKlatek - 1;
+		if (pozKoncowa.y >= RozmiarSystemu) pozKoncowa.y = RozmiarKlatek - 1;
 
 		for (unsigned int x = pozStartowa.x; x <= pozKoncowa.x; x++)
 		{
 			for (unsigned int y = pozStartowa.y; y <= pozKoncowa.y; y++)
 			{
-
-
-
-
-				
-					for (unsigned int& index : System[x + (y * rozmiarSystemu)])
+					for (unsigned int& index : ZmapowaneObiekty[ZwrocIndexKlatki(x,y)])
 					{
 						Obiekt* obiekt2 = ZwrocObiekt(index, Obiekty);
 						#ifdef SYSTEMNAMIERZANIA_DEBUG

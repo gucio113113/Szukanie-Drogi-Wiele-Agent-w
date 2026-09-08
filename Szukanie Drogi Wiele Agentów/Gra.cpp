@@ -25,8 +25,17 @@ void Gra::Inicjacja()
 	
 	
 
-	systemobrazen.UstawParametry(10, mapa);
-	systemnamierzania.UstawParametry(10, mapa);
+	systemobrazen.UstawRozmiarSystemu(10);
+	systemobrazen.DostosujDoRozmiaru(mapa.ZwrocRozmiarKlatki() * mapa.ZwrocSzerokosc());
+	systemobrazen.GenerujSystem();
+
+	systemnamierzania.UstawRozmiarSystemu(10);
+	systemnamierzania.DostosujDoRozmiaru(mapa.ZwrocRozmiarKlatki() * mapa.ZwrocSzerokosc());
+	systemnamierzania.GenerujSystem();
+
+	systemzajmowaniasojuszy.UstawRozmiarSystemu(5);
+	systemzajmowaniasojuszy.DostosujDoRozmiaru(mapa.ZwrocRozmiarKlatki() * mapa.ZwrocSzerokosc());
+	systemzajmowaniasojuszy.GenerujSystem(czas.ZwroctickRate());
 
 	
 	
@@ -77,9 +86,10 @@ void Gra::Logika()
 {
 	if (czas.CzasTrwania() == true)
 	{
-		systemnamierzania.UstawSystem(Obiekty);
+		systemnamierzania.LogikaSystemuNamierzania(Obiekty);
 		//systemobrazen.ZmapujObiekty(Obiekty);
-		systemobrazen.LogikaSystemu(Obiekty,czas, mapa, tablica);
+		systemobrazen.LogikaSystemuObrazen(Obiekty,czas, mapa, tablica);
+		systemzajmowaniasojuszy.Logika(Obiekty, czas);
 
 #ifdef GRA_DEBUG
 		std::cout << "Ilosc Obiektow :" << Obiekty.size() << "\n";

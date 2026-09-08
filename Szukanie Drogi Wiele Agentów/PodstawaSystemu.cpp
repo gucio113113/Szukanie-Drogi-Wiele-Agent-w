@@ -2,11 +2,27 @@
 
 void PodstawaSystemu::UstawRozmiarSystemu(unsigned int RozmiarSystemu)
 {
-	this->RozmiarSystemu = RozmiarSystemu;
+	if (SystemZainicjowany == false)
+	{
+		this->RozmiarSystemu = RozmiarSystemu;
+	}
+	else std::cout << "System juz Zainicjowano nie mozna ustawic RozmiarSystemu \n";
 }
 void PodstawaSystemu::UstawRozmiarKlatek(unsigned int RozmiarKlatek)
 {
-	this->RozmiarKlatek = RozmiarKlatek;
+	if (SystemZainicjowany == false)
+	{
+		this->RozmiarKlatek = RozmiarKlatek;
+	}
+	else std::cout << "System juz Zainicjowano nie mozna ustawic RozmiarKlatek \n";
+}
+void PodstawaSystemu::DostosujDoRozmiaru(unsigned int RozmiarMapy)
+{
+	if (SystemZainicjowany == false)
+	{
+		this->RozmiarKlatek = RozmiarMapy / RozmiarSystemu;
+	}
+	else std::cout << "System juz Zainicjowano nie mozna DostosowacDoRozmiaruMapy \n";
 }
 unsigned int PodstawaSystemu::ZwrocRozmiarSystemu()
 {
@@ -24,13 +40,23 @@ std::vector<unsigned int> PodstawaSystemu::ZwrocObiektyWKlatce(unsigned int x, u
 	}
 	else return {};
 }
+bool PodstawaSystemu::ZwrocCzySystemZainijowany()
+{
+	return SystemZainicjowany;
+}
+
  void PodstawaSystemu::GenerujSystem()
 {
-	 this->ZmapowaneObiekty.resize(RozmiarSystemu* RozmiarSystemu,{});
+	 if (RozmiarKlatek != 0)
+	 {
+		 this->ZmapowaneObiekty.resize(RozmiarSystemu * RozmiarSystemu, {});
+		 SystemZainicjowany = true;
+	 }
+	 else SystemZainicjowany = false;
 }
-void PodstawaSystemu::ZmapujObiekt(const unsigned int IndexObiektu, const bool CzyZaktualizowac, const Vector2 Pozycja,const Vector2 PoprzedniaPozycja, const Typy TypObiektu)
+void PodstawaSystemu::ZmapujObiekt(const unsigned int IndexObiektu, const bool CzyZaktualizowac, const Vector2 Pozycja,const Vector2 PoprzedniaPozycja,const Typy TypObiektu)
 {
-	if (!!(TypObiektu & TypSystemu) && CzyZaktualizowac == true)
+	if (!!(TypObiektu & TypSystemu) && CzyZaktualizowac == true && RozmiarKlatek!=0)
 	{
 		int x0 = Pozycja.x/RozmiarKlatek;
 		int y0 = Pozycja.y/RozmiarKlatek;

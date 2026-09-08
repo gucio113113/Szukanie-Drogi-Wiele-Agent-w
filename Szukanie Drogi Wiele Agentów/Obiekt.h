@@ -69,8 +69,6 @@ public:
 	Animacja* ZwrocAnimacje();
 	ZestawAnimacji * ZwrocZestawAnimacji();
 
-	virtual bool ZwrocCzySkonczyloSieRuszac();
-
 	unsigned int ZwrocIndexObiektu();
 	unsigned int ZwrocZdrowie();
 	Sojusze ZwrocSojusz();

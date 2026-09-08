@@ -13,17 +13,29 @@
 #include "CzasLogiki.h"
 #include "PodstawaSystemu.h"
 
+/*
+struct ProcesZajmowania
+{
+	Druzyny druzyna;
+	unsigned int Tick;
+	unsigned int TickZajmowania;
+	ProcesZajmowania();
+};
+*/
+
 
 class SystemZajmowaniaSojuszy : public PodstawaSystemu
 {
-	bool StanInicjacji;
 
 	std::vector<std::array<Vector2,4>> TablicaPunktyTerenu;
 	std::vector<Druzyny> TablicaDruzynyZajmujaceTeren;
 	std::vector<std::vector<unsigned int>> TablicaZmapowaneTereny;
 	std::vector<unsigned int> TablicaPrzychody;
+
+
 	std::vector<unsigned int> TablicaZajmowanieTick;
 	std::vector<unsigned int> TablicaZajmowanieCzasZajmowania;
+
 
 #ifdef SYSTEM_ZAJMOWANIA_DEBUG
 	std::vector<Vector2> LosowePunkciki;
@@ -33,23 +45,27 @@ class SystemZajmowaniaSojuszy : public PodstawaSystemu
 		ZAJMOWANIA_TICK_DEBUG,
 		ZAJMOWANIA_CZASZAJMOWANIA_DEBUG,
 		ZMAPOWANY_TEREN_DEBUG,
-		ILOSCOBIEKTOW_DANEJ_DRUZYNY_DEBUG
+		ILOSCOBIEKTOW_DEBUG
 	};
-	PokazWartosciDebug pokazwartoscidebug=PokazWartosciDebug::ILOSCOBIEKTOW_DANEJ_DRUZYNY_DEBUG;
+	PokazWartosciDebug pokazwartoscidebug=PokazWartosciDebug::ILOSCOBIEKTOW_DEBUG;
 
 
 #endif // SYSTEM_ZAJMOWANIA_DEBUG
 
 	void RozpocznijZajmowanie(unsigned int x,unsigned int y);
-	
-	void ZmapujObiekty(std::vector<Obiekt*>& Obiekty);
-	void OdMapujObiekty();
+#ifdef SYSTEM_ZAJMOWANIA_DEBUG
 
 
+	Vector2 ZwrocSrodekCzworokata(std::array<Vector2,4> &Tablica);
+
+	void NarysujDebug(unsigned int x,unsigned int y);
+#endif // SYSTEM_ZAJMOWANIA_DEBUG
+
+	float ZwrocPoleCzworokata(std::array<Vector2, 4>& Tablica);
 
 public:
 
-	SystemZajmowaniaSojuszy(unsigned int RozmiarSystemu=20, unsigned int RozmiarKlatek=50);
+	SystemZajmowaniaSojuszy(unsigned int RozmiarSystemu=5, unsigned int RozmiarKlatek=200);
 
 
 	//void DopasujDoRozmiarow(unsigned int RozmiarMapy);
@@ -74,6 +90,8 @@ public:
 	std::vector<unsigned int>  ZwrocTabliceObiektow(std::vector<Obiekt*> &Obiekty,Druzyny druzyna,unsigned int x,unsigned int y);
 
 	void GenerujSystem(const unsigned int TickRate);
+
+	void ZmapujObiekt(const unsigned int IndexObiektu, const bool CzyZaktualizowac, const Vector2 Pozycja, const Vector2 PoprzedniaPozycja,const Typy TypObiektu) override;
 
 	void Logika(std::vector<Obiekt*> &Obiekty,CzasLogiki &Czas);
 	

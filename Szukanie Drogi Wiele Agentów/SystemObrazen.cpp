@@ -183,18 +183,18 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
  {
 	 this->RozmiarKlatek = RozmiarKlatek;
 	 this->RozmiarSystemu = RozmiarSystemu;
+ }
 
-	 this->IndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu, {});
-	 this->PodOstrzalem.reserve(30);
- }
- void SystemObrazen::ZmapujObiekty(std::vector<Obiekt*>& Obiekty)
+ void SystemObrazen::LogikaSystemuObrazen(std::vector<Obiekt*>& Obiekty, CzasLogiki& Czaslogiki, Mapa& mapa,TablicaAnimacji & tablicanimacji)
  {
-	 PodOstrzalem.clear();
-	 MapowanieObiektow(Obiekty, IndexyObiektow, RozmiarKlatek, RozmiarSystemu,Typy::SYSTEM_OBRAZEN);
- }
- void SystemObrazen::LogikaSystemu(std::vector<Obiekt*>& Obiekty, CzasLogiki& Czaslogiki, Mapa& mapa,TablicaAnimacji & tablicanimacji)
- {
-	 ZmapujObiekty(Obiekty);
+	 for (Obiekt*& obiekt : Obiekty)
+	 {
+		 ZmapujObiekt(obiekt->ZwrocIndexObiektu(), obiekt->ZwrocCzyZaktualizowacSystemy(), obiekt->ZwrocPozycje(), obiekt->ZwrocPoprzedniaPozycje(), obiekt->ZwrocTypy());
+	}
+
+
+
+
 	 for (Damage*& damage : Obrazenia)
 	 {
 		 if (damage != nullptr)
@@ -210,7 +210,7 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 			 {
 				 for (unsigned int y = gornyRog.y; y <= dolnyRog.y; y++)
 				 {
-					 for (unsigned int& indexobiektu : IndexyObiektow[x+(y * RozmiarSystemu)])
+					 for (unsigned int& indexobiektu : ZmapowaneObiekty[ZwrocIndexKlatki(x,y)])
 					 {
 						 Obiekt * obiekt = ZwrocObiekt(indexobiektu,Obiekty);
 						 if (obiekt != nullptr)
@@ -252,12 +252,7 @@ Damage* DamageKolo::ZwrocKopie(Vector2 Pozycja)
 	 }
 
  }
- void SystemObrazen::UstawParametry(unsigned int RozmiarSystemu, Mapa& mapa)
- {
-	 this->RozmiarSystemu = RozmiarSystemu;
-	 this->RozmiarKlatek = mapa.szerokosc * mapa.RozmiarKlatki / RozmiarSystemu;
-	 this->IndexyObiektow.resize(RozmiarSystemu * RozmiarSystemu, {});
- }
+
 #ifdef SYSTEM_OBRAZEN_DEBUG
  void SystemObrazen::Debug(unsigned int Rozmiar)
  {

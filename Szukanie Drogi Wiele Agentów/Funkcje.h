@@ -47,26 +47,26 @@ void UstawRodzica(PozycjaNaMapie poz, unsigned int Rodzic, std::vector<KolorowyK
 void NowyKwadrat(PozycjaNaMapie poz, Color kolor, unsigned int rodzic, int kosztG, int kosztH, std::vector<KolorowyKwadrat>& tablica);
 
 
-float Interpolacja(float x0, float y0, float x1, float y1, float obecna);
-float Interpolacja(float x0, float x1, float procent);
+float ZwrocInterpolacja(float x0, float y0, float x1, float y1, float obecna);
+float ZwrocInterpolacja(float x0, float x1, float procent);
 
-float TickRuchu(Vector2 pozA, Vector2 pozB, float Predkosc, const float tickrate, float procent = 0.5);
+float ZwrocTickRuchu(Vector2 pozA, Vector2 pozB, float Predkosc, const float tickrate, float procent = 0.5);
 
-float Dlugosc(Vector2 wektor);
+float ZwrocDlugosc(Vector2 wektor);
 
-Vector2 Normalizacja(Vector2 wektor);
+Vector2 ZwrocNormalizacja(Vector2 wektor);
 
-int WInterwale(float t);
+int ZwrocWInterwale(float t);
 
-int Manhatan(PozycjaNaMapie A, PozycjaNaMapie B);
+int ZwrocManhatan(PozycjaNaMapie A, PozycjaNaMapie B);
 
-int Koszt(const PozycjaNaMapie A, const PozycjaNaMapie B);
+int ZwrocKoszt(const PozycjaNaMapie A, const PozycjaNaMapie B);
 
 //konwersja rodzicza na wektor
 
-PozycjaNaMapie RodzicPozycja(const unsigned int Rodzic, const unsigned int szerokosc);
+PozycjaNaMapie ZwrocRodzicPozycja(const unsigned int Rodzic, const unsigned int szerokosc);
 
-unsigned int PozycjaRodzic(const PozycjaNaMapie poz, const unsigned intszerokosc);
+unsigned int ZwrocPozycjaRodzic(const PozycjaNaMapie poz, const unsigned int szerokosc);
 
 void NarysujKwadrat(KolorowyKwadrat& kwadrat, const int rozmiar);
 
@@ -74,8 +74,8 @@ void NarysujKwadrat(KolorowyKwadrat& kwadrat, const int rozmiar);
 float KonwersjaKatow(float Kat);
 float OdwrocenieKonta(float Kat,bool WKtoraStrone);
 
-float IloczynSkalarny(Vector2 A, Vector2 B);
-float IloczynWektorowy(Vector2 A, Vector2 B);
+float ZwrocIloczynSkalarny(Vector2 A, Vector2 B);
+float ZwrocIloczynWektorowy(Vector2 A, Vector2 B);
 
 //Sluzy donarysowanie siatki sluzy do przedstawienia ilosci elementow na danym polu
 

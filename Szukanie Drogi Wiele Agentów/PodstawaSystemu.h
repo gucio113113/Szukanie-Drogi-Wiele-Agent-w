@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <raylib.h>
+#include <iostream>
 
 
 enum class Typy : unsigned char
@@ -47,6 +48,7 @@ public:
 
 	void UstawRozmiarSystemu(unsigned int RozmiarSystemu);
 	void UstawRozmiarKlatek(unsigned int RozmiarKlatek);
+	void DostosujDoRozmiaru(unsigned int RozmiarMapy);
 
 	unsigned int ZwrocRozmiarSystemu();
 	unsigned int ZwrocRozmiarKlatek();
@@ -65,9 +67,8 @@ public:
 	virtual void GenerujSystem();
 	
 
-	void ZmapujObiekt(const unsigned int IndexObiektu,const bool CzyZaktualizowac,const Vector2 Pozycja,const Vector2 PoprzedniaPozycja,const Typy TypObiektu);
-
-
+	virtual void ZmapujObiekt(const unsigned int IndexObiektu,const bool CzyZaktualizowac,const Vector2 Pozycja,const Vector2 PoprzedniaPozycja,const Typy TypObiektu);
+	//virtual void Debug();
 };
 
 
