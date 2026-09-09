@@ -167,7 +167,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 
 		 this->kat = katRozpoczeczeczia;
 
-		 ruchPoOkregu.Ustaw(this->kat, parametr->Predkosc, pozycja, obiekt->pozycja, parametr->Promien);
+		 ruchPoOkregu.Ustaw(this->kat, parametr->Predkosc, pozycja, obiekt->ZwrocPozycje(), parametr->Promien);
 
 
 
@@ -220,7 +220,7 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 
 				 if (obiekt != nullptr && obiekt2 != nullptr)
 				 {
-					 Pocisk* pocisk = new Pocisk(obiekt->pozycja, typ, obiekt2->pozycja, parametrypociskow, Obiekty, tablica);
+					 Pocisk* pocisk = new Pocisk(obiekt->ZwrocPozycje(), typ, obiekt2->ZwrocPozycje(), parametrypociskow, Obiekty, tablica);
 					 TickStrzalu = 0;
 					 if (pocisk->parametr == nullptr)
 					 {

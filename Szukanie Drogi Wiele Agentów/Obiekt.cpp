@@ -158,7 +158,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
   }
   Obiekt* ZwrocObiekt(unsigned indexObiektu, std::vector<Obiekt*>& Obiekty)
   {
-	  auto szukanie = std::find_if(Obiekty.begin(), Obiekty.end(), [&](const Obiekt* ob) { return ob->IndexObiektu == indexObiektu; });
+	  auto szukanie = std::find_if(Obiekty.begin(), Obiekty.end(), [&]( Obiekt* ob) { return ob->ZwrocIndexObiektu() == indexObiektu; });
 	  if (szukanie == Obiekty.end()) return nullptr;
 	  return *szukanie;
   }
@@ -328,16 +328,17 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 	  }
 	  for (unsigned int index = 0; index < Obiekty.size(); index++)
 	  {
-		  if (Obiekty[index] != nullptr && !!(Obiekty[index]->typ & typ))
+		  if (Obiekty[index] != nullptr && !!(Obiekty[index]->ZwrocTypy() & typ))
 		  {
 			  Obiekt*& obiekt = Obiekty[index];
+			  Vector2 pozycja = obiekt->ZwrocPozycje();
 			  PozycjaNaMapie poz;
-			  poz.x = obiekt->pozycja.x / RozmiarKlatek;
-			  poz.y = obiekt->pozycja.y / RozmiarKlatek;
+			  poz.x = pozycja.x / RozmiarKlatek;
+			  poz.y = pozycja.y / RozmiarKlatek;
 
 			  if (poz.x >= 0 && poz.y>=0 && poz.x<RozmiarSystemu && poz.y < RozmiarSystemu)
 			  {
-				  KlatkiSystemu[poz.x + (poz.y * RozmiarSystemu)].emplace_back(obiekt->IndexObiektu);
+				  KlatkiSystemu[poz.x + (poz.y * RozmiarSystemu)].emplace_back(obiekt->ZwrocIndexObiektu());
 			  }
 
 		  }

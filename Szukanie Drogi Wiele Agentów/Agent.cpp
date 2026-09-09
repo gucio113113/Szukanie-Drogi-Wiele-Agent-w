@@ -795,7 +795,7 @@ void Agent::ZnajdzCelLokalny(Mapa& mapa, CzasLogiki& czaslogiki)
 
 	}
 }
-void Agent::UstawGlownyCel(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki)
+void Agent::UstawCelGlobalny(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki)
 {
 	bool znaleziono;
 	NajbliszyCel(znaleziono, GlownyCel, this->CelGlobalny, mapa, czaslogiki);
@@ -811,6 +811,34 @@ void Agent::UstawGlownyCel(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki
 		AlgorytmDrogi(mapa, czaslogiki);
 	}
 }
+void Agent::UstawPredkosc(float Predkosc)
+{
+	this->Predkosc = Predkosc;
+}
+void Agent::UstawKolor(Color Kolor)
+{
+	this->kolor = Kolor;
+	}
+void Agent::UstawDecyzje(Decyzje decyjza)
+{
+	this->decyzjaWCzasie.decyzja = decyjza;
+}
+float Agent::ZwrocPredkosc()
+{
+	return Predkosc;
+}
+Color Agent::ZwrocKolor()
+{
+	return kolor;
+	}
+Decyzje Agent::ZwrocDecyzje()
+{
+	return decyzjaWCzasie.decyzja;
+}
+Vector2 Agent::ZwrocGlownyCel()
+{
+	return CelGlobalny;
+	}
 
 
 #ifdef AGENT_DEBUG

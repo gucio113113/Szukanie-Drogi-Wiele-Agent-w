@@ -117,7 +117,7 @@ void Gra::UsuwanieObiektow()
 	}
 	for (unsigned int& index : Indexy)
 	{
-		auto szukanie = std::find_if(Obiekty.begin(), Obiekty.end(), [&](const Obiekt* ob) { return ob->IndexObiektu == index; });
+		auto szukanie = std::find_if(Obiekty.begin(), Obiekty.end(), [&]( Obiekt* ob) { return ob->ZwrocIndexObiektu() == index; });
 		if (szukanie != Obiekty.end())
 		{
 #ifdef GRA_DEBUG

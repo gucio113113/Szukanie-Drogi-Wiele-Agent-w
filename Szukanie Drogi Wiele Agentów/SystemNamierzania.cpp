@@ -5,11 +5,16 @@ void SystemNamierzania::CzyMozeNamierzyc(Obiekt*& obiekt1, Obiekt*& obiekt2, flo
 {
 	if (obiekt2 != nullptr)
 	{
-		auto TenObiekt = std::find(Celowe.begin(), Celowe.end(), obiekt2->IndexObiektu);
+		const unsigned int IndexObiektu= obiekt2->ZwrocIndexObiektu();
+		Vector2 pozycja1 = obiekt1->ZwrocPozycje();
+		Vector2 pozycja2 = obiekt2->ZwrocPozycje();
+		auto TenObiekt = std::find(Celowe.begin(), Celowe.end(), IndexObiektu);
 
-		if (obiekt1 != nullptr && obiekt1!=obiekt2 && TenObiekt==Celowe.end() && obiekt1->sojusze.SprawdzSojusz(obiekt2->sojusze)==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= ZwrocDlugosc({obiekt2->pozycja.x - obiekt1->pozycja.x,obiekt2->pozycja.y - obiekt1->pozycja.y}))
+
+
+		if (obiekt1 != nullptr && obiekt1!=obiekt2 && TenObiekt==Celowe.end() && obiekt1->ZwrocSojusz().SprawdzSojusz(obiekt2->ZwrocSojusz())==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= ZwrocDlugosc({pozycja2.x - pozycja1.x,pozycja2.y - pozycja1.y}))
 		{
-			Celowe.emplace_back(obiekt2->IndexObiektu);
+			Celowe.emplace_back(IndexObiektu);
 		#ifdef SYSTEMNAMIERZANIA_DEBUG
 			std::cout << "Dodany :" << obiekt2->IndexObiektu << "\n";
 		#endif
@@ -43,11 +48,14 @@ void SystemNamierzania::ZwrocSpelniajaceZasieg(unsigned int indexObiektu, float 
 	{
 		PozycjaNaMapie pozStartowa;
 		PozycjaNaMapie pozKoncowa;
+		const Vector2 pozycja = obiekt->ZwrocPozycje();
+		const float RozmiarKlatekMapy = mapa.ZwrocRozmiarKlatki();
+		
 
-		pozStartowa.x = (obiekt->pozycja.x - static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
-		pozStartowa.y = (obiekt->pozycja.y - static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
-		pozKoncowa.x = (obiekt->pozycja.x + static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
-		pozKoncowa.y = (obiekt->pozycja.y + static_cast<float>(Zasieg * mapa.ZwrocRozmiarKlatki())) / RozmiarKlatek;
+		pozStartowa.x = (pozycja.x - (Zasieg * RozmiarKlatekMapy)) / RozmiarKlatek;
+		pozStartowa.y = (pozycja.y - (Zasieg * RozmiarKlatekMapy)) / RozmiarKlatek;
+		pozKoncowa.x = (pozycja.x + (Zasieg * RozmiarKlatekMapy)) / RozmiarKlatek;
+		pozKoncowa.y = (pozycja.y + (Zasieg * RozmiarKlatekMapy)) / RozmiarKlatek;
 
 		if (pozStartowa.x < 0) pozStartowa.x = 0;
 		if (pozStartowa.y < 0) pozStartowa.y = 0;

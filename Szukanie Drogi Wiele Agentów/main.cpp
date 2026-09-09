@@ -25,13 +25,7 @@ void inicjacjaMapy()
 {
 	//mapa.StworzMape(,25, 25, { {2,3},{2,4},{5,2},{9,0},{6,9},{2,9},{1,0},{1,1},{0,1} });
 }
- void WypiszInformacje(Agent &agent,Mapa &mapa)
-{
-	 for (const PozycjaNaMapie& pozycje : agent.droga._Get_container())
-	 {
-		 DrawText(std::to_string(pozycje.x + pozycje.y * mapa.szerokosc).c_str(), pozycje.x * mapa.RozmiarKlatki + mapa.RozmiarKlatki / 2, pozycje.y * mapa.RozmiarKlatki + mapa.RozmiarKlatki / 2, 10, BLACK);
-	}
-}
+
  /*
 void ZnajdzDroge()
 {

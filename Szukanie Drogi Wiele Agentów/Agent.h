@@ -147,15 +147,9 @@ class Agent : public Obiekt
 {
 protected:
 	float Predkosc;
-	
-
 	//bool DotarloDoGlownego;
-
 	Color kolor;
-
 	Ruch ruch;
-
-	
 	//Do Strzelania
 
 	Bron bron;
@@ -202,7 +196,7 @@ protected:
 
 	KlatkaCelu ZwrocMinimalne(std::vector<KlatkaCelu>& Klatki);
 
-	bool ZwrocCzyZaktualizowacSystemy() override;
+
 
 
 	//Gdy juz jest roszeszone i droga znalezione ponisza funkcja tworzy droge
@@ -234,16 +228,21 @@ public:
 	Agent(Vector2 Pozycja,std::string NazwaTekstury,  Color kolor, float Predkosc,unsigned int Zdrowie,Sojusze sojusz);
 	Agent(Vector2 Pozycja, std::string NazwaTekstury, Color kolor, float Predkosc, unsigned int Zdrowie, Sojusze sojusz,std::vector<Obiekt*> Obiekty,TablicaAnimacji &tablica);
 
-	friend void ZnajdzDroge();
-	friend void WypiszInformacje(Agent& agent, Mapa& mapa);
-	friend void DecyzjeOChodzeniu(Agent*& agent, Rozkazy& rozkaz, DecyzjaWCzasie& DecyzjaWCzasie, float& predkosc, CzasLogiki& czaslogiki, Bodziec& bodziec, Mapa& mapa, SystemNamierzania& SystemNamierzania, SystemObrazen& SystemObrazen);
 	void AlgorytmDrogi(Mapa& mapa, CzasLogiki& czaslogiki);
-
 	void ZnajdzCelLokalny(Mapa& mapa, CzasLogiki& czaslogiki);
-	void UstawGlownyCel(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki);
+	void UstawCelGlobalny(Vector2 GlownyCel, Mapa& mapa, CzasLogiki& czaslogiki);
+	void UstawPredkosc(float Predkosc);
+	void UstawKolor(Color Kolor);
+	void UstawDecyzje(Decyzje decyjza);
+
+	float ZwrocPredkosc();
+	Color ZwrocKolor();
+	Decyzje ZwrocDecyzje();
+	Vector2 ZwrocGlownyCel();
 
 
 
+	bool ZwrocCzyZaktualizowacSystemy() override;
 
 	//wizualizajca drogi Agenta
 #ifdef  AGENT_DEBUG

@@ -90,17 +90,7 @@ public:
 
 	//Do usuniencia
 
-	friend class Bron;
-	friend class Damage;
-	friend class DamageKolo;
-	friend class DamageProstokat;
-	friend class SystemObrazen;
-	friend class SystemNamierzania;
-	friend class Pocisk;
-	friend class PociskKierowany;
-	friend class Gra;
-	friend void MapowanieObiektow(std::vector<Obiekt*>& Obiekty, std::vector<std::vector<unsigned int>> &KlatkiSystemu, unsigned int RozmiarKlatek, unsigned int RozmiarSystemu, Typy typ);
-	friend Obiekt* ZwrocObiekt(unsigned indexObiektu, std::vector<Obiekt*>& Obiekty);
+	
 
 	//Do usuniencia
 };

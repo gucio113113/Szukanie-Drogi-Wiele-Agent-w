@@ -55,12 +55,16 @@ bool DamageKolo::Sprawdz(Obiekt*& obiekt, Mapa& mapa,TablicaAnimacji& tablicanim
 	//Rectangle kwadrat1={}
 	if (obiekt != nullptr)
 	{
-		Rectangle kwadrat = { obiekt->pozycja.x - static_cast<float>(mapa.RozmiarKlatki / 2),obiekt->pozycja.y - static_cast<float>(mapa.RozmiarKlatki / 2),static_cast<float>(mapa.RozmiarKlatki),static_cast<float>(mapa.RozmiarKlatki) };
+		Vector2 pozycja = obiekt->ZwrocPozycje();
+		unsigned int Zdrowie = obiekt->ZwrocZdrowie();
+		float RozmiarKlatki = static_cast<float>(mapa.ZwrocRozmiarKlatki());
 
-		if (CheckCollisionCircleRec(obiekt->pozycja, Promien * static_cast<float>(mapa.RozmiarKlatki), kwadrat) == true && Tick % KiedyZadaje == 0)
+		Rectangle kwadrat = { (pozycja.x - RozmiarKlatki) / 2,(pozycja.y - RozmiarKlatki) / 2,RozmiarKlatki,RozmiarKlatki };
+
+		if (CheckCollisionCircleRec(pozycja, Promien * RozmiarKlatki, kwadrat) == true && Tick % KiedyZadaje == 0)
 		{
-			if (obiekt->Zdrowie - IleZadaje > 0) obiekt->Zdrowie -= IleZadaje;
-			else obiekt->Zdrowie = 0;
+			if (Zdrowie - IleZadaje > 0) Zdrowie -= IleZadaje;
+			else Zdrowie = 0;
 			return true;
 		}
 	}
@@ -122,19 +126,20 @@ void DamageKolo::NarysujDamage(unsigned int rozmiarKlatki)
 {
 	 if (obiekt != nullptr)
 	 {
-		 ZestawAnimacji * Zestaw = obiekt->player.ZwrocZestaw();
+		 ZestawAnimacji * Zestaw = obiekt->ZwrocZestawAnimacji();
 
 		 if (Zestaw != nullptr)
 		 {
+			 Vector2 pozycja = obiekt->ZwrocPozycje();
 
-			 Rectangle kwadrat0 = { obiekt->pozycja.x - static_cast<float>(Zestaw->Rozmiar.x / 2),obiekt->pozycja.y - static_cast<float>(Zestaw->Rozmiar.y / 2),static_cast<float>(Zestaw->Rozmiar.x),static_cast<float>(Zestaw->Rozmiar.y) };
+			 Rectangle kwadrat0 = { pozycja.x - static_cast<float>(Zestaw->Rozmiar.x / 2),pozycja.y - static_cast<float>(Zestaw->Rozmiar.y / 2),static_cast<float>(Zestaw->Rozmiar.x),static_cast<float>(Zestaw->Rozmiar.y) };
 			 Rectangle kwadrat1 = { Pozycja.x - (Rozmiar.x*static_cast<float>(mapa.RozmiarKlatki) / 2),Pozycja.y - (Rozmiar.y*static_cast<float>(mapa.RozmiarKlatki) / 2),Rozmiar.x * static_cast<float>(mapa.RozmiarKlatki),Rozmiar.y * static_cast<float>(mapa.RozmiarKlatki) };
 
 
 			 if (CheckCollisionRecs(kwadrat0, kwadrat1) == true && Tick % KiedyZadaje == 0)
 			 {
-				 if (obiekt->Zdrowie - IleZadaje > 0) obiekt->Zdrowie -= IleZadaje;
-				 else obiekt->Zdrowie = 0;
+				 if (obiekt->ZwrocZdrowie() - IleZadaje > 0) obiekt->UstawZdrowie(obiekt->ZwrocZdrowie() - IleZadaje);
+				 else obiekt->UstawZdrowie(0);
 				 return true;
 			 }
 
