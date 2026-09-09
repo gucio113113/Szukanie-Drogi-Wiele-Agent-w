@@ -119,7 +119,20 @@ class Bron
 public:
 	Bron(unsigned int szybkostrzelnosc=20, float Zasieg=5, TypPocisku typ=TypPocisku::POCISK);
 	void Strzelanie(const unsigned int &Index,CzasLogiki &czasLogiki,std::vector<unsigned int> &Indexy,std::vector<Obiekt*> &Obiekty, Mapa& mapa ,ParametryPociskow &parametrypociskow,TablicaAnimacji &tablica);
-	friend class Agent;
+	
+	void UstawSzybkostrzelnosc(unsigned int Szybkostrzelnosc);
+	void UstawZasieg(float Zasieg);
+	void UstawTypPocisku(TypPocisku typ);
+	void UstawTickStrzalu(unsigned int TickStrzalu);
+
+	unsigned int ZwrocSzybkostrzelnosc();
+	float ZwrocZasieg();
+	TypPocisku ZwrocTypObiektu();
+	unsigned int ZwrocTickStrzalu();
+
+
+
+
 };
 
 #endif // !BRON_H

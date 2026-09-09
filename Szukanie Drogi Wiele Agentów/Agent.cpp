@@ -107,7 +107,7 @@ DecyzjaWCzasie::DecyzjaWCzasie()
 
 void Agent::WykryjBodzcze(SystemNamierzania& systemnamierzania, SystemObrazen& systemObrazen, Mapa& mapa, std::vector<Obiekt*>& Obiekty, std::vector<unsigned int>& Namierzane)
 {
-	systemnamierzania.ZwrocSpelniajaceZasieg(IndexObiektu, bron.Zasieg, Namierzane, Obiekty, mapa);
+	systemnamierzania.ZwrocSpelniajaceZasieg(IndexObiektu, bron.ZwrocZasieg(), Namierzane, Obiekty, mapa);
 	if (Namierzane.empty() == false) bodziec = bodziec | Bodziec::WYKRYTO_PRZECZWNIKA;
 	auto CzyPod = std::find(systemObrazen.PodOstrzalem.begin(), systemObrazen.PodOstrzalem.end(), IndexObiektu);
 	if (CzyPod != systemObrazen.PodOstrzalem.end()) bodziec = bodziec | Bodziec::PODOSTRZALEM;
@@ -210,7 +210,7 @@ void Agent::DecyzjeOChodzeniu(CzasLogiki& czaslogiki, Mapa& mapa, SystemNamierza
 				WykryjBodzcze(SystemNamierzania, SystemObrazen, mapa, Obiekty, Namierzane);
 				if (!!(bodziec & Bodziec::WYKRYTO_PRZECZWNIKA))
 				{
-					if (bron.TickStrzalu >= bron.Szybkostrzelnosc)
+					if (bron.ZwrocTickStrzalu() >= bron.ZwrocSzybkostrzelnosc() )
 					{
 						player.UstawTypAnimacji(TypyAnimacji::STRZELANIE);
 					}

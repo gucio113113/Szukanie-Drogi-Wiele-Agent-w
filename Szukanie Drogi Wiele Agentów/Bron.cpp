@@ -267,5 +267,38 @@ Pocisk::Pocisk(Vector2 Pozycja, TypPocisku typ, Vector2 Cel, ParametryPociskow& 
 
 
  }
+ void Bron::UstawSzybkostrzelnosc(unsigned int Szybkostrzelnosc)
+ {
+	 this->Szybkostrzelnosc = Szybkostrzelnosc;
+ }
+	 void Bron::UstawZasieg(float Zasieg)
+	 {
+		 this->Zasieg = Zasieg;
+	 }
+	 void Bron::UstawTypPocisku(TypPocisku typ)
+	 {
+		 this->typ = typ;
+	 }
+	 void Bron::UstawTickStrzalu(unsigned int TickStrzalu)
+	 {
+		 this->TickStrzalu = TickStrzalu;
+	 }
+	 unsigned int Bron::ZwrocSzybkostrzelnosc()
+	 {
+		 return Szybkostrzelnosc;
+	 }
+	 float Bron::ZwrocZasieg()
+	 {
+		 return Zasieg;
+	 }
+	 TypPocisku Bron::ZwrocTypObiektu()
+	 {
+		 return typ;
+	 }
+	 unsigned int Bron::ZwrocTickStrzalu()
+	 {
+		 return TickStrzalu;
+	 }
+
 
  
