@@ -162,7 +162,7 @@ Gra::Gra( std::string NazwaGry, PozycjaNaMapie rozmiarEkranu, unsigned int TickR
 	this->NazwaGry = NazwaGry;
 	this->rozmiarekranu = rozmiarEkranu;
 	czas.TickRate = TickRate;
-	mapa.RozmiarKlatki = RozmiarKlatki;
+	mapa.UstawRozmiarKlatki(static_cast<float>(RozmiarKlatki));
 	mapa.StworzMape(20, 20, {});
 	Inicjacja();
 }

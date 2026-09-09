@@ -31,15 +31,18 @@ enum TypPola
 
 class TeksturaTileSet
 {
-	Texture tekstura;
+	
 	unsigned int IloscKlatek;
-	bool Zajente;
+	bool CzyZajente;
 public:
-	friend class Mapa;
-	friend class JakaTekstura;
-	TeksturaTileSet(bool Zajente,std::filesystem::path Sciezka, unsigned int &Rozmiar);
+	Texture tekstura;
+	TeksturaTileSet(bool CzyZajente,std::filesystem::path Sciezka, unsigned int &Rozmiar);
+
+	void UstawCzyZajente(bool CzyZajente);
+
 	Rectangle ZwrocWymiary( unsigned int &Rozmiar,unsigned int IndexKlatki);
 	unsigned int ZwrocIloscKlatek();
+	bool ZwrocCzyZajente();
 
 };
 
@@ -47,11 +50,18 @@ void StworzTileSet(std::filesystem::path Sciezka, std::string NazwaFolderu, unsi
 
 class jakaTekstura
 {
-public:
-	unsigned int indexTekstury;
+	unsigned int IndexTekstury;
 	unsigned int Klatka;
-	jakaTekstura(unsigned int indexTekstury, unsigned int Klatka);
+public:
+	jakaTekstura(unsigned int IndexTekstury, unsigned int Klatka);
 	jakaTekstura operator=(const jakaTekstura& tekstura);
+
+	void UstawIndexTekstury(unsigned int IndexTekstury,std::vector<TeksturaTileSet> &TeksturyTileSet);
+	void UstawKlatke(unsigned int Klatka, std::vector<TeksturaTileSet>& TeksturyTileSet);
+
+	unsigned int ZwrocIndexTekstury();
+	unsigned int ZwrocKlatke();
+
 };
 
 
@@ -69,7 +79,6 @@ class Mapa
 	std::vector<PozycjaWCzasie> PozycjeCzasowe;
 
 	bool WMapie(const PozycjaNaMapie& poz);
-	void UstawTypPola(const PozycjaNaMapie& poz, TypPola typ);
 
 	//Odpowiada za Tekstury
 
@@ -80,19 +89,7 @@ class Mapa
 	void NarysujZablokownaPozycje(PozycjaNaMapie poz);
 
 public:
-	friend class Obiekt;
-	friend class Pocisk;
-	friend class Agent;
-	friend class SystemNamierzania;
-	friend class Gra;
-	friend class Damage;
-	friend class DamageKolo;
-	friend class DamageProstokat;
-	friend class SystemObrazen;
-	friend class GraczISter;
-	
 
-	friend void WypiszInformacje(Agent& agent, Mapa& mapa);
 
 	Mapa(std::filesystem::path TileSety="", unsigned int RozmiarKlatki = 100);
 	void StworzMape(unsigned int szerokosc, unsigned int wysokosc,const std::vector<PozycjaNaMapie> &PozycjeZajente={});
@@ -106,11 +103,12 @@ public:
 
 	
 
-	void ustawPozycjeWchodzaca(PozycjaNaMapie pozycja,unsigned int wchodzacy,const unsigned int &IndexObiektu);
-	void ustawPozycjeWychodzaca(PozycjaNaMapie pozycja, unsigned int wychodzacy,const unsigned int &IndexObiektu);
+	void UstawPozycjeWchodzaca(PozycjaNaMapie pozycja,unsigned int wchodzacy,const unsigned int &IndexObiektu);
+	void UstawPozycjeWychodzaca(PozycjaNaMapie pozycja, unsigned int wychodzacy,const unsigned int &IndexObiektu);
+	void UstawTypPola(const PozycjaNaMapie poz, TypPola typ);
 
 	bool CzyPozycjaZajenta(PozycjaNaMapie poz);
-	bool czyPozycjaZajentaWCzasie(PozycjaNaMapie poz,unsigned int const Tick);
+	bool CzyPozycjaZajentaWCzasie(PozycjaNaMapie poz,unsigned int const Tick);
 
 	bool CzyPozycjaZajentaWCzasieDlaObiektu(PozycjaNaMapie poz,unsigned int const Tick,const unsigned int IndexObiektu);
 	
@@ -122,12 +120,18 @@ public:
 	void UsunPozycjeCzasoweDlaObiektu(unsigned int IndexObiektu);
 
 	/// 
+
 	unsigned int ZwrocSzerokosc();
 	unsigned int ZwrocWysokosc();
 	unsigned int ZwrocRozmiarKlatki();
 	
+	void UstawSzerokosc(unsigned int szerokosc);
+	void UstawWysokosc(unsigned int wysokosc);
+	void UstawRozmiarKlatki(unsigned int RozmiarKlatki);
+
 
 	TypPola ZwrocTypPola(const PozycjaNaMapie &poz);
+
 	void Wizualizacja(CzasLogiki& czaslogiki);
 };
 

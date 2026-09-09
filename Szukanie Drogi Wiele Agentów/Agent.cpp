@@ -116,7 +116,9 @@ void Agent::WykryjBodzcze(SystemNamierzania& systemnamierzania, SystemObrazen& s
 	}
 void Agent::UstawRuch(CzasLogiki& czasLogiki, Mapa& mapa)
 {
-	PozycjaNaMapie poz = { static_cast<int>(pozycja.x / mapa.RozmiarKlatki),static_cast<int>(pozycja.y / mapa.RozmiarKlatki) };
+	float RozmiarKlatki = static_cast<float>(mapa.ZwrocRozmiarKlatki());
+
+	PozycjaNaMapie poz = { static_cast<int>(pozycja.x / RozmiarKlatki),static_cast<int>(pozycja.y / RozmiarKlatki) };
 
 	
 
@@ -176,7 +178,7 @@ void Agent::DecyzjeOChodzeniu(CzasLogiki& czaslogiki, Mapa& mapa, SystemNamierza
 				}
 				else
 				{
-					ruch.Porusz(Predkosc * static_cast<float>(mapa.RozmiarKlatki) * czaslogiki.DeltaTimeTick(), pozycja);
+					ruch.Porusz(Predkosc * static_cast<float>(mapa.ZwrocRozmiarKlatki() ) * czaslogiki.DeltaTimeTick(), pozycja);
 				}
 			}
 			else
@@ -287,8 +289,8 @@ void Agent::SzukanieDrogi(PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, std:
 	KlatkaRuchu obecna;
 
 	mapa.UsunPozycjeCzasoweDlaObiektu(IndexObiektu);
-	mapa.ustawPozycjeWchodzaca(mapa.Kordynat(pozycja), czaslogiki.ZwrocTick(),IndexObiektu);
-	mapa.ustawPozycjeWychodzaca(mapa.Kordynat(pozycja), std::numeric_limits<unsigned int>::infinity(),IndexObiektu);
+	mapa.UstawPozycjeWchodzaca(mapa.Kordynat(pozycja), czaslogiki.ZwrocTick(),IndexObiektu);
+	mapa.UstawPozycjeWychodzaca(mapa.Kordynat(pozycja), std::numeric_limits<unsigned int>::infinity(),IndexObiektu);
 
 	Szukanaklatka(docelu, Otwarte, Zamkniente, obecna);
 	droga.push(obecna.pozycja);
@@ -313,7 +315,7 @@ void Agent::SzukanieDrogi(PozycjaNaMapie& Poczatek, PozycjaNaMapie& docelu, std:
 		#ifdef AGENT_DEBUG
 			UstawKolor(obecna.pozycja, PURPLE, KoloroweKwadraty);
 		#endif // AGENT_DEBUG
-			Szukanaklatka(ZwrocRodzicPozycja(obecna.Rodzic, mapa.szerokosc), Otwarte, Zamkniente, obecna);
+			Szukanaklatka(ZwrocRodzicPozycja(obecna.Rodzic, mapa.ZwrocSzerokosc()), Otwarte, Zamkniente, obecna);
 		}
 		//std::cout << "Kurwa mac \n";
 	}
@@ -353,10 +355,10 @@ void Agent::ZajmowaniePozycjiCzasowych(PozycjaNaMapie &Poczatek,CzasLogiki &czas
 	PozycjaNaMapie obecnaPoz = Poczatek;
 
 	float obencytick = czaslogiki.ZwrocTick();
-	float PredkoscKlatkowa = static_cast<float>(mapa.RozmiarKlatki) * Predkosc;
+	float PredkoscKlatkowa = static_cast<float>(mapa.ZwrocRozmiarKlatki() ) * Predkosc;
 
 
-	mapa.ustawPozycjeWychodzaca(Poczatek, czaslogiki.ZwrocTick() + ZwrocTickRuchu(mapa.SrodekPola(Poczatek), mapa.SrodekPola(droga.front()), PredkoscKlatkowa, czaslogiki.ZwroctickRate()),IndexObiektu);
+	mapa.UstawPozycjeWychodzaca(Poczatek, czaslogiki.ZwrocTick() + ZwrocTickRuchu(mapa.SrodekPola(Poczatek), mapa.SrodekPola(droga.front()), PredkoscKlatkowa, czaslogiki.ZwroctickRate()),IndexObiektu);
 
 	for (unsigned int index = 0; index < droga._Get_container().size(); index++)
 	{
@@ -368,17 +370,17 @@ void Agent::ZajmowaniePozycjiCzasowych(PozycjaNaMapie &Poczatek,CzasLogiki &czas
 		#ifdef AGENT_DEBUG
 			std::cout << "Poprzedni Tick :" << obencytick - poprzedniTick << " Pozycje :" << obecnaPoz.x << ".x " << obecnaPoz.y << ".y \n";
 		#endif // AGENT_DEBUG
-			mapa.ustawPozycjeWchodzaca(obecnaPoz, static_cast<unsigned int>(obencytick - poprzedniTick),IndexObiektu);
+			mapa.UstawPozycjeWchodzaca(obecnaPoz, static_cast<unsigned int>(obencytick - poprzedniTick),IndexObiektu);
 		}
 		else
 		{
-			mapa.ustawPozycjeWchodzaca(obecnaPoz, obencytick,IndexObiektu);
+			mapa.UstawPozycjeWchodzaca(obecnaPoz, obencytick,IndexObiektu);
 		}
 		if (index < droga._Get_container().size() - 1)
 		{
 			Nastpstwa = droga._Get_container().at(index + 1);
 			float nastepnyTick = ZwrocTickRuchu(mapa.SrodekPola(obecnaPoz), mapa.SrodekPola(Nastpstwa), PredkoscKlatkowa, czaslogiki.ZwroctickRate());
-			mapa.ustawPozycjeWychodzaca(obecnaPoz, static_cast<unsigned int>(obencytick + nastepnyTick),IndexObiektu);
+			mapa.UstawPozycjeWychodzaca(obecnaPoz, static_cast<unsigned int>(obencytick + nastepnyTick),IndexObiektu);
 		#ifdef AGENT_DEBUG
 			std::cout << "nastepny Tick :" << nastepnyTick + obencytick << " Pozycje :" << obecnaPoz.x << ".x " << obecnaPoz.y << ".y \n";
 		#endif // AGENT_DEBUG
@@ -389,7 +391,7 @@ void Agent::ZajmowaniePozycjiCzasowych(PozycjaNaMapie &Poczatek,CzasLogiki &czas
 		}
 		else
 		{
-			mapa.ustawPozycjeWychodzaca(obecnaPoz, std::numeric_limits<unsigned int>::infinity(),IndexObiektu);
+			mapa.UstawPozycjeWychodzaca(obecnaPoz, std::numeric_limits<unsigned int>::infinity(),IndexObiektu);
 		}
 	}
 }
@@ -455,7 +457,7 @@ void Agent::WykonanieDrogiWlasciwe(Mapa& mapa, CzasLogiki& czaslogiki)
 	}
 	else
 	{
-		ruch.Porusz(Predkosc * static_cast<float>(mapa.RozmiarKlatki) * czaslogiki.DeltaTimeTick(), pozycja);
+		ruch.Porusz(Predkosc * static_cast<float>(mapa.ZwrocRozmiarKlatki()) * czaslogiki.DeltaTimeTick(), pozycja);
 	}
 }
 void Agent::Roszerz(Mapa& mapa, std::vector<KlatkaRuchu>& Otwarte, std::vector<KlatkaRuchu>& Zamkniente, PozycjaNaMapie& docelu, bool& SzukajDrogi, CzasLogiki& czasLogiki)
@@ -481,10 +483,10 @@ void Agent::Roszerz(Mapa& mapa, std::vector<KlatkaRuchu>& Otwarte, std::vector<K
 				KlatkaRuchu nowaKlatka;
 				nowaKlatka.pozycja.x = ix + minimalna.pozycja.x;
 				nowaKlatka.pozycja.y = iy + minimalna.pozycja.y;
-				nowaKlatka.Rodzic = minimalna.pozycja.x + (minimalna.pozycja.y * mapa.szerokosc);
+				nowaKlatka.Rodzic = minimalna.pozycja.x + (minimalna.pozycja.y * mapa.ZwrocSzerokosc());
 				nowaKlatka.kosztH = minimalna.kosztH + ZwrocKoszt(minimalna.pozycja, nowaKlatka.pozycja);
 				nowaKlatka.kosztG = ZwrocKoszt(nowaKlatka.pozycja, docelu);
-				nowaKlatka.Tick = minimalna.Tick + ZwrocTickRuchu(mapa.SrodekPola(minimalna.pozycja), mapa.SrodekPola(nowaKlatka.pozycja), Predkosc * static_cast<float>(mapa.RozmiarKlatki), czasLogiki.ZwroctickRate(), 1);
+				nowaKlatka.Tick = minimalna.Tick + ZwrocTickRuchu(mapa.SrodekPola(minimalna.pozycja), mapa.SrodekPola(nowaKlatka.pozycja), Predkosc * static_cast<float>(mapa.ZwrocRozmiarKlatki() ), czasLogiki.ZwroctickRate(), 1);
 
 				if (nowaKlatka.pozycja == docelu)
 				{
@@ -507,7 +509,7 @@ void Agent::Roszerz(Mapa& mapa, std::vector<KlatkaRuchu>& Otwarte, std::vector<K
 
 				
 
-				if (IteratorOtwarty == Otwarte.end() && IteratorZamknienty == Zamkniente.end() && mapa.czyPozycjaZajentaWCzasie(nowaKlatka.pozycja, nowaKlatka.Tick) == false)
+				if (IteratorOtwarty == Otwarte.end() && IteratorZamknienty == Zamkniente.end() && mapa.CzyPozycjaZajentaWCzasie(nowaKlatka.pozycja, nowaKlatka.Tick) == false)
 				{
 					if (mapa.ZwrocTypPola(nowaKlatka.pozycja) == TypPola::OTWARTE)
 					{
@@ -757,7 +759,7 @@ void Agent::ZnajdzCelLokalny(Mapa& mapa, CzasLogiki& czaslogiki)
 
 
 
-		if (ZwrocDlugosc(Odleglosc) <= 10 * static_cast<float>(mapa.RozmiarKlatki))
+		if (ZwrocDlugosc(Odleglosc) <= 10 * static_cast<float>(mapa.ZwrocRozmiarKlatki() ))
 		{
 			bool szukany;
 			NajbliszyCel(szukany, CelGlobalny, CelLokalny, mapa, czaslogiki);
@@ -774,8 +776,10 @@ void Agent::ZnajdzCelLokalny(Mapa& mapa, CzasLogiki& czaslogiki)
 		{
 			Vector2 WyszukanieCelu;
 
-			WyszukanieCelu.x = ZwrocInterpolacja(pozycja.x, CelGlobalny.x, static_cast<float>(mapa.RozmiarKlatki) * 10 / ZwrocDlugosc(Odleglosc));
-			WyszukanieCelu.y = ZwrocInterpolacja(pozycja.y, CelGlobalny.y, static_cast<float>(mapa.RozmiarKlatki) * 10 / ZwrocDlugosc(Odleglosc));
+			float RozmiarKlatki = static_cast<float>(mapa.ZwrocRozmiarKlatki() );
+
+			WyszukanieCelu.x = ZwrocInterpolacja(pozycja.x, CelGlobalny.x, RozmiarKlatki * 10 / ZwrocDlugosc(Odleglosc));
+			WyszukanieCelu.y = ZwrocInterpolacja(pozycja.y, CelGlobalny.y, RozmiarKlatki * 10 / ZwrocDlugosc(Odleglosc));
 
 
 			bool znalezionoCelLokalny;
@@ -886,5 +890,5 @@ void Agent::WykonujDroge(Mapa& mapa, CzasLogiki& czaslogiki)
 #ifdef AGENT_DEBUG
 	 WizuDrogi(mapa);
 #endif // AGENT_DEBUG
-	 player.Rysuj(czasLogiki, pozycja,mapa.RozmiarKlatki, tablica);
+	 player.Rysuj(czasLogiki, pozycja,mapa.ZwrocRozmiarKlatki(), tablica);
  }

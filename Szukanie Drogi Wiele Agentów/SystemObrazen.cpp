@@ -131,9 +131,12 @@ void DamageKolo::NarysujDamage(unsigned int rozmiarKlatki)
 		 if (Zestaw != nullptr)
 		 {
 			 Vector2 pozycja = obiekt->ZwrocPozycje();
+			 float RozmiarKlatki = static_cast<float>(mapa.ZwrocRozmiarKlatki());
+
+
 
 			 Rectangle kwadrat0 = { pozycja.x - static_cast<float>(Zestaw->Rozmiar.x / 2),pozycja.y - static_cast<float>(Zestaw->Rozmiar.y / 2),static_cast<float>(Zestaw->Rozmiar.x),static_cast<float>(Zestaw->Rozmiar.y) };
-			 Rectangle kwadrat1 = { Pozycja.x - (Rozmiar.x*static_cast<float>(mapa.RozmiarKlatki) / 2),Pozycja.y - (Rozmiar.y*static_cast<float>(mapa.RozmiarKlatki) / 2),Rozmiar.x * static_cast<float>(mapa.RozmiarKlatki),Rozmiar.y * static_cast<float>(mapa.RozmiarKlatki) };
+			 Rectangle kwadrat1 = { Pozycja.x - (Rozmiar.x*RozmiarKlatki / 2),Pozycja.y - (RozmiarKlatki / 2),Rozmiar.x * RozmiarKlatki,Rozmiar.y * RozmiarKlatki };
 
 
 			 if (CheckCollisionRecs(kwadrat0, kwadrat1) == true && Tick % KiedyZadaje == 0)

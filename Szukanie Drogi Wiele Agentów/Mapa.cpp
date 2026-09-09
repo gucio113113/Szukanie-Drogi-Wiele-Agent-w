@@ -3,17 +3,21 @@
 
 
 
-TeksturaTileSet::TeksturaTileSet(bool Zajente,std::filesystem::path Sciezka, unsigned int &Rozmiar)
+TeksturaTileSet::TeksturaTileSet(bool CzyZajente,std::filesystem::path Sciezka, unsigned int &Rozmiar)
 {
 	if (std::filesystem::exists(Sciezka) == true)
 	{
-		this->Zajente = Zajente;
+		this->CzyZajente = CzyZajente;
 		tekstura = LoadTexture(Sciezka.string().c_str());
 		IloscKlatek = static_cast<unsigned int>(tekstura.width / Rozmiar);
 		if (IsTextureValid(tekstura) == true) std::cout << "Zaladowano Teksture :" << Sciezka.string() << "\n";
 		else std::cout << "Nie Zaladowano Tekstury :" << Sciezka.string() << "\n";
 	}
 	else std::cout << "Nie zaladowano Tekstury :" << Sciezka.string() << "\n";
+}
+void TeksturaTileSet::UstawCzyZajente(bool CzyZajente)
+{
+	this->CzyZajente = CzyZajente;
 }
 Rectangle TeksturaTileSet::ZwrocWymiary( unsigned int& Rozmiar, unsigned int IndexKlatki)
 {
@@ -22,6 +26,10 @@ Rectangle TeksturaTileSet::ZwrocWymiary( unsigned int& Rozmiar, unsigned int Ind
 unsigned int TeksturaTileSet::ZwrocIloscKlatek()
 {
 	return IloscKlatek;
+}
+bool TeksturaTileSet::ZwrocCzyZajente()
+{
+	return CzyZajente;
 }
 
 // -------------------------------------------------------
@@ -73,20 +81,42 @@ void StworzTileSet(std::filesystem::path Sciezka, std::string NazwaFolderu, unsi
 //------------------------------------------
 jakaTekstura::jakaTekstura(unsigned int indexTekstury, unsigned int Klatka)
 {
-	this->indexTekstury = indexTekstury;
+	this->IndexTekstury = indexTekstury;
 	this->Klatka = Klatka;
 }
 jakaTekstura jakaTekstura::operator=(const jakaTekstura& tekstura)
 {
-	this->indexTekstury = tekstura.indexTekstury;
+	this->IndexTekstury = tekstura.IndexTekstury;
 	this->Klatka = tekstura.Klatka;
 	return *this;
 }
+void jakaTekstura::UstawIndexTekstury(unsigned int IndexTekstury, std::vector<TeksturaTileSet>& TeksturyTileSet)
+{
+	if (IndexTekstury > TeksturyTileSet.size() && TeksturyTileSet.empty() == false)
+	{
+		this->IndexTekstury = IndexTekstury;
+	}
+	else this->IndexTekstury = std::numeric_limits<unsigned int>::infinity();
+}
+void jakaTekstura::UstawKlatke(unsigned int Klatka, std::vector<TeksturaTileSet>& TeksturyTileSet)
+{
+	if (IndexTekstury > TeksturyTileSet.size() && TeksturyTileSet.empty() == false)
+	{
+		if (TeksturyTileSet[IndexTekstury].ZwrocIloscKlatek() > Klatka)
+			this->Klatka = Klatka;
+		else this->Klatka = 0;
+	}
+	else this->IndexTekstury = std::numeric_limits<unsigned int>::infinity();
+}
 
-
-
-
-
+unsigned int jakaTekstura::ZwrocIndexTekstury()
+{
+	return IndexTekstury;
+	}
+unsigned int jakaTekstura::ZwrocKlatke()
+{
+	return Klatka;
+}
 
 
 //------------------------------------------
@@ -106,7 +136,7 @@ bool Mapa::WMapie(const PozycjaNaMapie& poz)
 	if (0 <= poz.x && szerokosc > poz.x && 0 <= poz.y && wysokosc > poz.y) return true;
 	else return false;
 }
-void Mapa::UstawTypPola(const PozycjaNaMapie& poz, TypPola typ)
+void Mapa::UstawTypPola(const PozycjaNaMapie poz, TypPola typ)
 {
 	if (WMapie(poz) == true)
 	{ 
@@ -146,9 +176,11 @@ void Mapa::ZaladujTekstury(std::filesystem::path Folder)
 		{
 			blmp::Obiekt obiekt{ "",{} };
 			blmp::WczytajObiekt(obiekt, PlikInfo);
+			bool czyzajente;
 			for (unsigned int index=0;index <  tekstury.size();index++ )
 			{
-				blmp::WczytajWartoscWlasciwosci(obiekt, "TILESET" + std::to_string(index), tekstury[index].Zajente);
+				blmp::WczytajWartoscWlasciwosci(obiekt, "TILESET" + std::to_string(index), czyzajente);
+				tekstury[index].UstawCzyZajente(czyzajente);
 			}
 			PlikInfo.close();
 		}
@@ -159,9 +191,9 @@ void Mapa::UstawTileSet(const PozycjaNaMapie& poz, unsigned int IndexTekstury)
 {
 	if (WMapie(poz) == true && tekstury.empty()==false && tekstury.size()>IndexTekstury  )
 	{
-		Jakie[poz.y * RozmiarKlatki + poz.x].Klatka = 0;
-		Jakie[poz.y * RozmiarKlatki + poz.x].indexTekstury = IndexTekstury;
-		if (tekstury[IndexTekstury].Zajente == true)
+		Jakie[poz.y * RozmiarKlatki + poz.x].UstawIndexTekstury(IndexTekstury,tekstury);
+		Jakie[poz.y * RozmiarKlatki + poz.x].UstawKlatke(0, tekstury);
+		if (tekstury[IndexTekstury].ZwrocCzyZajente() == true)
 		{
 			Pola[poz.y * RozmiarKlatki + poz.x] = TypPola::ZAMKNIENTE;
 		}
@@ -171,10 +203,10 @@ void Mapa::UstawTileSet(const PozycjaNaMapie& poz, unsigned int IndexTekstury)
 void Mapa::RenderujTileSet(PozycjaNaMapie poz)
 {
 	unsigned int index = static_cast<unsigned int>(poz.x) + static_cast<unsigned int>(poz.y) * RozmiarKlatki;
-	if (tekstury.empty()==false  && IsTextureValid(tekstury[Jakie[index].indexTekstury].tekstura) == true)
+	if (tekstury.empty()==false  && IsTextureValid(tekstury[Jakie[index].ZwrocIndexTekstury()].tekstura) == true)
 	{
-		DrawTextureRec(tekstury[Jakie[index].indexTekstury].tekstura,
-			tekstury[Jakie[index].indexTekstury].ZwrocWymiary(RozmiarKlatki, Jakie[index].Klatka),
+		DrawTextureRec(tekstury[Jakie[index].ZwrocIndexTekstury()].tekstura,
+			tekstury[Jakie[index].ZwrocIndexTekstury()].ZwrocWymiary(RozmiarKlatki, Jakie[index].ZwrocKlatke()),
 			{ static_cast<float>(poz.x * RozmiarKlatki),static_cast<float>(poz.y * RozmiarKlatki) },
 			{ 255,255,255,255 });
 	}
@@ -228,7 +260,7 @@ PozycjaNaMapie Mapa::Kordynat(Vector2 wektor)
 }
 //Dotyczy pozycji czasowych
 
-void Mapa::ustawPozycjeWchodzaca(PozycjaNaMapie pozycja, unsigned int wchodzacy,const unsigned int &IndexObiektu)
+void Mapa::UstawPozycjeWchodzaca(PozycjaNaMapie pozycja, unsigned int wchodzacy,const unsigned int &IndexObiektu)
 {
 	
 	auto iterator = std::find_if(PozycjeCzasowe.begin(), PozycjeCzasowe.end(), [&](const PozycjaWCzasie& czasie) {
@@ -240,7 +272,7 @@ void Mapa::ustawPozycjeWchodzaca(PozycjaNaMapie pozycja, unsigned int wchodzacy,
 	}
 	else iterator->wejscie = wchodzacy;
 }
-void Mapa::ustawPozycjeWychodzaca(PozycjaNaMapie pozycja, unsigned int wychodzacy,const unsigned int &IndexObiektu)
+void Mapa::UstawPozycjeWychodzaca(PozycjaNaMapie pozycja, unsigned int wychodzacy,const unsigned int &IndexObiektu)
 {
 	auto iterator = std::find_if(PozycjeCzasowe.begin(), PozycjeCzasowe.end(), [&](const PozycjaWCzasie& czasie) {
 		return (czasie.poz.x == pozycja.x && czasie.poz.y == pozycja.y && IndexObiektu==czasie.IndexObiektu);
@@ -258,7 +290,7 @@ bool Mapa::CzyPozycjaZajenta(PozycjaNaMapie poz)
 	if (iterator != PozycjeCzasowe.end()) return true;
 	else return false;
 }
-bool Mapa::czyPozycjaZajentaWCzasie(PozycjaNaMapie poz, unsigned int const Tick)
+bool Mapa::CzyPozycjaZajentaWCzasie(PozycjaNaMapie poz, unsigned int const Tick)
 {
 	PozycjaWCzasie wczasie = { poz };
 	auto iterator = std::find(PozycjeCzasowe.begin(), PozycjeCzasowe.end(),wczasie);
@@ -340,6 +372,19 @@ unsigned int Mapa::ZwrocRozmiarKlatki()
 {
 	return RozmiarKlatki;
 }
+void Mapa::UstawSzerokosc(unsigned int szerokosc)
+{
+	this->szerokosc = szerokosc;
+}
+void Mapa::UstawWysokosc(unsigned int wysokosc)
+{
+	this->wysokosc = wysokosc;
+}
+void Mapa::UstawRozmiarKlatki(unsigned int RozmiarKlatki)
+{
+	this->RozmiarKlatki = RozmiarKlatki;
+}
+
 
 /// 
 
@@ -367,9 +412,9 @@ void Mapa::Wizualizacja(CzasLogiki &czaslogiki)
 			RenderujTileSet({ index % static_cast<int>(szerokosc),index / static_cast<int>(szerokosc) });
 			if (czaslogiki.StanCzasu() == true && tekstury.empty() == false)
 			{
-				Jakie[index].Klatka++;
-				if (Jakie[index].Klatka == tekstury[Jakie[index].indexTekstury].IloscKlatek)
-					Jakie[index].Klatka = 0;
+				Jakie[index].UstawKlatke(Jakie[index].ZwrocKlatke()+1,tekstury);
+				if (Jakie[index].ZwrocKlatke() == tekstury[Jakie[index].ZwrocIndexTekstury()].ZwrocIloscKlatek())
+					Jakie[index].UstawKlatke(0, tekstury);
 			}
 			
 		}

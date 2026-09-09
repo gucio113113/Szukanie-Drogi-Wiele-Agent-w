@@ -12,7 +12,7 @@ void SystemNamierzania::CzyMozeNamierzyc(Obiekt*& obiekt1, Obiekt*& obiekt2, flo
 
 
 
-		if (obiekt1 != nullptr && obiekt1!=obiekt2 && TenObiekt==Celowe.end() && obiekt1->ZwrocSojusz().SprawdzSojusz(obiekt2->ZwrocSojusz())==false && Zasieg * static_cast<float>(mapa.RozmiarKlatki) >= ZwrocDlugosc({pozycja2.x - pozycja1.x,pozycja2.y - pozycja1.y}))
+		if (obiekt1 != nullptr && obiekt1!=obiekt2 && TenObiekt==Celowe.end() && obiekt1->ZwrocSojusz().SprawdzSojusz(obiekt2->ZwrocSojusz())==false && Zasieg * static_cast<float>(mapa.ZwrocRozmiarKlatki()) >= ZwrocDlugosc({pozycja2.x - pozycja1.x,pozycja2.y - pozycja1.y}))
 		{
 			Celowe.emplace_back(IndexObiektu);
 		#ifdef SYSTEMNAMIERZANIA_DEBUG

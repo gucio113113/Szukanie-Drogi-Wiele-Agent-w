@@ -25,6 +25,9 @@
     <Filter Include="Pliki źródłowe\Zasob">
       <UniqueIdentifier>{323f3998-9b3d-4a63-b810-efb71d2a6171}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki źródłowe\Inne">
+      <UniqueIdentifier>{b69f8f90-ea65-4879-ba71-3cccda0e88ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -69,11 +72,11 @@
     <ClCompile Include="Sojusze.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="PodstawaSystemu.cpp">
-      <Filter>Pliki źródłowe\Systemy</Filter>
-    </ClCompile>
     <ClCompile Include="SystemZajmowania.cpp">
       <Filter>Pliki źródłowe\Systemy</Filter>
+    </ClCompile>
+    <ClCompile Include="PodstawaSystemu.cpp">
+      <Filter>Pliki źródłowe\Inne</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

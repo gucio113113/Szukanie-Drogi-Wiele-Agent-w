@@ -58,7 +58,7 @@ Obiekt::Obiekt(std::string NazwaAnimacji, Vector2 pozycja, unsigned int Zdrowie,
 }
   void Obiekt::Render(Mapa& mapa,CzasLogiki& czasLogiki, TablicaAnimacji& tablica)
  {
-	  player.Rysuj(czasLogiki, pozycja,mapa.RozmiarKlatki, tablica);
+	  player.Rysuj(czasLogiki, pozycja,mapa.ZwrocRozmiarKlatki(), tablica);
  }
   // This command allow us for own terms of deleting the object from the engine and it saves all deleted object from the current state to the table
   void Obiekt::SprawdzCzyUsunObiekt(std::vector<unsigned int>& IndexyUsuwanych)

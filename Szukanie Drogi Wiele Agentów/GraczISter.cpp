@@ -16,7 +16,7 @@ void GraczISter::InicjujKamere(Mapa& mapa)
 	this->kamera.zoom = 1;
 	this->kamera.target.x = GetScreenWidth() / 2;
 	this->kamera.target.y = GetScreenHeight() / 2;
-	maksmyalnyzoom = std::max(static_cast<float>(GetScreenWidth()/mapa.szerokosc * mapa.RozmiarKlatki), static_cast<float>(GetScreenWidth() /mapa.wysokosc * mapa.RozmiarKlatki) );
+	maksmyalnyzoom = std::max(static_cast<float>(GetScreenWidth()/mapa.ZwrocSzerokosc() * mapa.ZwrocRozmiarKlatki() ), static_cast<float>(GetScreenWidth() /mapa.ZwrocWysokosc() * mapa.ZwrocRozmiarKlatki()) );
 }
 
 void GraczISter::ZmienianiePozycjiZMyszka(float czulosc,Mapa& mapa)
@@ -31,7 +31,7 @@ void GraczISter::ZmienianiePozycjiZMyszka(float czulosc,Mapa& mapa)
 	if (kamera.zoom != 0)
 	{
 		Vector2 RozmiarObszaru = { GetScreenWidth() / kamera.zoom,GetScreenHeight() / kamera.zoom };
-		Vector2 RozmiarMapy = { mapa.szerokosc * mapa.RozmiarKlatki, mapa.wysokosc * mapa.RozmiarKlatki };
+		Vector2 RozmiarMapy = { mapa.ZwrocSzerokosc() * mapa.ZwrocRozmiarKlatki(), mapa.ZwrocWysokosc() * mapa.ZwrocRozmiarKlatki()};
 
 		//Vector2 Kwadrat = { RozmiarMapy.x - RozmiarObszaru.x,RozmiarMapy.y - RozmiarObszaru.y };
 
